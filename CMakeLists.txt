@@ -19,6 +19,8 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        exercisesmodel.h
+        exercisesmodel.cpp
         ${TS_FILES}
 )
 

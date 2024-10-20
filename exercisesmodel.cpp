@@ -6,13 +6,19 @@
 
 ExercisesModel::ExercisesModel(QObject* parent)
   : QAbstractTableModel{ parent }
+  , exercises(QStringList() << "...")
 {
+}
+
+void ExercisesModel::setExercises(const QStringList& newExercises) {
+  this->exercises = newExercises;
+  endResetModel();
 }
 
 int
 ExercisesModel::rowCount(const QModelIndex&) const
 {
-  return 8;
+  return exercises.length();
 }
 
 int
@@ -27,7 +33,7 @@ ExercisesModel::data(const QModelIndex& index, int role) const
   switch (role) {
     case Qt::DisplayRole:
       if (index.column() == 1) {
-        return QVariant("abc");
+        return exercises[index.row()];
       } else if (index.column() == 2 && index.row() < 2) {
         return QVariant("101");
       }

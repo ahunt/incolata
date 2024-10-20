@@ -15,6 +15,7 @@ public:
 
 private:
   QStringList exercises;
+  int currentExercise;
 };
 
 #endif // EXERCISESMODEL_H

@@ -7,6 +7,7 @@
 ExercisesModel::ExercisesModel(QObject* parent)
   : QAbstractTableModel{ parent }
   , exercises(QStringList() << "...")
+  , currentExercise(0)
 {
 }
 
@@ -39,12 +40,12 @@ ExercisesModel::data(const QModelIndex& index, int role) const
       }
       break;
     case Qt::DecorationRole:
-      if (index.column() == 0 && index.row() == 2) {
+      if (index.column() == 0 && index.row() == currentExercise) {
         return QIcon::fromTheme("media-playback-start");
       }
       break;
     case Qt::FontRole:
-      if (index.column() == 1 && index.row() == 2) {
+      if (index.column() == 1 && index.row() == currentExercise) {
         QFont font;
         font.setBold(true);
         font.setPointSize(font.pointSize() + 2);
@@ -52,7 +53,7 @@ ExercisesModel::data(const QModelIndex& index, int role) const
       }
       break;
     case Qt::BackgroundRole:
-      if (index.row() == 2) {
+      if (index.row() == currentExercise) {
         return QBrush(QColorConstants::Yellow);
       }
       break;

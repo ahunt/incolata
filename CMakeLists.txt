@@ -9,8 +9,10 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
+set(QT_MINIMUM_VERSION 6.0.0)
+
+find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Widgets LinguistTools Graphs)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Graphs)
 
 set(TS_FILES ftl_en_GB.ts)
 
@@ -55,7 +57,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
   -Wall -Wextra -Wpedantic -Werror
 )
 
-target_link_libraries(ftl PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(ftl PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::Graphs)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

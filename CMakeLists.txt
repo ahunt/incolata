@@ -57,7 +57,24 @@ target_compile_options(${PROJECT_NAME} PRIVATE
   -Wall -Wextra -Wpedantic -Werror
 )
 
-target_link_libraries(ftl PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::Graphs)
+include(ExternalProject)
+
+set_directory_properties(PROPERTIES EP_PREFIX ${CMAKE_BINARY_DIR}/rust)
+
+# TODO: figure out how to pass in release config, eventually.
+ExternalProject_Add(
+	p8020a-rs
+	CONFIGURE_COMMAND ""
+	INSTALL_COMMAND ""
+	BUILD_COMMAND cargo build
+	SOURCE_DIR "${CMAKE_SOURCE_DIR}/p8020a-rs"
+	BINARY_DIR "${CMAKE_SOURCE_DIR}/p8020a-rs")
+add_dependencies(ftl p8020a-rs)
+
+target_link_libraries(ftl
+  PRIVATE debug "${CMAKE_SOURCE_DIR}/p8020a-rs/target/debug/libp8020a.a"
+  PRIVATE optimized "${CMAKE_SOURCE_DIR}/p8020a-rs/target/release/libp8020a.a"
+  PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::Graphs)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

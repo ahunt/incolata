@@ -1,0 +1,3 @@
+[submodule "p8020a-rs"]
+	path = p8020a-rs
+	url = https://github.com/ahunt/p8020a-rs.git

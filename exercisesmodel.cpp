@@ -8,12 +8,33 @@ ExercisesModel::ExercisesModel(QObject* parent)
   : QAbstractTableModel{ parent }
   , exercises(QStringList() << "...")
   , currentExercise(0)
+  , ffs(1, -1.0)
 {
 }
 
 void ExercisesModel::setExercises(const QStringList& newExercises) {
+  beginResetModel();
   this->exercises = newExercises;
+  this->ffs = QList<double>(newExercises.length(), -1.0);
   endResetModel();
+}
+
+void
+ExercisesModel::updateCurrentExercise(uint ex)
+{
+  uint previous = std::max(currentExercise, 0);
+  // TODO: make this robust against non-incremental changes.
+  currentExercise = ex;
+  // TODO: consider passing in list of roles too?
+  emit dataChanged(index(previous, 0), index(ex, 2));
+}
+
+void
+ExercisesModel::updateFF(uint ex, double ff)
+{
+  ffs[ex] = ff;
+  // TODO: set correct role too.
+  emit dataChanged(index(ex, 2), index(ex, 2));
 }
 
 int
@@ -35,8 +56,17 @@ ExercisesModel::data(const QModelIndex& index, int role) const
     case Qt::DisplayRole:
       if (index.column() == 1) {
         return exercises[index.row()];
-      } else if (index.column() == 2 && index.row() < 2) {
-        return QVariant("101");
+      } else if (index.column() == 2) {
+        double ff = ffs[index.row()];
+        if (ff < 0) {
+          // TODO: return a spinner or equivalent if current_exercise >
+          // index.row() and data is not yet available.
+          return QVariant("");
+        }
+        if (ff > 10) {
+          return QString::number(ff, 'f', 1);
+        }
+        return QString::number(ff, 'f', 0);
       }
       break;
     case Qt::DecorationRole:

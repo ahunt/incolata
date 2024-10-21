@@ -13,9 +13,14 @@ public:
 
   void setExercises(const QStringList& exercises);
 
+public slots:
+  void updateCurrentExercise(uint ex);
+  void updateFF(uint ex, double ff);
+
 private:
   QStringList exercises;
   int currentExercise;
+  QList<double> ffs;
 };
 
 #endif // EXERCISESMODEL_H

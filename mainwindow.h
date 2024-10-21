@@ -2,6 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QThread>
+
+struct TestConfig;
+struct TestNotification;
+struct Device;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -25,7 +30,14 @@ private slots:
 private:
   std::unique_ptr<Ui::MainWindow> ui;
   ExercisesModel* model;
+  std::unique_ptr<QThread> workerThread;
+  Device* device;
 
+  static void test_callback(const TestNotification* notification,
+                            void* cb_data);
   void startTest(const QStringList& exercises);
+
+signals:
+  void triggerTest(TestConfig* testConfig);
 };
 #endif // MAINWINDOW_H

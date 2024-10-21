@@ -1,11 +1,28 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "exercisesmodel.h"
+#include "p8020a-rs/libp8020a.h"
+#include "testworker.h"
+
+void
+MainWindow::test_callback(const TestNotification* notification, void* cb_data)
+{
+  MainWindow* mw = static_cast<MainWindow*>(cb_data);
+  (void)mw;
+  switch (notification->tag) {
+    case TestNotification::Tag::StateChange:
+      break;
+    default:
+      // TODO: handle all cases.
+      break;
+  }
+}
 
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
   , model(new ExercisesModel)
+  , workerThread(new QThread)
 {
   ui->setupUi(this);
 
@@ -18,6 +35,16 @@ MainWindow::MainWindow(QWidget* parent)
   QObject::connect(ui->startTest2, &QAbstractButton::pressed,
                      this, &MainWindow::startTestPressed);
   // TODO: implement custom exercise support.
+
+  // TODO: provide a proper connection UI.
+  device = device_connect("/dev/ttyUSB0");
+
+  // TODO: connect remaining signals, e.g. thread (test) finish -> stuff in the
+  // UI.
+  TestWorker* testWorker = new TestWorker(device);
+  testWorker->moveToThread(workerThread.get());
+  connect(this, &MainWindow::triggerTest, testWorker, &TestWorker::runTest);
+  workerThread->start();
 }
 
 void MainWindow::startTest(const QStringList& exercises) {
@@ -30,6 +57,12 @@ void MainWindow::startTest(const QStringList& exercises) {
   ui->subjectSelector->setEnabled(false);
 
   model->setExercises(exercises);
+
+  TestConfig* config = test_config_new(exercises.length());
+  config->test_callback = &test_callback;
+  config->test_callback_data = this;
+
+  emit triggerTest(config);
 }
 
 

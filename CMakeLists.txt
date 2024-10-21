@@ -23,6 +23,8 @@ set(PROJECT_SOURCES
         mainwindow.ui
         exercisesmodel.h
         exercisesmodel.cpp
+        testworker.h
+        testworker.cpp
         ${TS_FILES}
 )
 
@@ -74,7 +76,7 @@ add_dependencies(ftl p8020a-rs)
 target_link_libraries(ftl
   PRIVATE debug "${CMAKE_SOURCE_DIR}/p8020a-rs/target/debug/libp8020a.a"
   PRIVATE optimized "${CMAKE_SOURCE_DIR}/p8020a-rs/target/release/libp8020a.a"
-  PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::Graphs)
+  PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::Graphs udev)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

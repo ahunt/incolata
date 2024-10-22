@@ -63,10 +63,17 @@ ExercisesModel::data(const QModelIndex& index, int role) const
           // index.row() and data is not yet available.
           return QVariant("");
         }
+
+        QString result;
+        QTextStream s(&result);
         if (ff > 10) {
-          return QString::number(ff, 'f', 1);
+          s << QString::number(ff, 'f', 0);
+        } else {
+          s << QString::number(ff, 'f', 1);
         }
-        return QString::number(ff, 'f', 0);
+        s << " / " << QString::number(log10(ff), 'f', 2)
+          << QStringLiteral(" log₁₀");
+        return result;
       }
       break;
     case Qt::DecorationRole:

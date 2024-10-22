@@ -41,6 +41,7 @@ signals:
   void triggerTest(TestConfig* testConfig);
   void exerciseChanged(uint ex);
   void ffUpdated(uint ex, double ff);
+  void renderRawSample(QString sample);
   void receivedRawSample(double sample);
 };
 #endif // MAINWINDOW_H

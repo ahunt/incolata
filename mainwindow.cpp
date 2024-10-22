@@ -31,6 +31,11 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
     case TestNotification::Tag::RawSample: {
       const double sample = notification->raw_sample._0;
       emit mw->receivedRawSample(sample);
+      if (sample < 100) {
+        emit mw->renderRawSample(QString::number(sample, 'f', 2));
+      } else {
+        emit mw->renderRawSample(QString::number(sample, 'f', 0));
+      }
       break;
     }
     default:
@@ -63,8 +68,10 @@ MainWindow::MainWindow(QWidget* parent)
                    &ExercisesModel::updateCurrentExercise);
   QObject::connect(
     this, &MainWindow::ffUpdated, model, &ExercisesModel::updateFF);
-  // TODO: connect(this, &MainWindow::receivedRawSample,
-  //               rawSamplesModel, &RawSampleModel::addSample);
+  QObject::connect(this,
+                   &MainWindow::renderRawSample,
+                   ui->rawCountLCD,
+                   QOverload<const QString&>::of(&QLCDNumber::display));
 
   // TODO: provide a proper connection UI.
   device = device_connect("/dev/ttyUSB0");

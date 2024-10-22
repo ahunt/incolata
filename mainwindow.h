@@ -30,12 +30,16 @@ public:
 private slots:
   void startTestPressed();
   void processRawSample(double sample);
+  void receivedFF(uint ex, double ff);
 
 private:
   std::unique_ptr<Ui::MainWindow> ui;
   ExercisesModel* model;
   std::unique_ptr<QChart> rawChart;
   std::unique_ptr<QLineSeries> rawSeries;
+  std::unique_ptr<QChart> ffChart;
+  std::unique_ptr<QLineSeries> ffSeries;
+
   std::unique_ptr<QThread> workerThread;
   Device* device;
 

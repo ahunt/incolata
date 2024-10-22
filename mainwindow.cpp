@@ -3,6 +3,7 @@
 
 #include <QChart>
 #include <QLineSeries>
+#include <QLogValueAxis>
 #include <QThread>
 #include <QValueAxis>
 
@@ -63,12 +64,22 @@ MainWindow::processRawSample(double sample)
   }
 }
 
+void
+MainWindow::receivedFF(uint ex, double ff)
+{
+  // TODO: validate that ordering is correct. It should be, but you never
+  // know...
+  ffSeries->append(QPoint(ex + 1, ff));
+}
+
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
   , model(new ExercisesModel)
   , rawChart(new QChart)
   , rawSeries(new QLineSeries)
+  , ffChart(new QChart)
+  , ffSeries(new QLineSeries)
   , workerThread(new QThread)
 {
   ui->setupUi(this);
@@ -96,6 +107,28 @@ MainWindow::MainWindow(QWidget* parent)
   rawSeries->attachAxis(yAxis);
   ui->rawChartView->setChart(rawChart.get());
 
+  // TODO; try to show a log axis on the right?
+  ffChart->setAnimationOptions(QChart::SeriesAnimations);
+  ffChart->setTitle("Fit Factors");
+  ffChart->legend()->hide();
+  ffChart->addSeries(ffSeries.get());
+  auto ffxAxis = new QValueAxis();
+  ffxAxis->setRange(0, 9);
+  ffxAxis->setTickCount(10);
+  ffxAxis->setLabelFormat("%d");
+  ffChart->addAxis(ffxAxis, Qt::AlignBottom);
+  ffSeries->attachAxis(ffxAxis);
+  auto ffyAxis = new QLogValueAxis();
+  ffyAxis->setLabelFormat("%d");
+  ffyAxis->setMinorTickCount(-1);
+  ffyAxis->setMax(1000);
+  ffChart->addAxis(ffyAxis, Qt::AlignLeft);
+  ffSeries->attachAxis(ffyAxis);
+  ffSeries->setPointsVisible(true);
+  ui->ffChartView->setChart(ffChart.get());
+  ffyAxis->setRange(0, 1000);
+  ffyAxis->setBase(10.0);
+
   QObject::connect(ui->startTest1, &QAbstractButton::pressed,
                      this, &MainWindow::startTestPressed);
   QObject::connect(ui->startTest2, &QAbstractButton::pressed,
@@ -108,6 +141,7 @@ MainWindow::MainWindow(QWidget* parent)
                    &ExercisesModel::updateCurrentExercise);
   QObject::connect(
     this, &MainWindow::ffUpdated, model, &ExercisesModel::updateFF);
+  QObject::connect(this, &MainWindow::ffUpdated, this, &MainWindow::receivedFF);
   QObject::connect(this,
                    &MainWindow::renderRawSample,
                    ui->rawCountLCD,
@@ -117,7 +151,7 @@ MainWindow::MainWindow(QWidget* parent)
     this, &MainWindow::receivedRawSample, this, &MainWindow::processRawSample);
 
   // TODO: provide a proper connection UI.
-  device = device_connect("/dev/ttyUSB0");
+  device = device_connect("/dev/ttyUSB1");
 
   // TODO: connect remaining signals, e.g. thread (test) finish -> stuff in the
   // UI.
@@ -143,6 +177,8 @@ void MainWindow::startTest(const QStringList& exercises) {
   config->test_callback_data = this;
 
   emit triggerTest(config);
+
+  // TODO: reset graphs if needed, set the right scale for the FF graph.
 }
 
 

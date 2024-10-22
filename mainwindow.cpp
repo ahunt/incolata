@@ -1,5 +1,11 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+
+#include <QChart>
+#include <QLineSeries>
+#include <QThread>
+#include <QValueAxis>
+
 #include "exercisesmodel.h"
 #include "p8020a-rs/libp8020a.h"
 #include "testworker.h"
@@ -44,10 +50,25 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
   }
 }
 
+void
+MainWindow::processRawSample(double sample)
+{
+  rawSeries->append(QPoint(rawSeries->count(), sample));
+  // TODO: check range dynamically and/or extract constants.
+  // TODO: check Y range.
+  if (rawSeries->count() > 180) {
+    // TODO: store a ref to the axis to avoid the lookup.
+    rawChart->axes(Qt::Horizontal)[0]->setRange(rawSeries->count() - 180,
+                                                rawSeries->count());
+  }
+}
+
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
   , model(new ExercisesModel)
+  , rawChart(new QChart)
+  , rawSeries(new QLineSeries)
   , workerThread(new QThread)
 {
   ui->setupUi(this);
@@ -55,6 +76,25 @@ MainWindow::MainWindow(QWidget* parent)
   ui->testTable->setModel(model);
   ui->testTable->setHorizontalHeader(nullptr);
   ui->testTable->setColumnWidth(1, 400);
+  ui->testTable->setColumnWidth(2, 120);
+
+  // TODO: move all this into a standalone class?
+  rawChart->setAnimationOptions(QChart::SeriesAnimations);
+  rawChart->setTitle("Raw Particle Count");
+  rawChart->legend()->hide();
+  rawChart->addSeries(rawSeries.get());
+  auto xAxis = new QValueAxis();
+  xAxis->setRange(0, 180);
+  xAxis->setLabelFormat("%d");
+  rawChart->addAxis(xAxis, Qt::AlignBottom);
+  rawSeries->attachAxis(xAxis);
+  auto yAxis = new QValueAxis();
+  yAxis->setRange(0, 2500);
+  yAxis->setTickCount(6);
+  yAxis->setLabelFormat("%d");
+  rawChart->addAxis(yAxis, Qt::AlignLeft);
+  rawSeries->attachAxis(yAxis);
+  ui->rawChartView->setChart(rawChart.get());
 
   QObject::connect(ui->startTest1, &QAbstractButton::pressed,
                      this, &MainWindow::startTestPressed);
@@ -72,6 +112,9 @@ MainWindow::MainWindow(QWidget* parent)
                    &MainWindow::renderRawSample,
                    ui->rawCountLCD,
                    QOverload<const QString&>::of(&QLCDNumber::display));
+  // Use signals+slots here as it deals with cross-thread dispatch for us.
+  QObject::connect(
+    this, &MainWindow::receivedRawSample, this, &MainWindow::processRawSample);
 
   // TODO: provide a proper connection UI.
   device = device_connect("/dev/ttyUSB0");

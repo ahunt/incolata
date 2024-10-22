@@ -2,7 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QThread>
+
+class QChart;
+class QLineSeries;
+class QThread;
 
 struct TestConfig;
 struct TestNotification;
@@ -25,11 +28,14 @@ public:
   ~MainWindow();
 
 private slots:
-    void startTestPressed();
+  void startTestPressed();
+  void processRawSample(double sample);
 
 private:
   std::unique_ptr<Ui::MainWindow> ui;
   ExercisesModel* model;
+  std::unique_ptr<QChart> rawChart;
+  std::unique_ptr<QLineSeries> rawSeries;
   std::unique_ptr<QThread> workerThread;
   Device* device;
 

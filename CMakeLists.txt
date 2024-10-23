@@ -65,17 +65,17 @@ set_directory_properties(PROPERTIES EP_PREFIX ${CMAKE_BINARY_DIR}/rust)
 
 # TODO: figure out how to pass in release config, eventually.
 ExternalProject_Add(
-	p8020a-rs
+	libp8020
 	CONFIGURE_COMMAND ""
 	INSTALL_COMMAND ""
 	BUILD_COMMAND cargo build
-	SOURCE_DIR "${CMAKE_SOURCE_DIR}/p8020a-rs"
-	BINARY_DIR "${CMAKE_SOURCE_DIR}/p8020a-rs")
-add_dependencies(ftl p8020a-rs)
+	SOURCE_DIR "${CMAKE_SOURCE_DIR}/libp8020"
+	BINARY_DIR "${CMAKE_SOURCE_DIR}/libp8020")
+add_dependencies(ftl libp8020)
 
 target_link_libraries(ftl
-  PRIVATE debug "${CMAKE_SOURCE_DIR}/p8020a-rs/target/debug/libp8020a.a"
-  PRIVATE optimized "${CMAKE_SOURCE_DIR}/p8020a-rs/target/release/libp8020a.a"
+  PRIVATE debug "${CMAKE_SOURCE_DIR}/libp8020/target/debug/libp8020.a"
+  PRIVATE optimized "${CMAKE_SOURCE_DIR}/libp8020/target/release/libp8020.a"
   PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Charts udev)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

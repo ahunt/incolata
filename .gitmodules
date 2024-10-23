@@ -1,3 +1,4 @@
-[submodule "p8020a-rs"]
-	path = p8020a-rs
-	url = https://github.com/ahunt/p8020a-rs.git
+[submodule "libp8020a"]
+	path = libp8020
+	url = https://github.com/ahunt/libp8020.git
+	branch = main

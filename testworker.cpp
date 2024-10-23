@@ -1,5 +1,5 @@
 #include "testworker.h"
-#include "p8020a-rs/libp8020a.h"
+#include "libp8020/libp8020.h"
 
 TestWorker::TestWorker(Device* device, QObject* parent)
   : QObject(parent)

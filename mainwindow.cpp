@@ -8,7 +8,7 @@
 #include <QValueAxis>
 
 #include "exercisesmodel.h"
-#include "p8020a-rs/libp8020a.h"
+#include "libp8020/libp8020.h"
 #include "testworker.h"
 
 void

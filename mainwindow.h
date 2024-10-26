@@ -5,6 +5,7 @@
 
 class QChart;
 class QLineSeries;
+class QLogValueAxis;
 class QThread;
 class QValueAxis;
 
@@ -46,6 +47,7 @@ private slots:
                      size_t index,
                      double value);
   void receivedFF(uint ex, double ff);
+  void processLiveFF(size_t exercise, size_t index, double fit_factor);
 
 private:
   std::unique_ptr<Ui::MainWindow> ui;
@@ -70,6 +72,11 @@ private:
   std::unique_ptr<QValueAxis> mSpecimenSampleYAxis;
   double mSpecimenMaxSeen;
 
+  std::unique_ptr<QChart> mLiveFFChart;
+  std::vector<std::unique_ptr<QLineSeries>> mLiveFFSeriess;
+  std::unique_ptr<QValueAxis> mLiveFFXAxis;
+  std::unique_ptr<QLogValueAxis> mLiveFFYAxis;
+
   std::unique_ptr<QThread> workerThread;
   Device* device;
 
@@ -91,5 +98,6 @@ signals:
                       size_t exercise,
                       size_t index,
                       double value);
+  void receivedLiveFF(size_t exercise, size_t index, double fit_factor);
 };
 #endif // MAINWINDOW_H

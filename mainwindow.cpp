@@ -69,6 +69,11 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
       }
       break;
     }
+    case TestNotification::Tag::LiveFF: {
+      auto& ff = notification->live_ff;
+      emit mw->receivedLiveFF(ff.exercise, ff.index, ff.fit_factor);
+      break;
+    }
   }
 }
 
@@ -158,6 +163,37 @@ MainWindow::processSample(SampleType sampleType,
 }
 
 void
+MainWindow::processLiveFF(size_t exercise, size_t index, double fit_factor)
+{
+  (void)index;
+  QLineSeries* series;
+  qreal x;
+  if (mLiveFFSeriess.size() <= exercise) {
+    if (mLiveFFSeriess.size() == 0) {
+      x = 0;
+    } else {
+      // Overlap is deliberate.
+      x = mLiveFFSeriess.back()->points().last().x();
+    }
+
+    series = mLiveFFSeriess.emplace_back(std::make_unique<QLineSeries>()).get();
+    series->setPointsVisible(true);
+    mLiveFFChart->addSeries(series);
+    series->attachAxis(mLiveFFXAxis.get());
+    series->attachAxis(mLiveFFYAxis.get());
+  } else {
+    series = mLiveFFSeriess.back().get();
+    x = series->points().last().x() + 1;
+  }
+  series->append(QPoint(x, fit_factor));
+
+  // Deliberately use the same range as for specimen samples.
+  if (x > sSpecimenSampleRange) {
+    mLiveFFXAxis->setRange(x - sSpecimenSampleRange, x);
+  }
+}
+
+void
 MainWindow::receivedFF(uint ex, double ff)
 {
   // TODO: validate that ordering is correct. It should be, but you never
@@ -185,6 +221,10 @@ MainWindow::MainWindow(QWidget* parent)
   , mSpecimenSampleXAxis(new QValueAxis)
   , mSpecimenSampleYAxis(new QValueAxis)
   , mSpecimenMaxSeen(0.0)
+  , mLiveFFChart(new QChart)
+  , mLiveFFSeriess()
+  , mLiveFFXAxis(new QValueAxis)
+  , mLiveFFYAxis(new QLogValueAxis)
   , workerThread(new QThread)
 {
   ui->setupUi(this);
@@ -259,6 +299,20 @@ MainWindow::MainWindow(QWidget* parent)
   mSpecimenSampleChart->addAxis(mSpecimenSampleYAxis.get(), Qt::AlignLeft);
   ui->specimenSampleGraph->setChart(mSpecimenSampleChart.get());
 
+  mLiveFFChart->setAnimationOptions(QChart::SeriesAnimations);
+  mLiveFFChart->setTitle("Live FF");
+  mLiveFFChart->legend()->hide();
+  mLiveFFXAxis->setRange(0, sSpecimenSampleRange);
+  mLiveFFXAxis->setLabelFormat("%d");
+  mLiveFFChart->addAxis(mLiveFFXAxis.get(), Qt::AlignBottom);
+  mLiveFFYAxis->setLabelFormat("%d");
+  mLiveFFYAxis->setMinorTickCount(-1);
+  mLiveFFYAxis->setMax(1000);
+  mLiveFFYAxis->setRange(0, 1000);
+  mLiveFFYAxis->setBase(10.0);
+  mLiveFFChart->addAxis(mLiveFFYAxis.get(), Qt::AlignLeft);
+  ui->liveFFGraph->setChart(mLiveFFChart.get());
+
   QObject::connect(ui->startTest1,
                    &QAbstractButton::pressed,
                    this,
@@ -285,6 +339,8 @@ MainWindow::MainWindow(QWidget* parent)
     this, &MainWindow::receivedRawSample, this, &MainWindow::processRawSample);
   QObject::connect(
     this, &MainWindow::receivedSample, this, &MainWindow::processSample);
+  QObject::connect(
+    this, &MainWindow::receivedLiveFF, this, &MainWindow::processLiveFF);
 
   // TODO: provide a proper connection UI.
   device = device_connect("/dev/ttyUSB1");

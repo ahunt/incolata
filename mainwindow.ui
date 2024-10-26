@@ -213,9 +213,12 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>// TODO: more nice graphs and stuff.</string>
+             <widget class="QChartView" name="liveFFGraph" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>200</height>
+               </size>
               </property>
              </widget>
             </item>

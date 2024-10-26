@@ -45,10 +45,14 @@ private:
 
   static void test_callback(const TestNotification* notification,
                             void* cb_data);
-  void startTest(const QStringList& exercises);
+  void startTest(const QStringList& exercises,
+                 const QString& protocolShortName);
 
 signals:
-  void triggerTest(TestConfig* testConfig);
+  void triggerTest(TestConfig* testConfig,
+                   const QString& specimen,
+                   const QString& subject,
+                   const QString& protocol);
   void exerciseChanged(uint ex);
   void ffUpdated(uint ex, double ff);
   void renderRawSample(QString sample);

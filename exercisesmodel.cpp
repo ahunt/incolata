@@ -66,7 +66,7 @@ ExercisesModel::data(const QModelIndex& index, int role) const
 
         QString result;
         QTextStream s(&result);
-        if (ff > 10) {
+        if (ff >= 10) {
           s << QString::number(ff, 'f', 0);
         } else {
           s << QString::number(ff, 'f', 1);

@@ -161,7 +161,10 @@ MainWindow::MainWindow(QWidget* parent)
   workerThread->start();
 }
 
-void MainWindow::startTest(const QStringList& exercises) {
+void
+MainWindow::startTest(const QStringList& exercises,
+                      const QString& protocolShortName)
+{
   qInfo() << "Start test: " << exercises.length() << " exercises";
 
   // TODO: reenable these after the test.
@@ -176,23 +179,41 @@ void MainWindow::startTest(const QStringList& exercises) {
   config->test_callback = &test_callback;
   config->test_callback_data = this;
 
-  emit triggerTest(config);
+  emit triggerTest(config,
+                   ui->specimenSelector->currentText(),
+                   ui->subjectSelector->currentText(),
+                   protocolShortName);
 
   // TODO: reset graphs if needed, set the right scale for the FF graph.
 }
-
 
 void MainWindow::startTestPressed()
 {
   auto sndr(sender());
   if (sndr == ui->startTest1) {
-    startTest(QStringList() << "Normal breathing" << "Deep Breathing" << "Turning head side to side" << "Moving head up and down" << "Talking" << "Grimace" << "Bending over" << "Normal breathing");
-    } else if     (sndr == ui->startTest2) {
-    startTest(QStringList()
-	      << "Relax" << "2x Jaw Motion cycles" << "Relax"
-	      << "Relax" << "2x Jaw Motion cycles" << "Relax"
-	      << "Relax" << "2x Jaw Motion cycles" << "Relax"
-	      << "Relax" << "2x Jaw Motion cycles" << "Relax");
+    startTest(QStringList() << "Normal breathing"
+                            << "Deep Breathing"
+                            << "Turning head side to side"
+                            << "Moving head up and down"
+                            << "Talking"
+                            << "Grimace"
+                            << "Bending over"
+                            << "Normal breathing",
+              "OSHA");
+  } else if (sndr == ui->startTest2) {
+    startTest(QStringList() << "Relax"
+                            << "2x Jaw Motion cycles"
+                            << "Relax"
+                            << "Relax"
+                            << "2x Jaw Motion cycles"
+                            << "Relax"
+                            << "Relax"
+                            << "2x Jaw Motion cycles"
+                            << "Relax"
+                            << "Relax"
+                            << "2x Jaw Motion cycles"
+                            << "Relax",
+              "FTTP2.5");
   } else {
     qWarning() << "Bad sender for startExercisesPressed()";
   }

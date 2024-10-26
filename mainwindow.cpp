@@ -12,6 +12,7 @@
 #include "testworker.h"
 
 static const qsizetype sRawSampleRange = 180;
+static const qsizetype sAmbientSampleRange = 40;
 
 void
 MainWindow::test_callback(const TestNotification* notification, void* cb_data)
@@ -46,9 +47,21 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
       }
       break;
     }
-    default:
-      // TODO: handle all cases.
+    case TestNotification::Tag::Sample: {
+      auto& sample = notification->sample._0;
+      switch (sample.tag) {
+        case Sample::Tag::AmbientSample:
+          emit mw->receivedSample(SampleType::ambientSample,
+                                  sample.ambient_sample.exercise,
+                                  sample.ambient_sample.index,
+                                  sample.ambient_sample.value);
+          break;
+        default:
+          // TODO: handle all cases.
+          break;
+      }
       break;
+    }
   }
 }
 
@@ -62,6 +75,61 @@ MainWindow::processRawSample(double sample)
     // TODO: store a ref to the axis to avoid the lookup.
     rawChart->axes(Qt::Horizontal)[0]->setRange(rawSeries->count() - sRawSampleRange,
                                                 rawSeries->count());
+  }
+}
+
+void
+MainWindow::processSample(SampleType sampleType,
+                          size_t exercise,
+                          size_t index,
+                          double value)
+{
+  (void)index;
+  switch (sampleType) {
+    case SampleType::ambientSample: {
+      QLineSeries* series;
+      qreal x;
+      if (mAmbientSampleSeriess.size() <= exercise) {
+        if (mAmbientSampleSeriess.size() == 0) {
+          x = 0;
+        } else {
+          // Overlap is deliberate.
+          x = mAmbientSampleSeriess.back()->points().last().x();
+        }
+
+        series =
+          mAmbientSampleSeriess.emplace_back(std::make_unique<QLineSeries>())
+            .get();
+        series->setPointsVisible(true);
+        // Ordering is significant: Qt complains (and ignores the request) if
+        // you try to attach an axis to a new series, if that axis is already
+        // attached to another series which is attached to a chart, and if that
+        // new series is not yet attached to the chart. (Translation:
+        // addSeries(foo), before you foo->attachAxis.)
+        mAmbientSampleChart->addSeries(series);
+        series->attachAxis(mAmbientSampleXAxis.get());
+        series->attachAxis(mAmbientSampleYAxis.get());
+      } else {
+        series = mAmbientSampleSeriess.back().get();
+        x = series->points().last().x() + 1;
+      }
+      series->append(QPoint(x, value));
+
+      // TODO: figure out a better way of doing this. It doesn't need to be
+      // full-on functional, but surely there's something a bit less ugly.
+      mAmbientMaxSeen = std::max(mAmbientMaxSeen, value);
+      mAmbientMinSeen = std::min(mAmbientMinSeen, value);
+      mAmbientSampleYAxis->setRange(mAmbientMinSeen - 100,
+                                    mAmbientMaxSeen + 100);
+
+      if (x > sAmbientSampleRange) {
+        mAmbientSampleXAxis->setRange(x - sAmbientSampleRange, x);
+      }
+      break;
+    }
+    default:
+      // TODO: handle remaining cases.
+      break;
   }
 }
 
@@ -82,6 +150,12 @@ MainWindow::MainWindow(QWidget* parent)
   , ffChart(new QChart)
   , ffSeries(new QLineSeries)
   , mFFXAxis(new QValueAxis)
+  , mAmbientSampleChart(new QChart)
+  , mAmbientSampleSeriess()
+  , mAmbientSampleXAxis(new QValueAxis)
+  , mAmbientSampleYAxis(new QValueAxis)
+  , mAmbientMaxSeen(0.0)
+  , mAmbientMinSeen(std::numeric_limits<double>::infinity())
   , workerThread(new QThread)
 {
   ui->setupUi(this);
@@ -136,10 +210,24 @@ MainWindow::MainWindow(QWidget* parent)
   ffyAxis->setRange(0, 1000);
   ffyAxis->setBase(10.0);
 
-  QObject::connect(ui->startTest1, &QAbstractButton::pressed,
-                     this, &MainWindow::startTestPressed);
-  QObject::connect(ui->startTest2, &QAbstractButton::pressed,
-                     this, &MainWindow::startTestPressed);
+  mAmbientSampleChart->setAnimationOptions(QChart::SeriesAnimations);
+  mAmbientSampleChart->setTitle("Ambient samples");
+  mAmbientSampleChart->legend()->hide();
+  mAmbientSampleXAxis->setRange(0, sAmbientSampleRange);
+  mAmbientSampleXAxis->setLabelFormat("%d");
+  mAmbientSampleChart->addAxis(mAmbientSampleXAxis.get(), Qt::AlignBottom);
+  mAmbientSampleYAxis->setRange(1000, 10000);
+  mAmbientSampleChart->addAxis(mAmbientSampleYAxis.get(), Qt::AlignLeft);
+  ui->ambientSampleGraph->setChart(mAmbientSampleChart.get());
+
+  QObject::connect(ui->startTest1,
+                   &QAbstractButton::pressed,
+                   this,
+                   &MainWindow::startTestPressed);
+  QObject::connect(ui->startTest2,
+                   &QAbstractButton::pressed,
+                   this,
+                   &MainWindow::startTestPressed);
   // TODO: implement custom exercise support.
 
   QObject::connect(this,
@@ -156,12 +244,14 @@ MainWindow::MainWindow(QWidget* parent)
   // Use signals+slots here as it deals with cross-thread dispatch for us.
   QObject::connect(
     this, &MainWindow::receivedRawSample, this, &MainWindow::processRawSample);
+  QObject::connect(
+    this, &MainWindow::receivedSample, this, &MainWindow::processSample);
 
   // TODO: provide a proper connection UI.
   device = device_connect("/dev/ttyUSB1");
 
-  // TODO: connect remaining signals, e.g. thread (test) finish -> stuff in the
-  // UI.
+  // TODO: connect remaining signals, e.g. thread (test) finish -> stuff in
+  // the UI.
   TestWorker* testWorker = new TestWorker(device);
   testWorker->moveToThread(workerThread.get());
   connect(this, &MainWindow::triggerTest, testWorker, &TestWorker::runTest);
@@ -197,7 +287,8 @@ MainWindow::startTest(const QStringList& exercises,
   // TODO: reset graphs if necessary.
 }
 
-void MainWindow::startTestPressed()
+void
+MainWindow::startTestPressed()
 {
   auto sndr(sender());
   if (sndr == ui->startTest1) {

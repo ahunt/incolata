@@ -82,6 +82,7 @@ MainWindow::MainWindow(QWidget* parent)
   , rawSeries(new QLineSeries)
   , ffChart(new QChart)
   , ffSeries(new QLineSeries)
+  , mFFXAxis(new QValueAxis)
   , workerThread(new QThread)
 {
   ui->setupUi(this);
@@ -114,12 +115,17 @@ MainWindow::MainWindow(QWidget* parent)
   ffChart->setTitle("Fit Factors");
   ffChart->legend()->hide();
   ffChart->addSeries(ffSeries.get());
-  auto ffxAxis = new QValueAxis();
-  ffxAxis->setRange(0, 9);
-  ffxAxis->setTickCount(10);
-  ffxAxis->setLabelFormat("%d");
-  ffChart->addAxis(ffxAxis, Qt::AlignBottom);
-  ffSeries->attachAxis(ffxAxis);
+  mFFXAxis->setRange(0, 9);
+  // TODO: figure out how to omit the first and last tick.
+  // setTickInterval() does not work as documented, so we use tick count
+  // instead.
+  mFFXAxis->setTickCount(10);
+  mFFXAxis->setLabelFormat("%d");
+  QFont ffxAxisFont;
+  ffxAxisFont.setPixelSize(10);
+  mFFXAxis->setLabelsFont(ffxAxisFont);
+  ffChart->addAxis(mFFXAxis.get(), Qt::AlignBottom);
+  ffSeries->attachAxis(mFFXAxis.get());
   auto ffyAxis = new QLogValueAxis();
   ffyAxis->setLabelFormat("%d");
   ffyAxis->setMinorTickCount(-1);
@@ -177,6 +183,9 @@ MainWindow::startTest(const QStringList& exercises,
 
   model->setExercises(exercises);
 
+  mFFXAxis->setRange(0, exercises.length() + 1);
+  mFFXAxis->setTickCount(exercises.length() + 2);
+
   TestConfig* config = test_config_new(exercises.length());
   config->test_callback = &test_callback;
   config->test_callback_data = this;
@@ -186,7 +195,7 @@ MainWindow::startTest(const QStringList& exercises,
                    ui->subjectSelector->currentText(),
                    protocolShortName);
 
-  // TODO: reset graphs if needed, set the right scale for the FF graph.
+  // TODO: reset graphs if necessary.
 }
 
 void MainWindow::startTestPressed()

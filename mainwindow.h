@@ -6,6 +6,7 @@
 class QChart;
 class QLineSeries;
 class QThread;
+class QValueAxis;
 
 struct TestConfig;
 struct TestNotification;
@@ -39,6 +40,7 @@ private:
   std::unique_ptr<QLineSeries> rawSeries;
   std::unique_ptr<QChart> ffChart;
   std::unique_ptr<QLineSeries> ffSeries;
+  std::unique_ptr<QValueAxis> mFFXAxis;
 
   std::unique_ptr<QThread> workerThread;
   Device* device;

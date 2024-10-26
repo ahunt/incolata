@@ -64,6 +64,12 @@ private:
   std::unique_ptr<QValueAxis> mAmbientSampleYAxis;
   double mAmbientMaxSeen, mAmbientMinSeen;
 
+  std::unique_ptr<QChart> mSpecimenSampleChart;
+  std::vector<std::unique_ptr<QLineSeries>> mSpecimenSampleSeriess;
+  std::unique_ptr<QValueAxis> mSpecimenSampleXAxis;
+  std::unique_ptr<QValueAxis> mSpecimenSampleYAxis;
+  double mSpecimenMaxSeen;
+
   std::unique_ptr<QThread> workerThread;
   Device* device;
 

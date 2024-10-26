@@ -13,6 +13,7 @@
 
 static const qsizetype sRawSampleRange = 180;
 static const qsizetype sAmbientSampleRange = 40;
+static const qsizetype sSpecimenSampleRange = 60;
 
 void
 MainWindow::test_callback(const TestNotification* notification, void* cb_data)
@@ -56,6 +57,12 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
                                   sample.ambient_sample.index,
                                   sample.ambient_sample.value);
           break;
+        case Sample::Tag::SpecimenSample:
+          emit mw->receivedSample(SampleType::specimenSample,
+                                  sample.specimen_sample.exercise,
+                                  sample.specimen_sample.index,
+                                  sample.specimen_sample.value);
+          break;
         default:
           // TODO: handle all cases.
           break;
@@ -86,44 +93,61 @@ MainWindow::processSample(SampleType sampleType,
 {
   (void)index;
   switch (sampleType) {
-    case SampleType::ambientSample: {
+    case SampleType::ambientSample:
+    case SampleType::specimenSample: {
+      // TODO: create a FTLSampleGraph class instead of this nonsense:
+      bool isAmbient = (sampleType == SampleType::ambientSample);
+      auto& sampleSeriess =
+        isAmbient ? mAmbientSampleSeriess : mSpecimenSampleSeriess;
+      auto& chart = isAmbient ? mAmbientSampleChart : mSpecimenSampleChart;
+      auto& xAxis = isAmbient ? mAmbientSampleXAxis : mSpecimenSampleXAxis;
+      auto& yAxis = isAmbient ? mAmbientSampleYAxis : mSpecimenSampleYAxis;
+
       QLineSeries* series;
       qreal x;
-      if (mAmbientSampleSeriess.size() <= exercise) {
-        if (mAmbientSampleSeriess.size() == 0) {
+      if (sampleSeriess.size() <= exercise) {
+        if (sampleSeriess.size() == 0) {
           x = 0;
         } else {
           // Overlap is deliberate.
-          x = mAmbientSampleSeriess.back()->points().last().x();
+          x = sampleSeriess.back()->points().last().x();
         }
 
         series =
-          mAmbientSampleSeriess.emplace_back(std::make_unique<QLineSeries>())
-            .get();
+          sampleSeriess.emplace_back(std::make_unique<QLineSeries>()).get();
         series->setPointsVisible(true);
         // Ordering is significant: Qt complains (and ignores the request) if
         // you try to attach an axis to a new series, if that axis is already
         // attached to another series which is attached to a chart, and if that
         // new series is not yet attached to the chart. (Translation:
         // addSeries(foo), before you foo->attachAxis.)
-        mAmbientSampleChart->addSeries(series);
-        series->attachAxis(mAmbientSampleXAxis.get());
-        series->attachAxis(mAmbientSampleYAxis.get());
+        chart->addSeries(series);
+        series->attachAxis(xAxis.get());
+        series->attachAxis(yAxis.get());
       } else {
-        series = mAmbientSampleSeriess.back().get();
+        series = sampleSeriess.back().get();
         x = series->points().last().x() + 1;
       }
       series->append(QPoint(x, value));
 
-      // TODO: figure out a better way of doing this. It doesn't need to be
-      // full-on functional, but surely there's something a bit less ugly.
-      mAmbientMaxSeen = std::max(mAmbientMaxSeen, value);
-      mAmbientMinSeen = std::min(mAmbientMinSeen, value);
-      mAmbientSampleYAxis->setRange(mAmbientMinSeen - 100,
-                                    mAmbientMaxSeen + 100);
+      if (isAmbient) {
+        // TODO: figure out a better way of doing this. It doesn't need to be
+        // full-on functional, but surely there's something a bit less ugly.
+        mAmbientMaxSeen = std::max(mAmbientMaxSeen, value);
+        mAmbientMinSeen = std::min(mAmbientMinSeen, value);
+        mAmbientSampleYAxis->setRange(mAmbientMinSeen - 100,
+                                      mAmbientMaxSeen + 100);
 
-      if (x > sAmbientSampleRange) {
-        mAmbientSampleXAxis->setRange(x - sAmbientSampleRange, x);
+        if (x > sAmbientSampleRange) {
+          mAmbientSampleXAxis->setRange(x - sAmbientSampleRange, x);
+        }
+      } else {
+        mSpecimenMaxSeen = std::max(mSpecimenMaxSeen, value);
+        mSpecimenSampleYAxis->setRange(0, mSpecimenMaxSeen + 100);
+
+        if (x > sSpecimenSampleRange) {
+          mSpecimenSampleXAxis->setRange(x - sSpecimenSampleRange, x);
+        }
       }
       break;
     }
@@ -156,6 +180,11 @@ MainWindow::MainWindow(QWidget* parent)
   , mAmbientSampleYAxis(new QValueAxis)
   , mAmbientMaxSeen(0.0)
   , mAmbientMinSeen(std::numeric_limits<double>::infinity())
+  , mSpecimenSampleChart(new QChart)
+  , mSpecimenSampleSeriess()
+  , mSpecimenSampleXAxis(new QValueAxis)
+  , mSpecimenSampleYAxis(new QValueAxis)
+  , mSpecimenMaxSeen(0.0)
   , workerThread(new QThread)
 {
   ui->setupUi(this);
@@ -219,6 +248,16 @@ MainWindow::MainWindow(QWidget* parent)
   mAmbientSampleYAxis->setRange(1000, 10000);
   mAmbientSampleChart->addAxis(mAmbientSampleYAxis.get(), Qt::AlignLeft);
   ui->ambientSampleGraph->setChart(mAmbientSampleChart.get());
+
+  mSpecimenSampleChart->setAnimationOptions(QChart::SeriesAnimations);
+  mSpecimenSampleChart->setTitle("Specimen samples");
+  mSpecimenSampleChart->legend()->hide();
+  mSpecimenSampleXAxis->setRange(0, sSpecimenSampleRange);
+  mSpecimenSampleXAxis->setLabelFormat("%d");
+  mSpecimenSampleChart->addAxis(mSpecimenSampleXAxis.get(), Qt::AlignBottom);
+  mSpecimenSampleYAxis->setRange(0, 50);
+  mSpecimenSampleChart->addAxis(mSpecimenSampleYAxis.get(), Qt::AlignLeft);
+  ui->specimenSampleGraph->setChart(mSpecimenSampleChart.get());
 
   QObject::connect(ui->startTest1,
                    &QAbstractButton::pressed,

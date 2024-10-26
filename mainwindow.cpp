@@ -17,7 +17,6 @@ void
 MainWindow::test_callback(const TestNotification* notification, void* cb_data)
 {
   MainWindow* mw = static_cast<MainWindow*>(cb_data);
-  (void)mw;
   switch (notification->tag) {
     case TestNotification::Tag::StateChange: {
       const TestState ts = notification->state_change._0;

@@ -77,8 +77,18 @@ ExercisesModel::data(const QModelIndex& index, int role) const
       }
       break;
     case Qt::DecorationRole:
+      // Icon names from
+      // https://specifications.freedesktop.org/icon-naming-spec/latest/
       if (index.column() == 0 && index.row() == currentExercise) {
         return QIcon::fromTheme("media-playback-start");
+      } else if (index.column() == 2) {
+        // We could perform this check for all prior rows, but we only expect
+        // this condition to ever be true for the immediately preceeding row.
+        if ((index.row() == currentExercise ||
+             index.row() == currentExercise - 1) &&
+            ffs[index.row()] < 0) {
+          return QIcon::fromTheme("system-search");
+        }
       }
       break;
     case Qt::FontRole:

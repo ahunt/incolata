@@ -11,6 +11,8 @@
 #include "libp8020/libp8020.h"
 #include "testworker.h"
 
+static const qsizetype sRawSampleRange = 180;
+
 void
 MainWindow::test_callback(const TestNotification* notification, void* cb_data)
 {
@@ -57,9 +59,9 @@ MainWindow::processRawSample(double sample)
   rawSeries->append(QPoint(rawSeries->count(), sample));
   // TODO: check range dynamically and/or extract constants.
   // TODO: check Y range.
-  if (rawSeries->count() > 180) {
+  if (rawSeries->count() > sRawSampleRange) {
     // TODO: store a ref to the axis to avoid the lookup.
-    rawChart->axes(Qt::Horizontal)[0]->setRange(rawSeries->count() - 180,
+    rawChart->axes(Qt::Horizontal)[0]->setRange(rawSeries->count() - sRawSampleRange,
                                                 rawSeries->count());
   }
 }
@@ -95,7 +97,7 @@ MainWindow::MainWindow(QWidget* parent)
   rawChart->legend()->hide();
   rawChart->addSeries(rawSeries.get());
   auto xAxis = new QValueAxis();
-  xAxis->setRange(0, 180);
+  xAxis->setRange(0, sRawSampleRange);
   xAxis->setLabelFormat("%d");
   rawChart->addAxis(xAxis, Qt::AlignBottom);
   rawSeries->attachAxis(xAxis);

@@ -257,15 +257,7 @@ MainWindow::MainWindow(QWidget* parent)
   ffChart->setTitle("Fit Factors");
   ffChart->legend()->hide();
   ffChart->addSeries(ffSeries.get());
-  mFFXAxis->setRange(0, 9);
-  // TODO: figure out how to omit the first and last tick.
-  // setTickInterval() does not work as documented, so we use tick count
-  // instead.
-  mFFXAxis->setTickCount(10);
   mFFXAxis->setLabelFormat("%d");
-  QFont ffxAxisFont;
-  ffxAxisFont.setPixelSize(10);
-  mFFXAxis->setLabelsFont(ffxAxisFont);
   ffChart->addAxis(mFFXAxis.get(), Qt::AlignBottom);
   ffSeries->attachAxis(mFFXAxis.get());
   auto ffyAxis = new QLogValueAxis();
@@ -278,6 +270,13 @@ MainWindow::MainWindow(QWidget* parent)
   ui->ffChartView->setChart(ffChart.get());
   ffyAxis->setRange(0, 1000);
   ffyAxis->setBase(10.0);
+
+  // 0 is included deliberately as it gives us a margin on the left.
+  mFFXAxis->setRange(0, 8);
+  mFFXAxis->setTickType(QValueAxis::TicksDynamic);
+  mFFXAxis->setTickInterval(2);
+  mFFXAxis->setTickAnchor(1);
+  mFFXAxis->setMinorTickCount(1);
 
   mAmbientSampleChart->setAnimationOptions(QChart::SeriesAnimations);
   mAmbientSampleChart->setTitle("Ambient samples");
@@ -369,8 +368,7 @@ MainWindow::startTest(const QStringList& exercises,
 
   model->setExercises(exercises);
 
-  mFFXAxis->setRange(0, exercises.length() + 1);
-  mFFXAxis->setTickCount(exercises.length() + 2);
+  mFFXAxis->setRange(0, exercises.length());
 
   TestConfig* config = test_config_new(exercises.length());
   config->test_callback = &test_callback;

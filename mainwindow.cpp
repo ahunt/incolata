@@ -286,6 +286,7 @@ MainWindow::MainWindow(QWidget* parent)
   mAmbientSampleXAxis->setLabelFormat("%d");
   mAmbientSampleChart->addAxis(mAmbientSampleXAxis.get(), Qt::AlignBottom);
   mAmbientSampleYAxis->setRange(1000, 10000);
+  mAmbientSampleYAxis->setLabelFormat("%d");
   mAmbientSampleChart->addAxis(mAmbientSampleYAxis.get(), Qt::AlignLeft);
   ui->ambientSampleGraph->setChart(mAmbientSampleChart.get());
 
@@ -296,6 +297,7 @@ MainWindow::MainWindow(QWidget* parent)
   mSpecimenSampleXAxis->setLabelFormat("%d");
   mSpecimenSampleChart->addAxis(mSpecimenSampleXAxis.get(), Qt::AlignBottom);
   mSpecimenSampleYAxis->setRange(0, 50);
+  mSpecimenSampleYAxis->setLabelFormat("%d");
   mSpecimenSampleChart->addAxis(mSpecimenSampleYAxis.get(), Qt::AlignLeft);
   ui->specimenSampleGraph->setChart(mSpecimenSampleChart.get());
 

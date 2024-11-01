@@ -77,7 +77,7 @@ private:
   std::unique_ptr<QValueAxis> mLiveFFXAxis;
   std::unique_ptr<QLogValueAxis> mLiveFFYAxis;
 
-  std::unique_ptr<QThread> workerThread;
+  QThread *mWorkerThread;
   Device* device;
 
   static void test_callback(const TestNotification* notification,

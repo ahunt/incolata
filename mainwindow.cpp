@@ -225,7 +225,7 @@ MainWindow::MainWindow(QWidget* parent)
   , mLiveFFSeriess()
   , mLiveFFXAxis(new QValueAxis)
   , mLiveFFYAxis(new QLogValueAxis)
-  , workerThread(new QThread)
+  , mWorkerThread(new QThread)
 {
   ui->setupUi(this);
 
@@ -346,12 +346,12 @@ MainWindow::MainWindow(QWidget* parent)
   // TODO: provide a proper connection UI.
   device = device_connect("/dev/ttyUSB1");
 
-  // TODO: connect remaining signals, e.g. thread (test) finish -> stuff in
+  // TODO: connect remaining signals, e.g. worker (test) finish -> stuff in
   // the UI.
   TestWorker* testWorker = new TestWorker(device);
-  testWorker->moveToThread(workerThread.get());
+  testWorker->moveToThread(mWorkerThread);
   connect(this, &MainWindow::triggerTest, testWorker, &TestWorker::runTest);
-  workerThread->start();
+  mWorkerThread->start();
 }
 
 void
@@ -415,4 +415,12 @@ MainWindow::startTestPressed()
   }
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow() {
+  // There is no special reason to connect these here... but there's no good
+  // reason to connect them earlier anyway (we may have crashed in the meantime
+  // ¯\_(ツ)_/¯.
+  connect(mWorkerThread, &QThread::finished, mWorkerThread, &QThread::deleteLater);
+  // TODO: make sure any ongoing work (in the worker) is interrupted too.
+  // That's not possible yet because tests are still synchronous.
+  mWorkerThread->quit();
+}

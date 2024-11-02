@@ -114,31 +114,7 @@ void
 MainWindow::processLiveFF(size_t exercise, size_t index, double fit_factor)
 {
   (void)index;
-  QLineSeries* series;
-  qreal x;
-  if (mLiveFFSeriess.size() <= exercise) {
-    if (mLiveFFSeriess.size() == 0) {
-      x = 0;
-    } else {
-      // Overlap is deliberate.
-      x = mLiveFFSeriess.back()->points().last().x();
-    }
-
-    series = mLiveFFSeriess.emplace_back(std::make_unique<QLineSeries>()).get();
-    series->setPointsVisible(true);
-    mLiveFFChart->addSeries(series);
-    series->attachAxis(mLiveFFXAxis.get());
-    series->attachAxis(mLiveFFYAxis.get());
-  } else {
-    series = mLiveFFSeriess.back().get();
-    x = series->points().last().x() + 1;
-  }
-  series->append(QPoint(x, fit_factor));
-
-  // Deliberately use the same range as for specimen samples.
-  if (x > sSpecimenSampleRange) {
-    mLiveFFXAxis->setRange(x - sSpecimenSampleRange, x);
-  }
+  ui->liveFFGraph->addDatapoint(exercise, fit_factor);
 }
 
 void
@@ -158,10 +134,6 @@ MainWindow::MainWindow(QWidget* parent)
   , ffChart(new QChart)
   , ffSeries(new QLineSeries)
   , mFFXAxis(new QValueAxis)
-  , mLiveFFChart(new QChart)
-  , mLiveFFSeriess()
-  , mLiveFFXAxis(new QValueAxis)
-  , mLiveFFYAxis(new QLogValueAxis)
   , mWorkerThread(new QThread)
 {
   ui->setupUi(this);
@@ -224,19 +196,11 @@ MainWindow::MainWindow(QWidget* parent)
   ui->specimenSampleGraph->setXRange(sSpecimenSampleRange);
   ui->specimenSampleGraph->yAxis()->setRange(0, 20);
 
-  mLiveFFChart->setAnimationOptions(QChart::SeriesAnimations);
-  mLiveFFChart->setTitle("Live FF");
-  mLiveFFChart->legend()->hide();
-  mLiveFFXAxis->setRange(0, sSpecimenSampleRange);
-  mLiveFFXAxis->setLabelFormat("%d");
-  mLiveFFChart->addAxis(mLiveFFXAxis.get(), Qt::AlignBottom);
-  mLiveFFYAxis->setLabelFormat("%d");
-  mLiveFFYAxis->setMinorTickCount(-1);
-  mLiveFFYAxis->setMax(1000);
-  mLiveFFYAxis->setRange(0, 1000);
-  mLiveFFYAxis->setBase(10.0);
-  mLiveFFChart->addAxis(mLiveFFYAxis.get(), Qt::AlignLeft);
-  ui->liveFFGraph->setChart(mLiveFFChart.get());
+  ui->liveFFGraph->setTitle("Live(ish) Fit Factor");
+  ui->liveFFGraph->enableLogYAxis();
+  // Intentionally use the same range as for specimen samples - the two graphs
+  // should mirror each other:
+  ui->liveFFGraph->setXRange(sSpecimenSampleRange);
 
   QObject::connect(ui->startTest1,
                    &QAbstractButton::pressed,

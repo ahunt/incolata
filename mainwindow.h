@@ -60,11 +60,6 @@ private:
   std::unique_ptr<QLineSeries> ffSeries;
   std::unique_ptr<QValueAxis> mFFXAxis;
 
-  std::unique_ptr<QChart> mLiveFFChart;
-  std::vector<std::unique_ptr<QLineSeries>> mLiveFFSeriess;
-  std::unique_ptr<QValueAxis> mLiveFFXAxis;
-  std::unique_ptr<QLogValueAxis> mLiveFFYAxis;
-
   QThread *mWorkerThread;
   Device* device;
 

@@ -213,7 +213,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QChartView" name="liveFFGraph">
+             <widget class="SequentialSeriesScrollingChartView" name="liveFFGraph">
               <property name="minimumSize">
                <size>
                 <width>0</width>

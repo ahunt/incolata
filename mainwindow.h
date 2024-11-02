@@ -60,12 +60,6 @@ private:
   std::unique_ptr<QLineSeries> ffSeries;
   std::unique_ptr<QValueAxis> mFFXAxis;
 
-  std::unique_ptr<QChart> mAmbientSampleChart;
-  std::vector<std::unique_ptr<QLineSeries>> mAmbientSampleSeriess;
-  std::unique_ptr<QValueAxis> mAmbientSampleXAxis;
-  std::unique_ptr<QValueAxis> mAmbientSampleYAxis;
-  double mAmbientMaxSeen, mAmbientMinSeen;
-
   std::unique_ptr<QChart> mSpecimenSampleChart;
   std::vector<std::unique_ptr<QLineSeries>> mSpecimenSampleSeriess;
   std::unique_ptr<QValueAxis> mSpecimenSampleXAxis;

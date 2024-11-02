@@ -99,14 +99,14 @@ MainWindow::processSample(SampleType sampleType,
   (void)index;
   switch (sampleType) {
     case SampleType::ambientSample:
+      ui->ambientSampleGraph->addDatapoint(exercise, value);
+      break;
     case SampleType::specimenSample: {
-      // TODO: create a FTLSampleGraph class instead of this nonsense:
-      bool isAmbient = (sampleType == SampleType::ambientSample);
-      auto& sampleSeriess =
-        isAmbient ? mAmbientSampleSeriess : mSpecimenSampleSeriess;
-      auto& chart = isAmbient ? mAmbientSampleChart : mSpecimenSampleChart;
-      auto& xAxis = isAmbient ? mAmbientSampleXAxis : mSpecimenSampleXAxis;
-      auto& yAxis = isAmbient ? mAmbientSampleYAxis : mSpecimenSampleYAxis;
+      // TODO: convert to SequentialSeriesScrollingChartView.
+      auto& sampleSeriess = mSpecimenSampleSeriess;
+      auto& chart = mSpecimenSampleChart;
+      auto& xAxis = mSpecimenSampleXAxis;
+      auto& yAxis = mSpecimenSampleYAxis;
 
       QLineSeries* series;
       qreal x;
@@ -135,25 +135,12 @@ MainWindow::processSample(SampleType sampleType,
       }
       series->append(QPoint(x, value));
 
-      if (isAmbient) {
-        // TODO: figure out a better way of doing this. It doesn't need to be
-        // full-on functional, but surely there's something a bit less ugly.
-        mAmbientMaxSeen = std::max(mAmbientMaxSeen, value);
-        mAmbientMinSeen = std::min(mAmbientMinSeen, value);
-        mAmbientSampleYAxis->setRange(mAmbientMinSeen - 100,
-                                      mAmbientMaxSeen + 100);
-
-        if (x > sAmbientSampleRange) {
-          mAmbientSampleXAxis->setRange(x - sAmbientSampleRange, x);
-        }
-      } else {
         mSpecimenMaxSeen = std::max(mSpecimenMaxSeen, value);
         mSpecimenSampleYAxis->setRange(0, mSpecimenMaxSeen + 100);
 
         if (x > sSpecimenSampleRange) {
           mSpecimenSampleXAxis->setRange(x - sSpecimenSampleRange, x);
         }
-      }
       break;
     }
     default:
@@ -210,12 +197,6 @@ MainWindow::MainWindow(QWidget* parent)
   , ffChart(new QChart)
   , ffSeries(new QLineSeries)
   , mFFXAxis(new QValueAxis)
-  , mAmbientSampleChart(new QChart)
-  , mAmbientSampleSeriess()
-  , mAmbientSampleXAxis(new QValueAxis)
-  , mAmbientSampleYAxis(new QValueAxis)
-  , mAmbientMaxSeen(0.0)
-  , mAmbientMinSeen(std::numeric_limits<double>::infinity())
   , mSpecimenSampleChart(new QChart)
   , mSpecimenSampleSeriess()
   , mSpecimenSampleXAxis(new QValueAxis)
@@ -278,16 +259,10 @@ MainWindow::MainWindow(QWidget* parent)
   mFFXAxis->setTickAnchor(1);
   mFFXAxis->setMinorTickCount(1);
 
-  mAmbientSampleChart->setAnimationOptions(QChart::SeriesAnimations);
-  mAmbientSampleChart->setTitle("Ambient samples");
-  mAmbientSampleChart->legend()->hide();
-  mAmbientSampleXAxis->setRange(0, sAmbientSampleRange);
-  mAmbientSampleXAxis->setLabelFormat("%d");
-  mAmbientSampleChart->addAxis(mAmbientSampleXAxis.get(), Qt::AlignBottom);
-  mAmbientSampleYAxis->setRange(1000, 10000);
-  mAmbientSampleYAxis->setLabelFormat("%d");
-  mAmbientSampleChart->addAxis(mAmbientSampleYAxis.get(), Qt::AlignLeft);
-  ui->ambientSampleGraph->setChart(mAmbientSampleChart.get());
+  ui->ambientSampleGraph->setTitle("Ambient Samples");
+  ui->ambientSampleGraph->setXRange(sAmbientSampleRange);
+  ui->ambientSampleGraph->setYAxisScalingMode(YAxisScalingMode::Floating);
+  ui->ambientSampleGraph->yAxis()->setRange(1000, 10000);
 
   mSpecimenSampleChart->setAnimationOptions(QChart::SeriesAnimations);
   mSpecimenSampleChart->setTitle("Specimen samples");

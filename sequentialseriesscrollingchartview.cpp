@@ -61,7 +61,7 @@ SequentialSeriesScrollingChartView::enableLogYAxis()
   axis->setLabelFormat("%d");
   axis->setBase(10.0);
   axis->setMinorTickCount(-1);
-  axis->setMax(1000);
+  axis->setMax(100);
 }
 
 void
@@ -156,21 +156,30 @@ SequentialSeriesScrollingChartView::addDatapoint(const size_t& seriesIndex,
   // more elegant, but this is faster (at the cost of 16 bytes).
   mMinYSeen = std::min(mMinYSeen, value);
   mMaxYSeen = std::max(mMaxYSeen, value);
-  switch (mYAxisScalingMode) {
-    case ZeroAnchored: {
-      // TODO: configure making this configurable
-      const qsizetype max = static_cast<qsizetype>(mMaxYSeen) / 20 * 20 + 20;
-      mYAxis->setRange(0.0, static_cast<qreal>(max));
-      break;
+
+  QLogValueAxis* const logYAxis = dynamic_cast<QLogValueAxis*>(mYAxis);
+  if (logYAxis == nullptr) {
+    switch (mYAxisScalingMode) {
+      case ZeroAnchored: {
+        // TODO: configure making this configurable
+        const qsizetype max = static_cast<qsizetype>(mMaxYSeen) / 20 * 20 + 20;
+        mYAxis->setRange(0.0, static_cast<qreal>(max));
+        break;
+      }
+      case Floating: {
+        // TODO: consider making margins configurable.
+        const qsizetype min =
+          std::max(static_cast<qsizetype>(0),
+                   static_cast<qsizetype>(mMinYSeen) / 100 * 100 - 100);
+        const qsizetype max =
+          static_cast<qsizetype>(mMaxYSeen) / 100 * 100 + 200;
+        mYAxis->setRange(static_cast<qreal>(min), static_cast<qreal>(max));
+        break;
+      }
     }
-    case Floating: {
-      // TODO: consider making margins configurable.
-      const qsizetype min =
-        std::max(static_cast<qsizetype>(0),
-                 static_cast<qsizetype>(mMinYSeen) / 100 * 100 - 100);
-      const qsizetype max = static_cast<qsizetype>(mMaxYSeen) / 100 * 100 + 200;
-      mYAxis->setRange(static_cast<qreal>(min), static_cast<qreal>(max));
-      break;
-    }
+  } else {
+    // Round up to the next whole log as that seems easiest to read.
+    auto maxLog = std::log10(mMaxYSeen);
+    logYAxis->setMax(std::pow(10.0, std::floor(maxLog) + 1));
   }
 }

@@ -53,9 +53,6 @@ private:
   std::unique_ptr<Ui::MainWindow> ui;
   ExercisesModel* model;
 
-  std::unique_ptr<QChart> rawChart;
-  std::unique_ptr<QLineSeries> rawSeries;
-
   std::unique_ptr<QChart> ffChart;
   std::unique_ptr<QLineSeries> ffSeries;
   std::unique_ptr<QValueAxis> mFFXAxis;

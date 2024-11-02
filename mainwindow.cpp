@@ -80,14 +80,7 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
 void
 MainWindow::processRawSample(double sample)
 {
-  rawSeries->append(QPoint(rawSeries->count(), sample));
-  // TODO: check range dynamically and/or extract constants.
-  // TODO: check Y range.
-  if (rawSeries->count() > sRawSampleRange) {
-    // TODO: store a ref to the axis to avoid the lookup.
-    rawChart->axes(Qt::Horizontal)[0]->setRange(rawSeries->count() - sRawSampleRange,
-                                                rawSeries->count());
-  }
+  ui->rawChartView->addDatapoint(0, sample);
 }
 
 void
@@ -129,8 +122,6 @@ MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
   , model(new ExercisesModel)
-  , rawChart(new QChart)
-  , rawSeries(new QLineSeries)
   , ffChart(new QChart)
   , ffSeries(new QLineSeries)
   , mFFXAxis(new QValueAxis)
@@ -143,23 +134,11 @@ MainWindow::MainWindow(QWidget* parent)
   ui->testTable->setColumnWidth(1, 400);
   ui->testTable->setColumnWidth(2, 120);
 
-  // TODO: move all this into a standalone class?
-  rawChart->setAnimationOptions(QChart::SeriesAnimations);
-  rawChart->setTitle("Raw Particle Count");
-  rawChart->legend()->hide();
-  rawChart->addSeries(rawSeries.get());
-  auto xAxis = new QValueAxis();
-  xAxis->setRange(0, sRawSampleRange);
-  xAxis->setLabelFormat("%d");
-  rawChart->addAxis(xAxis, Qt::AlignBottom);
-  rawSeries->attachAxis(xAxis);
-  auto yAxis = new QValueAxis();
-  yAxis->setRange(0, 2500);
-  yAxis->setTickCount(6);
-  yAxis->setLabelFormat("%d");
-  rawChart->addAxis(yAxis, Qt::AlignLeft);
-  rawSeries->attachAxis(yAxis);
-  ui->rawChartView->setChart(rawChart.get());
+  ui->rawChartView->setTitle("Raw samples");
+  ui->rawChartView->setXRange(sRawSampleRange);
+  ui->rawChartView->xAxis()->setTickInterval(30);
+  ui->rawChartView->yAxis()->setRange(0, 2000);
+  ui->rawChartView->yAxis()->setRange(0, 2000);
 
   // TODO; try to show a log axis on the right?
   ffChart->setAnimationOptions(QChart::SeriesAnimations);

@@ -110,21 +110,10 @@ MainWindow::processLiveFF(size_t exercise, size_t index, double fit_factor)
   ui->liveFFGraph->addDatapoint(exercise, fit_factor);
 }
 
-void
-MainWindow::receivedFF(uint ex, double ff)
-{
-  // TODO: validate that ordering is correct. It should be, but you never
-  // know...
-  ffSeries->append(QPoint(ex + 1, ff));
-}
-
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
   , model(new ExercisesModel)
-  , ffChart(new QChart)
-  , ffSeries(new QLineSeries)
-  , mFFXAxis(new QValueAxis)
   , mWorkerThread(new QThread)
 {
   ui->setupUi(this);
@@ -139,32 +128,6 @@ MainWindow::MainWindow(QWidget* parent)
   ui->rawChartView->xAxis()->setTickInterval(30);
   ui->rawChartView->yAxis()->setRange(0, 2000);
   ui->rawChartView->yAxis()->setRange(0, 2000);
-
-  // TODO; try to show a log axis on the right?
-  ffChart->setAnimationOptions(QChart::SeriesAnimations);
-  ffChart->setTitle("Fit Factors");
-  ffChart->legend()->hide();
-  ffChart->addSeries(ffSeries.get());
-  mFFXAxis->setLabelFormat("%d");
-  ffChart->addAxis(mFFXAxis.get(), Qt::AlignBottom);
-  ffSeries->attachAxis(mFFXAxis.get());
-  auto ffyAxis = new QLogValueAxis();
-  ffyAxis->setLabelFormat("%d");
-  ffyAxis->setMinorTickCount(-1);
-  ffyAxis->setMax(1000);
-  ffChart->addAxis(ffyAxis, Qt::AlignLeft);
-  ffSeries->attachAxis(ffyAxis);
-  ffSeries->setPointsVisible(true);
-  ui->ffChartView->setChart(ffChart.get());
-  ffyAxis->setRange(0, 1000);
-  ffyAxis->setBase(10.0);
-
-  // 0 is included deliberately as it gives us a margin on the left.
-  mFFXAxis->setRange(0, 8);
-  mFFXAxis->setTickType(QValueAxis::TicksDynamic);
-  mFFXAxis->setTickInterval(2);
-  mFFXAxis->setTickAnchor(1);
-  mFFXAxis->setMinorTickCount(1);
 
   ui->ambientSampleGraph->setTitle("Ambient Samples");
   ui->ambientSampleGraph->setXRange(sAmbientSampleRange);
@@ -197,7 +160,10 @@ MainWindow::MainWindow(QWidget* parent)
                    &ExercisesModel::updateCurrentExercise);
   QObject::connect(
     this, &MainWindow::ffUpdated, model, &ExercisesModel::updateFF);
-  QObject::connect(this, &MainWindow::ffUpdated, this, &MainWindow::receivedFF);
+  QObject::connect(this,
+                   &MainWindow::ffUpdated,
+                   ui->ffGraph,
+                   &FitFactorChartView::addDatapoint);
   QObject::connect(this,
                    &MainWindow::renderRawSample,
                    ui->rawCountLCD,
@@ -234,8 +200,7 @@ MainWindow::startTest(const QStringList& exercises,
   ui->subjectSelector->setEnabled(false);
 
   model->setExercises(exercises);
-
-  mFFXAxis->setRange(0, exercises.length());
+  ui->ffGraph->setExerciseCount(exercises.count());
 
   TestConfig* config = test_config_new(exercises.length());
   config->test_callback = &test_callback;

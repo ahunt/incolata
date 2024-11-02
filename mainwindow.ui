@@ -183,7 +183,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QChartView" name="ffChartView">
+             <widget class="FitFactorChartView" name="ffGraph">
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -320,14 +320,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QChartView</class>
-   <extends>QGraphicsView</extends>
-   <header>qchartview.h</header>
-  </customwidget>
-  <customwidget>
    <class>SequentialSeriesScrollingChartView</class>
    <extends>QGraphicsView</extends>
    <header>sequentialseriesscrollingchartview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>FitFactorChartView</class>
+   <extends>QGraphicsView</extends>
+   <header>fitfactorchartview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

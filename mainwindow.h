@@ -46,16 +46,11 @@ private slots:
                      size_t exercise,
                      size_t index,
                      double value);
-  void receivedFF(uint ex, double ff);
   void processLiveFF(size_t exercise, size_t index, double fit_factor);
 
 private:
   std::unique_ptr<Ui::MainWindow> ui;
   ExercisesModel* model;
-
-  std::unique_ptr<QChart> ffChart;
-  std::unique_ptr<QLineSeries> ffSeries;
-  std::unique_ptr<QValueAxis> mFFXAxis;
 
   QThread *mWorkerThread;
   Device* device;
@@ -71,7 +66,7 @@ signals:
                    const QString& subject,
                    const QString& protocol);
   void exerciseChanged(uint ex);
-  void ffUpdated(uint ex, double ff);
+  void ffUpdated(const uint& exercise, const double& fitFactor);
   void renderRawSample(QString sample);
   void receivedRawSample(double sample);
   void receivedSample(SampleType sampleType,

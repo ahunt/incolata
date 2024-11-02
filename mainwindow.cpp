@@ -101,48 +101,9 @@ MainWindow::processSample(SampleType sampleType,
     case SampleType::ambientSample:
       ui->ambientSampleGraph->addDatapoint(exercise, value);
       break;
-    case SampleType::specimenSample: {
-      // TODO: convert to SequentialSeriesScrollingChartView.
-      auto& sampleSeriess = mSpecimenSampleSeriess;
-      auto& chart = mSpecimenSampleChart;
-      auto& xAxis = mSpecimenSampleXAxis;
-      auto& yAxis = mSpecimenSampleYAxis;
-
-      QLineSeries* series;
-      qreal x;
-      if (sampleSeriess.size() <= exercise) {
-        if (sampleSeriess.size() == 0) {
-          x = 0;
-        } else {
-          // Overlap is deliberate.
-          x = sampleSeriess.back()->points().last().x();
-        }
-
-        series =
-          sampleSeriess.emplace_back(std::make_unique<QLineSeries>()).get();
-        series->setPointsVisible(true);
-        // Ordering is significant: Qt complains (and ignores the request) if
-        // you try to attach an axis to a new series, if that axis is already
-        // attached to another series which is attached to a chart, and if that
-        // new series is not yet attached to the chart. (Translation:
-        // addSeries(foo), before you foo->attachAxis.)
-        chart->addSeries(series);
-        series->attachAxis(xAxis.get());
-        series->attachAxis(yAxis.get());
-      } else {
-        series = sampleSeriess.back().get();
-        x = series->points().last().x() + 1;
-      }
-      series->append(QPoint(x, value));
-
-        mSpecimenMaxSeen = std::max(mSpecimenMaxSeen, value);
-        mSpecimenSampleYAxis->setRange(0, mSpecimenMaxSeen + 100);
-
-        if (x > sSpecimenSampleRange) {
-          mSpecimenSampleXAxis->setRange(x - sSpecimenSampleRange, x);
-        }
+    case SampleType::specimenSample:
+      ui->specimenSampleGraph->addDatapoint(exercise, value);
       break;
-    }
     default:
       // TODO: handle remaining cases.
       break;
@@ -197,11 +158,6 @@ MainWindow::MainWindow(QWidget* parent)
   , ffChart(new QChart)
   , ffSeries(new QLineSeries)
   , mFFXAxis(new QValueAxis)
-  , mSpecimenSampleChart(new QChart)
-  , mSpecimenSampleSeriess()
-  , mSpecimenSampleXAxis(new QValueAxis)
-  , mSpecimenSampleYAxis(new QValueAxis)
-  , mSpecimenMaxSeen(0.0)
   , mLiveFFChart(new QChart)
   , mLiveFFSeriess()
   , mLiveFFXAxis(new QValueAxis)
@@ -264,16 +220,9 @@ MainWindow::MainWindow(QWidget* parent)
   ui->ambientSampleGraph->setYAxisScalingMode(YAxisScalingMode::Floating);
   ui->ambientSampleGraph->yAxis()->setRange(1000, 10000);
 
-  mSpecimenSampleChart->setAnimationOptions(QChart::SeriesAnimations);
-  mSpecimenSampleChart->setTitle("Specimen samples");
-  mSpecimenSampleChart->legend()->hide();
-  mSpecimenSampleXAxis->setRange(0, sSpecimenSampleRange);
-  mSpecimenSampleXAxis->setLabelFormat("%d");
-  mSpecimenSampleChart->addAxis(mSpecimenSampleXAxis.get(), Qt::AlignBottom);
-  mSpecimenSampleYAxis->setRange(0, 50);
-  mSpecimenSampleYAxis->setLabelFormat("%d");
-  mSpecimenSampleChart->addAxis(mSpecimenSampleYAxis.get(), Qt::AlignLeft);
-  ui->specimenSampleGraph->setChart(mSpecimenSampleChart.get());
+  ui->specimenSampleGraph->setTitle("Specimen Samples");
+  ui->specimenSampleGraph->setXRange(sSpecimenSampleRange);
+  ui->specimenSampleGraph->yAxis()->setRange(0, 20);
 
   mLiveFFChart->setAnimationOptions(QChart::SeriesAnimations);
   mLiveFFChart->setTitle("Live FF");

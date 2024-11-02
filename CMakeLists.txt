@@ -23,6 +23,8 @@ set(PROJECT_SOURCES
         mainwindow.ui
         exercisesmodel.h
         exercisesmodel.cpp
+        fitfactorchartview.h
+        fitfactorchartview.cpp
         sequentialseriesscrollingchartview.h
         sequentialseriesscrollingchartview.cpp
         testworker.h

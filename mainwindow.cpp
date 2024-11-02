@@ -120,6 +120,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   ui->testTable->setModel(model);
   ui->testTable->setHorizontalHeader(nullptr);
+  ui->testTable->setColumnWidth(0, 20);
   ui->testTable->setColumnWidth(1, 400);
   ui->testTable->setColumnWidth(2, 120);
 

@@ -183,16 +183,6 @@
              </layout>
             </item>
             <item>
-             <widget class="FitFactorChartView" name="ffGraph">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>200</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="SequentialSeriesScrollingChartView" name="ambientSampleGraph">
               <property name="minimumSize">
                <size>
@@ -214,6 +204,16 @@
             </item>
             <item>
              <widget class="SequentialSeriesScrollingChartView" name="liveFFGraph">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>200</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="FitFactorChartView" name="ffGraph">
               <property name="minimumSize">
                <size>
                 <width>0</width>

@@ -31,6 +31,8 @@ SequentialSeriesScrollingChartView::SequentialSeriesScrollingChartView(
   mChart->legend()->hide();
   mChart->addAxis(mXAxis, Qt::AlignBottom);
   mChart->addAxis(mYAxis, Qt::AlignLeft);
+
+  mChart->setMargins(QMargins(5,5,5,5));
 }
 
 QValueAxis*

@@ -36,6 +36,8 @@ FitFactorChartView::FitFactorChartView(QWidget* const parent)
   mSeries->attachAxis(mXAxis);
   mSeries->attachAxis(mYAxis);
 
+  chart()->setMargins(QMargins(5,5,5,5));
+
   refreshExerciseRange();
 }
 

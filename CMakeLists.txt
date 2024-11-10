@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #set(QT_MINIMUM_VERSION 6.0.0)
 
-find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Widgets LinguistTools Charts)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools Charts)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Charts)
 
 set(TS_FILES ftl_en_GB.ts)

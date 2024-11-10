@@ -4,7 +4,7 @@ This is a very hacky proof of concept, and entirely unvalidated, fit-testing
 application. It's expected to work with any PortaCount 8020 and 8020A, however
 it's only been tested with a single 8020A. This codebase is extremely messy.
 
-![Main Window, showing a test in progress](/docs/img/screenshot_main_2024_10_22.png?raw=true "Screenshot of the test window")
+![Main Window, showing a test in progress](/docs/img/screenshot_main_2024_11_02.png?raw=true "Screenshot of the test window")
 
 ## Setup guide
 

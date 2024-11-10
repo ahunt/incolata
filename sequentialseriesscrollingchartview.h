@@ -25,19 +25,19 @@ public:
 
   // The range of data to show on the X-Axis. The actual range is calculated
   // dynamically as [max(x) - xRange, max(x)].
-  Q_PROPERTY(qsizetype xRange MEMBER mXRange WRITE setXRange);
+  Q_PROPERTY(qsizetype xRange MEMBER mXRange WRITE setXRange)
   void setXRange(const size_t& range);
 
-  Q_PROPERTY(QValueAxis* xAxis MEMBER mXAxis READ default);
+  Q_PROPERTY(QValueAxis* xAxis MEMBER mXAxis READ default)
   QValueAxis* xAxis() const;
 
-  Q_PROPERTY(QAbstractAxis* yAxis MEMBER mYAxis READ default);
+  Q_PROPERTY(QAbstractAxis* yAxis MEMBER mYAxis READ default)
   QAbstractAxis* yAxis() const;
 
   // Spacing between each sequential series. All changes must be made prior to
   // adding any datapoints. Defaults to 0, i.e. by default the first point of
   // each series overlaps the last point of the previous series.
-  Q_PROPERTY(size_t seriesSpacing MEMBER default WRITE setSeriesSpacing);
+  Q_PROPERTY(size_t seriesSpacing MEMBER default WRITE setSeriesSpacing)
   void setSeriesSpacing(const size_t& spacing);
 
   // Set the Chart's title.

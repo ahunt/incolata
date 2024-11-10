@@ -13,7 +13,7 @@ public:
   FitFactorChartView(QWidget* const parent = nullptr);
 
   // The number of exercises that will be displayed.
-  Q_PROPERTY(size_t exerciseCount MEMBER mExerciseCount WRITE setExerciseCount);
+  Q_PROPERTY(size_t exerciseCount MEMBER mExerciseCount WRITE setExerciseCount)
   void setExerciseCount(const qsizetype& count);
 
 public slots:

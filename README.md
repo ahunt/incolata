@@ -8,7 +8,42 @@ it's only been tested with a single 8020A. This codebase is extremely messy.
 
 ## Setup guide
 
-TODO: write this.
+### Linux
+
+**Dependencies:**
+
+* Rust+Cargo
+* Qt6, Qt6-Charts ('qt6-charts-dev' or equivalent should pull in all the right Qt deps)
+* CMake
+
+**Nice-to-have:**
+
+* Ninja (e.g. 'ninja-build') - the example build instructions below use ninja,
+  but you can also tell CMake to build using another tool if you prefer.
+
+**Build it:**
+
+See also the Github Actions Workflow at:
+https://github.com/ahunt/ftl/blob/main/.github/workflows/checks.yml
+
+I typically run something like:
+```
+git submodule init
+cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B build/Debug
+cd build/Debug && ninja
+```
+
+> [!TIP]  
+> You can also open the project in QtCreator, which should take care of
+> configuring and building, modulo submodule init.
+
+### Windows
+
+TODO
+
+### OSX
+
+TODO, if I ever get hold of a Mac.
 
 ## Architecture
 

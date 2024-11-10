@@ -1,0 +1,35 @@
+---
+name: build & test
+
+on:
+  push:
+    branches: [main,citmp]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+      - name: Install deps
+        run: sudo apt-get install -y libudev-dev ninja-build
+      # TODO: figure out if there's a way to install from apt for the actions
+      # ubuntu image. The following fails;
+      # 'add-apt-repository universe && apt-get install qt6-charts-dev'
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.2.*'
+          modules: 'qtcharts'
+      - name: Diagnostics
+        run: |
+          rustc --version
+          cargo --version
+          qtpaths --qt-version
+      - name: Configure
+        run: cmake -G Ninja -S . -B build
+      - name: Build
+        run: cd build && ninja

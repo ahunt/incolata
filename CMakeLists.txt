@@ -70,7 +70,8 @@ ExternalProject_Add(
 	libp8020build
 	CONFIGURE_COMMAND ""
 	INSTALL_COMMAND ""
-	BUILD_COMMAND cargo build $<IF:$<CONFIG:Debug>,,--release>
+	BUILD_COMMAND cargo build "$<$<NOT:$<CONFIG:Debug>>:--release>"
+	COMMAND_EXPAND_LISTS
 	SOURCE_DIR "${CMAKE_SOURCE_DIR}/libp8020"
 	BINARY_DIR "${CMAKE_SOURCE_DIR}/libp8020"
 	BUILD_BYPRODUCTS ${CMAKE_SOURCE_DIR}/libp8020/target/debug/libp8020.a ${CMAKE_SOURCE_DIR}/libp8020/target/release/libp8020.a)

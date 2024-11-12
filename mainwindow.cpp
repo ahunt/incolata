@@ -80,7 +80,7 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
 void
 MainWindow::processRawSample(double sample)
 {
-  ui->rawChartView->addDatapoint(0, sample);
+  mUI->rawChartView->addDatapoint(0, sample);
 }
 
 void
@@ -92,10 +92,10 @@ MainWindow::processSample(SampleType sampleType,
   (void)index;
   switch (sampleType) {
     case SampleType::ambientSample:
-      ui->ambientSampleGraph->addDatapoint(exercise, value);
+      mUI->ambientSampleGraph->addDatapoint(exercise, value);
       break;
     case SampleType::specimenSample:
-      ui->specimenSampleGraph->addDatapoint(exercise, value);
+      mUI->specimenSampleGraph->addDatapoint(exercise, value);
       break;
     default:
       // TODO: handle remaining cases.
@@ -107,49 +107,49 @@ void
 MainWindow::processLiveFF(size_t exercise, size_t index, double fit_factor)
 {
   (void)index;
-  ui->liveFFGraph->addDatapoint(exercise, fit_factor);
+  mUI->liveFFGraph->addDatapoint(exercise, fit_factor);
 }
 
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
-  , ui(new Ui::MainWindow)
-  , model(new ExercisesModel)
+  , mUI(new Ui::MainWindow)
+  , mModel(new ExercisesModel)
   , mWorkerThread(new QThread)
 {
-  ui->setupUi(this);
+  mUI->setupUi(this);
 
-  ui->testTable->setModel(model);
-  ui->testTable->setHorizontalHeader(nullptr);
-  ui->testTable->setColumnWidth(0, 20);
-  ui->testTable->setColumnWidth(1, 400);
-  ui->testTable->setColumnWidth(2, 120);
+  mUI->testTable->setModel(mModel);
+  mUI->testTable->setHorizontalHeader(nullptr);
+  mUI->testTable->setColumnWidth(0, 20);
+  mUI->testTable->setColumnWidth(1, 400);
+  mUI->testTable->setColumnWidth(2, 120);
 
-  ui->rawChartView->setTitle("Raw samples");
-  ui->rawChartView->setXRange(sRawSampleRange);
-  ui->rawChartView->xAxis()->setTickInterval(30);
-  ui->rawChartView->yAxis()->setRange(0, 2000);
-  ui->rawChartView->yAxis()->setRange(0, 2000);
+  mUI->rawChartView->setTitle("Raw samples");
+  mUI->rawChartView->setXRange(sRawSampleRange);
+  mUI->rawChartView->xAxis()->setTickInterval(30);
+  mUI->rawChartView->yAxis()->setRange(0, 2000);
+  mUI->rawChartView->yAxis()->setRange(0, 2000);
 
-  ui->ambientSampleGraph->setTitle("Ambient Samples");
-  ui->ambientSampleGraph->setXRange(sAmbientSampleRange);
-  ui->ambientSampleGraph->setYAxisScalingMode(YAxisScalingMode::Floating);
-  ui->ambientSampleGraph->yAxis()->setRange(1000, 10000);
+  mUI->ambientSampleGraph->setTitle("Ambient Samples");
+  mUI->ambientSampleGraph->setXRange(sAmbientSampleRange);
+  mUI->ambientSampleGraph->setYAxisScalingMode(YAxisScalingMode::Floating);
+  mUI->ambientSampleGraph->yAxis()->setRange(1000, 10000);
 
-  ui->specimenSampleGraph->setTitle("Specimen Samples");
-  ui->specimenSampleGraph->setXRange(sSpecimenSampleRange);
-  ui->specimenSampleGraph->yAxis()->setRange(0, 20);
+  mUI->specimenSampleGraph->setTitle("Specimen Samples");
+  mUI->specimenSampleGraph->setXRange(sSpecimenSampleRange);
+  mUI->specimenSampleGraph->yAxis()->setRange(0, 20);
 
-  ui->liveFFGraph->setTitle("Live(ish) Fit Factor");
-  ui->liveFFGraph->enableLogYAxis();
+  mUI->liveFFGraph->setTitle("Live(ish) Fit Factor");
+  mUI->liveFFGraph->enableLogYAxis();
   // Intentionally use the same range as for specimen samples - the two graphs
   // should mirror each other:
-  ui->liveFFGraph->setXRange(sSpecimenSampleRange);
+  mUI->liveFFGraph->setXRange(sSpecimenSampleRange);
 
-  QObject::connect(ui->startTest1,
+  QObject::connect(mUI->startTest1,
                    &QAbstractButton::pressed,
                    this,
                    &MainWindow::startTestPressed);
-  QObject::connect(ui->startTest2,
+  QObject::connect(mUI->startTest2,
                    &QAbstractButton::pressed,
                    this,
                    &MainWindow::startTestPressed);
@@ -157,17 +157,17 @@ MainWindow::MainWindow(QWidget* parent)
 
   QObject::connect(this,
                    &MainWindow::exerciseChanged,
-                   model,
+                   mModel,
                    &ExercisesModel::updateCurrentExercise);
   QObject::connect(
-    this, &MainWindow::ffUpdated, model, &ExercisesModel::updateFF);
+    this, &MainWindow::ffUpdated, mModel, &ExercisesModel::updateFF);
   QObject::connect(this,
                    &MainWindow::ffUpdated,
-                   ui->ffGraph,
+                   mUI->ffGraph,
                    &FitFactorChartView::addDatapoint);
   QObject::connect(this,
                    &MainWindow::renderRawSample,
-                   ui->rawCountLCD,
+                   mUI->rawCountLCD,
                    QOverload<const QString&>::of(&QLCDNumber::display));
   // Use signals+slots here as it deals with cross-thread dispatch for us.
   QObject::connect(
@@ -178,11 +178,11 @@ MainWindow::MainWindow(QWidget* parent)
     this, &MainWindow::receivedLiveFF, this, &MainWindow::processLiveFF);
 
   // TODO: provide a proper connection UI.
-  device = device_connect("/dev/ttyUSB1");
+  mDevice = device_connect("/dev/ttyUSB1");
 
   // TODO: connect remaining signals, e.g. worker (test) finish -> stuff in
   // the UI.
-  TestWorker* testWorker = new TestWorker(device);
+  TestWorker* testWorker = new TestWorker(mDevice);
   testWorker->moveToThread(mWorkerThread);
   connect(this, &MainWindow::triggerTest, testWorker, &TestWorker::runTest);
   mWorkerThread->start();
@@ -195,21 +195,21 @@ MainWindow::startTest(const QStringList& exercises,
   qInfo() << "Start test: " << exercises.length() << " exercises";
 
   // TODO: reenable these after the test.
-  ui->startTest1->setEnabled(false);
-  ui->startTest2->setEnabled(false);
-  ui->specimenSelector->setEnabled(false);
-  ui->subjectSelector->setEnabled(false);
+  mUI->startTest1->setEnabled(false);
+  mUI->startTest2->setEnabled(false);
+  mUI->specimenSelector->setEnabled(false);
+  mUI->subjectSelector->setEnabled(false);
 
-  model->setExercises(exercises);
-  ui->ffGraph->setExerciseCount(exercises.count());
+  mModel->setExercises(exercises);
+  mUI->ffGraph->setExerciseCount(exercises.count());
 
   TestConfig* config = test_config_new(exercises.length());
   config->test_callback = &test_callback;
   config->test_callback_data = this;
 
   emit triggerTest(config,
-                   ui->specimenSelector->currentText(),
-                   ui->subjectSelector->currentText(),
+                   mUI->specimenSelector->currentText(),
+                   mUI->subjectSelector->currentText(),
                    protocolShortName);
 
   // TODO: reset graphs if necessary.
@@ -219,7 +219,7 @@ void
 MainWindow::startTestPressed()
 {
   auto sndr(sender());
-  if (sndr == ui->startTest1) {
+  if (sndr == mUI->startTest1) {
     startTest(QStringList() << "Normal breathing"
                             << "Deep Breathing"
                             << "Turning head side to side"
@@ -229,7 +229,7 @@ MainWindow::startTestPressed()
                             << "Bending over"
                             << "Normal breathing",
               "OSHA");
-  } else if (sndr == ui->startTest2) {
+  } else if (sndr == mUI->startTest2) {
     startTest(QStringList() << "Relax"
                             << "2x Jaw Motion cycles"
                             << "Relax"

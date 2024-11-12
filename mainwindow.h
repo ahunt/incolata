@@ -49,11 +49,12 @@ private slots:
   void processLiveFF(size_t exercise, size_t index, double fit_factor);
 
 private:
-  std::unique_ptr<Ui::MainWindow> ui;
-  ExercisesModel* model;
+  std::unique_ptr<Ui::MainWindow> mUI;
+  ExercisesModel* mModel;
+  Device* mDevice;
 
+  // Owned by itself, self-destructs as and when needed.
   QThread *mWorkerThread;
-  Device* device;
 
   static void test_callback(const TestNotification* notification,
                             void* cb_data);

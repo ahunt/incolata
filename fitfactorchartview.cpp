@@ -39,6 +39,7 @@ FitFactorChartView::FitFactorChartView(QWidget* const parent)
   chart()->setMargins(QMargins(5,5,5,5));
 
   refreshExerciseRange();
+  refreshBackground();
 }
 
 void
@@ -57,6 +58,25 @@ FitFactorChartView::refreshExerciseRange()
 }
 
 void
+FitFactorChartView::refreshBackground()
+{
+  QLinearGradient gradient;
+  gradient.setStart(0.0, 1.0);
+  gradient.setFinalStop(0.0, 0.0);
+  gradient.setCoordinateMode(QGradient::ObjectMode);
+
+  auto maxLog = std::log(mYAxis->max());
+  auto stopMargin = 30;
+  gradient.setColorAt(std::log(100 - stopMargin) / maxLog, QRgb(0xFF0000));
+  gradient.setColorAt(std::log(100 + stopMargin) / maxLog, QRgb(0xFFFF00));
+  gradient.setColorAt(std::log(200 - stopMargin) / maxLog, QRgb(0xFFFF00));
+  gradient.setColorAt(std::log(200 + stopMargin) / maxLog, QRgb(0xBBFFBB));
+
+  chart()->setPlotAreaBackgroundBrush(gradient);
+  chart()->setPlotAreaBackgroundVisible(true);
+}
+
+void
 FitFactorChartView::addDatapoint(const size_t& exercise,
                                  const double& fitFactor)
 {
@@ -70,4 +90,6 @@ FitFactorChartView::addDatapoint(const size_t& exercise,
   mMaxFFSeen = std::max(mMaxFFSeen, fitFactor);
   auto maxLog = std::log10(mMaxFFSeen);
   mYAxis->setMax(std::pow(10.0, std::floor(maxLog) + 1));
+
+  refreshBackground();
 }

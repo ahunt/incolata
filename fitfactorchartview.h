@@ -31,6 +31,7 @@ private:
   QLogValueAxis* const mYAxis;
 
   void refreshExerciseRange();
+  void refreshBackground();
 };
 
 #endif // FITFACTORCHARTVIEW_H

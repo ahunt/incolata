@@ -1,8 +1,11 @@
-# FTL ("Fit Test Logger")
+# Incolata
 
 This is a very hacky proof of concept, and entirely unvalidated, fit-testing
 application. It's expected to work with any PortaCount 8020 and 8020A, however
-it's only been tested with a single 8020A. This codebase is extremely messy.
+it's only been tested with a single 8020A.
+
+> [!WARNING]
+> This codebase is extremely messy.
 
 ![Main Window, showing a test in progress](/docs/img/screenshot_main_2024_11_02.png?raw=true "Screenshot of the test window")
 
@@ -24,7 +27,7 @@ it's only been tested with a single 8020A. This codebase is extremely messy.
 **Build it:**
 
 See also the Github Actions Workflow at:
-https://github.com/ahunt/ftl/blob/main/.github/workflows/checks.yml
+https://github.com/ahunt/incolata/blob/main/.github/workflows/checks.yml
 
 I typically run something like:
 ```
@@ -47,8 +50,7 @@ TODO, if I ever get hold of a Mac.
 
 ## Architecture
 
-Actual test machinery will live in libp8020a. FTL is just a (not so) nice (yet)
-GUI wrapper around that; in due time FTL will (probably) take care of test
-logging.
+Actual test machinery will live in libp8020a. Incolata is just a (not so) nice
+(yet) GUI wrapper around that.
 
 There is no real architecture to speak of, yet.

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(ftl VERSION 0.1 LANGUAGES CXX)
+project(incolata VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -14,7 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools Charts)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Charts)
 
-set(TS_FILES ftl_en_GB.ts)
+set(TS_FILES incolata_en_GB.ts)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -34,25 +34,25 @@ set(PROJECT_SOURCES
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(ftl
+    qt_add_executable(incolata
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
 # Define target properties for Android with Qt 6 as:
-#    set_property(TARGET ftl APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+#    set_property(TARGET incolata APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
 # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 else()
     if(ANDROID)
-        add_library(ftl SHARED
+        add_library(incolata SHARED
             ${PROJECT_SOURCES}
         )
 # Define properties for Android with Qt 5 after find_package() calls as:
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
-        add_executable(ftl
+        add_executable(incolata
             ${PROJECT_SOURCES}
         )
     endif()
@@ -81,16 +81,16 @@ set_target_properties(libp8020 PROPERTIES
   IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/libp8020/target/release/libp8020.a"
   IMPORTED_LOCATION_DEBUG "${CMAKE_SOURCE_DIR}/libp8020/target/debug/libp8020.a")
 
-target_link_libraries(ftl
+target_link_libraries(incolata
   PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Charts libp8020 udev)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
 if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.ftl)
+  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER org.ahunt.incolata)
 endif()
-set_target_properties(ftl PROPERTIES
+set_target_properties(incolata PROPERTIES
     ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -99,12 +99,12 @@ set_target_properties(ftl PROPERTIES
 )
 
 include(GNUInstallDirs)
-install(TARGETS ftl
+install(TARGETS incolata
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(ftl)
+    qt_finalize_executable(incolata)
 endif()

@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>FTL (0.0.1-devel)</string>
+   <string>Incolata</string>
   </property>
   <property name="windowIcon">
    <iconset theme="QIcon::ThemeIcon::UserAvailable"/>

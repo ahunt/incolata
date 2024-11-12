@@ -50,7 +50,7 @@ private slots:
 
 private:
   std::unique_ptr<Ui::MainWindow> mUI;
-  ExercisesModel* mModel;
+  std::unique_ptr<ExercisesModel> mModel;
   Device* mDevice;
 
   // Owned by itself, self-destructs as and when needed.

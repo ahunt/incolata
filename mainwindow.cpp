@@ -118,7 +118,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
   mUI->setupUi(this);
 
-  mUI->testTable->setModel(mModel);
+  mUI->testTable->setModel(mModel.get());
   mUI->testTable->setHorizontalHeader(nullptr);
   mUI->testTable->setColumnWidth(0, 20);
   mUI->testTable->setColumnWidth(1, 400);
@@ -157,10 +157,10 @@ MainWindow::MainWindow(QWidget* parent)
 
   QObject::connect(this,
                    &MainWindow::exerciseChanged,
-                   mModel,
+                   mModel.get(),
                    &ExercisesModel::updateCurrentExercise);
   QObject::connect(
-    this, &MainWindow::ffUpdated, mModel, &ExercisesModel::updateFF);
+    this, &MainWindow::ffUpdated, mModel.get(), &ExercisesModel::updateFF);
   QObject::connect(this,
                    &MainWindow::ffUpdated,
                    mUI->ffGraph,

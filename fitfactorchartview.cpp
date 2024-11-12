@@ -24,7 +24,7 @@ FitFactorChartView::FitFactorChartView(QWidget* const parent)
   mXAxis->setMinorTickCount(1);
 
   mYAxis->setLabelFormat("%d");
-  mYAxis->setMax(100);
+  mYAxis->setMax(1000);
   mYAxis->setBase(10.0);
   mYAxis->setMinorTickCount(-1);
 

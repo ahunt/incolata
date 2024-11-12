@@ -63,7 +63,7 @@ SequentialSeriesScrollingChartView::enableLogYAxis()
   axis->setLabelFormat("%d");
   axis->setBase(10.0);
   axis->setMinorTickCount(-1);
-  axis->setMax(100);
+  axis->setMax(1000);
 }
 
 void

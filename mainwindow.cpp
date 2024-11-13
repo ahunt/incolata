@@ -126,8 +126,8 @@ MainWindow::MainWindow(QWidget* parent)
 
   mUI->rawChartView->setTitle("Raw samples");
   mUI->rawChartView->setXRange(sRawSampleRange);
+  mUI->rawChartView->enableFixedXAxis();
   mUI->rawChartView->xAxis()->setTickInterval(30);
-  mUI->rawChartView->yAxis()->setRange(0, 2000);
   mUI->rawChartView->yAxis()->setRange(0, 2000);
 
   mUI->ambientSampleGraph->setTitle("Ambient Samples");

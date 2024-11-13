@@ -12,6 +12,7 @@ SequentialSeriesScrollingChartView::SequentialSeriesScrollingChartView(
   // we only grab its pointer for convenience.
   , mChart(this->chart())
   , mXAxis(new QValueAxis())
+  , mFixedXAxis(nullptr)
   , mSeriesList()
   , mYAxisScalingMode(YAxisScalingMode::ZeroAnchored)
   , mSeriesSpacing(0)
@@ -67,6 +68,21 @@ SequentialSeriesScrollingChartView::enableLogYAxis()
 }
 
 void
+SequentialSeriesScrollingChartView::enableFixedXAxis()
+{
+  assert(!mFixedXAxis && "enableFixedXAxis() can only be called once");
+
+  mXAxis->setVisible(false);
+
+  mFixedXAxis = new QValueAxis();
+  mFixedXAxis->setLabelFormat("%d");
+  mFixedXAxis->setTickCount(7);
+  mChart->addAxis(mFixedXAxis, Qt::AlignBottom);
+
+  refreshXRange();
+}
+
+void
 SequentialSeriesScrollingChartView::setSeriesSpacing(const size_t& spacing)
 {
   assert(mSeriesList.size() == 0 &&
@@ -90,7 +106,7 @@ SequentialSeriesScrollingChartView::setTitle(const QString& title)
 }
 
 void
-SequentialSeriesScrollingChartView::setXRange(const size_t& range)
+SequentialSeriesScrollingChartView::setXRange(const qsizetype& range)
 {
   mXRange = range;
   refreshXRange();
@@ -99,12 +115,22 @@ SequentialSeriesScrollingChartView::setXRange(const size_t& range)
 void
 SequentialSeriesScrollingChartView::refreshXRange()
 {
-  size_t ceil = mXRange;
-  if (mSeriesList.size() > 0) {
-    ceil = std::max(
-      ceil, static_cast<size_t>(mSeriesList.back()->points().back().rx()));
+  const auto maxX = mSeriesList.size() > 0
+                      ? std::optional<qsizetype>(static_cast<qsizetype>(
+                          mSeriesList.back()->points().back().rx()))
+                      : std::nullopt;
+  if (!mFixedXAxis) {
+    qsizetype ceil = mXRange;
+    if (maxX.has_value()) {
+      ceil = std::max(ceil, maxX.value());
+    }
+    mXAxis->setRange(ceil - mXRange, ceil);
+  } else {
+    mFixedXAxis->setRange(-mXRange, 0);
+    if (maxX.has_value()) {
+      mXAxis->setRange(maxX.value() - mXRange, maxX.value());
+    }
   }
-  mXAxis->setRange(ceil - mXRange, ceil);
 }
 
 void

@@ -6,9 +6,9 @@
 #include <QDir>
 #include <QFile>
 
-TestWorker::TestWorker(Device* device, QObject* parent)
+TestWorker::TestWorker(P8020Device* device, QObject* parent)
   : QObject(parent)
-  , device(device)
+  , mDevice(device)
 {
 }
 
@@ -34,7 +34,7 @@ TestWorker::runTest(TestConfig* testConfig,
   }
   QTextStream stream(&testLog);
 
-  TestResult* result = device_run_test(device, testConfig);
+  TestResult* result = p8020_device_run_test(mDevice, testConfig);
 
   auto date = QDate().toString("yyyy_MM_dd");
   for (size_t i = 0; i < result->exercise_count; i += 12) {

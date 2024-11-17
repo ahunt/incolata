@@ -11,7 +11,7 @@ class QValueAxis;
 
 struct TestConfig;
 struct TestNotification;
-struct Device;
+struct P8020Device;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -51,7 +51,7 @@ private slots:
 private:
   std::unique_ptr<Ui::MainWindow> mUI;
   std::unique_ptr<ExercisesModel> mModel;
-  Device* mDevice;
+  P8020Device* mDevice;
 
   // Owned by itself, self-destructs as and when needed.
   QThread *mWorkerThread;

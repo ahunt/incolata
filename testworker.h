@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-struct Device;
+struct P8020Device;
 struct TestConfig;
 
 class TestWorker : public QObject
@@ -11,10 +11,10 @@ class TestWorker : public QObject
   Q_OBJECT
 
 public:
-  TestWorker(Device* device, QObject* parent = 0);
+  TestWorker(P8020Device* device, QObject* parent = 0);
 
 private:
-  Device* device;
+  P8020Device* mDevice;
 
 public slots:
   // Runs test with testConfig. runTest assumes ownership of testConfig, and

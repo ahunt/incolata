@@ -51,13 +51,13 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
     case TestNotification::Tag::Sample: {
       auto& sample = notification->sample._0;
       switch (sample.tag) {
-        case Sample::Tag::AmbientSample:
+        case SampleNotification::Tag::AmbientSample:
           emit mw->receivedSample(SampleType::ambientSample,
                                   sample.ambient_sample.exercise,
                                   sample.ambient_sample.index,
                                   sample.ambient_sample.value);
           break;
-        case Sample::Tag::SpecimenSample:
+        case SampleNotification::Tag::SpecimenSample:
           emit mw->receivedSample(SampleType::specimenSample,
                                   sample.specimen_sample.exercise,
                                   sample.specimen_sample.index,
@@ -74,6 +74,9 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
       emit mw->receivedLiveFF(ff.exercise, ff.index, ff.fit_factor);
       break;
     }
+    case TestNotification::Tag::InterimFF:
+      // TODO: forward to ExercisesModel
+      break;
   }
 }
 
@@ -178,7 +181,7 @@ MainWindow::MainWindow(QWidget* parent)
     this, &MainWindow::receivedLiveFF, this, &MainWindow::processLiveFF);
 
   // TODO: provide a proper connection UI.
-  mDevice = device_connect("/dev/ttyUSB1");
+  mDevice = p8020_device_connect("/dev/ttyUSB0");
 
   // TODO: connect remaining signals, e.g. worker (test) finish -> stuff in
   // the UI.
@@ -204,8 +207,7 @@ MainWindow::startTest(const QStringList& exercises,
   mUI->ffGraph->setExerciseCount(exercises.count());
 
   TestConfig* config = test_config_new(exercises.length());
-  config->test_callback = &test_callback;
-  config->test_callback_data = this;
+  test_config_set_callback(config, &test_callback, this);
 
   emit triggerTest(config,
                    mUI->specimenSelector->currentText(),

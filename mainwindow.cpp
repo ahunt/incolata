@@ -55,8 +55,8 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
       break;
     }
     case TestNotification::Tag::ExerciseResult: {
-      const uint ex(notification->exercise_result._0);
-      const double ff(notification->exercise_result._1);
+      const size_t ex = notification->exercise_result._0;
+      const double ff = notification->exercise_result._1;
       emit mw->ffUpdated(ex, ff);
       break;
     };

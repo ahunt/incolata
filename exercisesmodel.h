@@ -16,11 +16,13 @@ public:
 public slots:
   void updateCurrentExercise(uint ex);
   void updateFF(uint ex, double ff);
+  void renderInterimFF(uint ex, double ff);
 
 private:
   QStringList exercises;
   int currentExercise;
   QList<double> ffs;
+  QList<double> interimFFs;
 };
 
 #endif // EXERCISESMODEL_H

@@ -75,5 +75,6 @@ signals:
                       size_t index,
                       double value);
   void receivedLiveFF(size_t exercise, size_t index, double fit_factor);
+  void receivedInterimFF(size_t exercise, double fit_factor);
 };
 #endif // MAINWINDOW_H

@@ -75,7 +75,8 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
       break;
     }
     case TestNotification::Tag::InterimFF:
-      // TODO: forward to ExercisesModel
+      auto& ff = notification->interim_ff;
+      emit mw->receivedInterimFF(ff.exercise, ff.fit_factor);
       break;
   }
 }
@@ -125,7 +126,7 @@ MainWindow::MainWindow(QWidget* parent)
   mUI->testTable->setHorizontalHeader(nullptr);
   mUI->testTable->setColumnWidth(0, 20);
   mUI->testTable->setColumnWidth(1, 400);
-  mUI->testTable->setColumnWidth(2, 120);
+  mUI->testTable->setColumnWidth(2, 240);
 
   mUI->rawChartView->setTitle("Raw samples");
   mUI->rawChartView->setXRange(sRawSampleRange);
@@ -164,6 +165,10 @@ MainWindow::MainWindow(QWidget* parent)
                    &ExercisesModel::updateCurrentExercise);
   QObject::connect(
     this, &MainWindow::ffUpdated, mModel.get(), &ExercisesModel::updateFF);
+  QObject::connect(this,
+                   &MainWindow::receivedInterimFF,
+                   mModel.get(),
+                   &ExercisesModel::renderInterimFF);
   QObject::connect(this,
                    &MainWindow::ffUpdated,
                    mUI->ffGraph,

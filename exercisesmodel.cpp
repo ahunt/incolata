@@ -9,6 +9,7 @@ ExercisesModel::ExercisesModel(QObject* parent)
   , exercises(QStringList() << "...")
   , currentExercise(0)
   , ffs(1, -1.0)
+  , interimFFs(1, -1.0)
 {
 }
 
@@ -16,6 +17,7 @@ void ExercisesModel::setExercises(const QStringList& newExercises) {
   beginResetModel();
   this->exercises = newExercises;
   this->ffs = QList<double>(newExercises.length(), -1.0);
+  this->interimFFs = QList<double>(newExercises.length(), -1.0);
   endResetModel();
 }
 
@@ -33,6 +35,14 @@ void
 ExercisesModel::updateFF(uint ex, double ff)
 {
   ffs[ex] = ff;
+  // TODO: set correct role too.
+  emit dataChanged(index(ex, 2), index(ex, 2));
+}
+
+void
+ExercisesModel::renderInterimFF(uint ex, double ff)
+{
+  interimFFs[ex] = ff;
   // TODO: set correct role too.
   emit dataChanged(index(ex, 2), index(ex, 2));
 }
@@ -57,15 +67,22 @@ ExercisesModel::data(const QModelIndex& index, int role) const
       if (index.column() == 1) {
         return exercises[index.row()];
       } else if (index.column() == 2) {
-        double ff = ffs[index.row()];
-        if (ff < 0) {
-          // TODO: return a spinner or equivalent if current_exercise >
-          // index.row() and data is not yet available.
+        double finalFF = ffs[index.row()];
+        double interimFF = interimFFs[index.row()];
+        // In a spherical world, a valid ff is always >= 1. But it's entirely
+        // possible to achieve < 1 if you try to fool the machine and/or you
+        // have a bad machine.
+        if (finalFF < 0 && interimFF < 0) {
           return QVariant("");
         }
+        bool isInterim = finalFF < 0;
+        double ff = isInterim ? interimFF : finalFF;
 
         QString result;
         QTextStream s(&result);
+        if (isInterim) {
+          s << "<Interim> ";
+        }
         if (ff >= 10) {
           s << QString::number(ff, 'f', 0);
         } else {

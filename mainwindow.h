@@ -9,6 +9,7 @@ class QLogValueAxis;
 class QThread;
 class QValueAxis;
 
+enum class SampleType;
 struct TestConfig;
 struct DeviceNotification;
 struct TestNotification;
@@ -22,16 +23,6 @@ QT_END_NAMESPACE
 
 class ExercisesModel;
 
-// TODO: try to avoid duplicating the rust enum. We cannot (yet) send the rust
-// enum via signals/slots.
-enum SampleType
-{
-  ambientPurge,
-  ambientSample,
-  specimenPurge,
-  specimenSample
-};
-
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
@@ -43,10 +34,7 @@ public:
 private slots:
   void startTestPressed();
   void processRawSample(double sample);
-  void processSample(SampleType sampleType,
-                     size_t exercise,
-                     size_t index,
-                     double value);
+  void processSample(SampleType sampleType, size_t exercise, double value);
   void processLiveFF(size_t exercise, size_t index, double fit_factor);
 
 private:
@@ -73,10 +61,7 @@ signals:
   void ffUpdated(const uint& exercise, const double& fitFactor);
   void renderRawSample(QString sample);
   void receivedRawSample(double sample);
-  void receivedSample(SampleType sampleType,
-                      size_t exercise,
-                      size_t index,
-                      double value);
+  void receivedSample(SampleType sampleType, size_t exercise, double value);
   void receivedLiveFF(size_t exercise, size_t index, double fit_factor);
   void receivedInterimFF(size_t exercise, double fit_factor);
 };

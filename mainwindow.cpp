@@ -62,21 +62,14 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
     };
     case TestNotification::Tag::Sample: {
       auto& sample = notification->sample._0;
-      switch (sample.tag) {
-        case SampleNotification::Tag::AmbientSample:
-          emit mw->receivedSample(SampleType::ambientSample,
-                                  sample.ambient_sample.exercise,
-                                  sample.ambient_sample.index,
-                                  sample.ambient_sample.value);
+      switch (sample.sample_type) {
+        case SampleType::AmbientSample:
+        case SampleType::SpecimenSample:
+          emit mw->receivedSample(
+            sample.sample_type, sample.exercise, sample.value);
           break;
-        case SampleNotification::Tag::SpecimenSample:
-          emit mw->receivedSample(SampleType::specimenSample,
-                                  sample.specimen_sample.exercise,
-                                  sample.specimen_sample.index,
-                                  sample.specimen_sample.value);
-          break;
-        default:
-          // TODO: handle all cases.
+        case SampleType::AmbientPurge:
+        case SampleType::SpecimenPurge:
           break;
       }
       break;
@@ -100,17 +93,13 @@ MainWindow::processRawSample(double sample)
 }
 
 void
-MainWindow::processSample(SampleType sampleType,
-                          size_t exercise,
-                          size_t index,
-                          double value)
+MainWindow::processSample(SampleType sampleType, size_t exercise, double value)
 {
-  (void)index;
   switch (sampleType) {
-    case SampleType::ambientSample:
+    case SampleType::AmbientSample:
       mUI->ambientSampleGraph->addDatapoint(exercise, value);
       break;
-    case SampleType::specimenSample:
+    case SampleType::SpecimenSample:
       mUI->specimenSampleGraph->addDatapoint(exercise, value);
       break;
     default:

@@ -10,6 +10,7 @@ class QThread;
 class QValueAxis;
 
 struct TestConfig;
+struct DeviceNotification;
 struct TestNotification;
 struct P8020Device;
 
@@ -56,6 +57,8 @@ private:
   // Owned by itself, self-destructs as and when needed.
   QThread *mWorkerThread;
 
+  static void device_callback(const DeviceNotification* notification,
+                              void* cb_data);
   static void test_callback(const TestNotification* notification,
                             void* cb_data);
   void startTest(const QStringList& exercises,

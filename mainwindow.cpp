@@ -16,6 +16,28 @@ static const qsizetype sAmbientSampleRange = 40;
 static const qsizetype sSpecimenSampleRange = 60;
 
 void
+MainWindow::device_callback(const DeviceNotification* notification,
+                            void* cb_data)
+{
+  MainWindow* mw = static_cast<MainWindow*>(cb_data);
+  switch (notification->tag) {
+    case DeviceNotification::Tag::Sample: {
+      const double sample = notification->sample.particles;
+      emit mw->receivedRawSample(sample);
+      if (sample < 100) {
+        emit mw->renderRawSample(QString::number(sample, 'f', 2));
+      } else {
+        emit mw->renderRawSample(QString::number(sample, 'f', 0));
+      }
+      break;
+    }
+    default:
+      // TODO: handle remaining cases.
+      break;
+  }
+}
+
+void
 MainWindow::test_callback(const TestNotification* notification, void* cb_data)
 {
   MainWindow* mw = static_cast<MainWindow*>(cb_data);
@@ -38,16 +60,6 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
       emit mw->ffUpdated(ex, ff);
       break;
     };
-    case TestNotification::Tag::RawSample: {
-      const double sample = notification->raw_sample._0;
-      emit mw->receivedRawSample(sample);
-      if (sample < 100) {
-        emit mw->renderRawSample(QString::number(sample, 'f', 2));
-      } else {
-        emit mw->renderRawSample(QString::number(sample, 'f', 0));
-      }
-      break;
-    }
     case TestNotification::Tag::Sample: {
       auto& sample = notification->sample._0;
       switch (sample.tag) {
@@ -186,7 +198,7 @@ MainWindow::MainWindow(QWidget* parent)
     this, &MainWindow::receivedLiveFF, this, &MainWindow::processLiveFF);
 
   // TODO: provide a proper connection UI.
-  mDevice = p8020_device_connect("/dev/ttyUSB0");
+  mDevice = p8020_device_connect("/dev/ttyUSB0", &device_callback, this);
 
   // TODO: connect remaining signals, e.g. worker (test) finish -> stuff in
   // the UI.

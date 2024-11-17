@@ -12,7 +12,7 @@ FitFactorChartView::FitFactorChartView(QWidget* const parent)
   , mXAxis(new QValueAxis())
   , mYAxis(new QLogValueAxis())
 {
-  chart()->setTitle("Fit Factors");
+  chart()->setTitle("Fit Factor");
   chart()->legend()->hide();
 
   mXAxis->setLabelFormat("%d");

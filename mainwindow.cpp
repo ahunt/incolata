@@ -140,18 +140,18 @@ MainWindow::MainWindow(QWidget* parent)
   mUI->testTable->setColumnWidth(1, 400);
   mUI->testTable->setColumnWidth(2, 240);
 
-  mUI->rawChartView->setTitle("Raw samples");
+  mUI->rawChartView->setTitle("Raw Particles");
   mUI->rawChartView->setXRange(sRawSampleRange);
   mUI->rawChartView->enableFixedXAxis();
   mUI->rawChartView->xAxis()->setTickInterval(30);
   mUI->rawChartView->yAxis()->setRange(0, 2000);
 
-  mUI->ambientSampleGraph->setTitle("Ambient Samples");
+  mUI->ambientSampleGraph->setTitle("Ambient Particles");
   mUI->ambientSampleGraph->setXRange(sAmbientSampleRange);
   mUI->ambientSampleGraph->setYAxisScalingMode(YAxisScalingMode::Floating);
   mUI->ambientSampleGraph->yAxis()->setRange(1000, 10000);
 
-  mUI->specimenSampleGraph->setTitle("Specimen Samples");
+  mUI->specimenSampleGraph->setTitle("Specimen Particles");
   mUI->specimenSampleGraph->setXRange(sSpecimenSampleRange);
   mUI->specimenSampleGraph->yAxis()->setRange(0, 20);
 

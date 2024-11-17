@@ -198,24 +198,32 @@ MainWindow::MainWindow(QWidget* parent)
 }
 
 void
-MainWindow::startTest(const QStringList& exercises,
-                      const QString& protocolShortName)
+MainWindow::startTest(const QString& protocolShortName)
 {
-  qInfo() << "Start test: " << exercises.length() << " exercises";
-
   // TODO: reenable these after the test.
   mUI->startTest1->setEnabled(false);
   mUI->startTest2->setEnabled(false);
   mUI->specimenSelector->setEnabled(false);
   mUI->subjectSelector->setEnabled(false);
 
-  mModel->setExercises(exercises);
-  mUI->ffGraph->setExerciseCount(exercises.count());
+  // TODO: protocolShortName
+  const TestConfig* config = p8020_test_config_builtin_load("osha_fast_ffp");
+  const size_t exerciseCount = p8020_test_config_exercise_count(config);
+  QStringList exercises;
+  for (size_t i = 0; i < exerciseCount; i++) {
+    auto name = p8020_test_config_exercise_name(config, i);
+    exercises << name;
+    p8020_test_config_exercise_name_free(name);
+  }
 
-  TestConfig* config = test_config_new(exercises.length());
-  test_config_set_callback(config, &test_callback, this);
+  mUI->ffGraph->setExerciseCount(exerciseCount);
+  mModel->setExercises(exercises);
+
+  qInfo() << "Start test: " << exercises.length() << " exercises";
 
   emit triggerTest(config,
+                   (void*)&test_callback,
+                   this,
                    mUI->specimenSelector->currentText(),
                    mUI->subjectSelector->currentText(),
                    protocolShortName);
@@ -228,29 +236,9 @@ MainWindow::startTestPressed()
 {
   auto sndr(sender());
   if (sndr == mUI->startTest1) {
-    startTest(QStringList() << "Normal breathing"
-                            << "Deep Breathing"
-                            << "Turning head side to side"
-                            << "Moving head up and down"
-                            << "Talking"
-                            << "Grimace"
-                            << "Bending over"
-                            << "Normal breathing",
-              "OSHA");
+    startTest("OSHA");
   } else if (sndr == mUI->startTest2) {
-    startTest(QStringList() << "Relax"
-                            << "2x Jaw Motion cycles"
-                            << "Relax"
-                            << "Relax"
-                            << "2x Jaw Motion cycles"
-                            << "Relax"
-                            << "Relax"
-                            << "2x Jaw Motion cycles"
-                            << "Relax"
-                            << "Relax"
-                            << "2x Jaw Motion cycles"
-                            << "Relax",
-              "FTTP2.5");
+    startTest("FTTP2.5");
   } else {
     qWarning() << "Bad sender for startExercisesPressed()";
   }

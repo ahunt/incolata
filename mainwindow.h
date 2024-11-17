@@ -10,8 +10,8 @@ class QThread;
 class QValueAxis;
 
 enum class SampleType;
-struct TestConfig;
 struct DeviceNotification;
+struct TestConfig;
 struct TestNotification;
 struct P8020Device;
 
@@ -49,11 +49,12 @@ private:
                               void* cb_data);
   static void test_callback(const TestNotification* notification,
                             void* cb_data);
-  void startTest(const QStringList& exercises,
-                 const QString& protocolShortName);
+  void startTest(const QString& protocolShortName);
 
 signals:
-  void triggerTest(TestConfig* testConfig,
+  void triggerTest(const TestConfig* config,
+                   void* callback,
+                   void* cb_data,
                    const QString& specimen,
                    const QString& subject,
                    const QString& protocol);

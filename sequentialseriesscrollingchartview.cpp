@@ -137,7 +137,7 @@ void
 SequentialSeriesScrollingChartView::addDatapoint(const size_t& seriesIndex,
                                                  const qreal& value)
 {
-  assert(seriesIndex <= mSeriesList.size() &&
+  assert((seriesIndex + 1 >= mSeriesList.size()) &&
          "must not append to prior (already completed) series");
 
   const QLineSeries* const lastPopulatedSeries =

@@ -159,7 +159,10 @@ MainWindow::MainWindow(QWidget* parent)
                    &QAbstractButton::pressed,
                    this,
                    &MainWindow::startTestPressed);
-  // TODO: implement custom exercise support.
+  QObject::connect(mUI->startTest3,
+                   &QAbstractButton::pressed,
+                   this,
+                   &MainWindow::startTestPressed);
 
   QObject::connect(this,
                    &MainWindow::exerciseChanged,
@@ -204,11 +207,13 @@ MainWindow::startTest(const QString& protocolShortName)
   // TODO: reenable these after the test.
   mUI->startTest1->setEnabled(false);
   mUI->startTest2->setEnabled(false);
+  mUI->startTest3->setEnabled(false);
   mUI->specimenSelector->setEnabled(false);
   mUI->subjectSelector->setEnabled(false);
 
-  // TODO: protocolShortName
-  const TestConfig* config = p8020_test_config_builtin_load("osha_fast_ffp");
+  const std::string shortNameStdString = protocolShortName.toStdString();
+  assert(shortNameStdString.find_first_of('\0') == std::string::npos && "short name must not contain nulls");
+  const TestConfig* config = p8020_test_config_builtin_load(shortNameStdString.c_str());
   const size_t exerciseCount = p8020_test_config_exercise_count(config);
   QStringList exercises;
   for (size_t i = 0; i < exerciseCount; i++) {
@@ -220,7 +225,7 @@ MainWindow::startTest(const QString& protocolShortName)
   mUI->ffGraph->setExerciseCount(exerciseCount);
   mModel->setExercises(exercises);
 
-  qInfo() << "Start test: " << exercises.length() << " exercises";
+  qInfo() << "Start test: " << protocolShortName << " (" << exercises.length() << " exercises)";
 
   emit triggerTest(config,
                    (void*)&test_callback,
@@ -237,9 +242,11 @@ MainWindow::startTestPressed()
 {
   auto sndr(sender());
   if (sndr == mUI->startTest1) {
-    startTest("OSHA");
+    startTest("osha_legacy");
   } else if (sndr == mUI->startTest2) {
-    startTest("FTTP2.5");
+    startTest("crash2.5");
+  } else if (sndr == mUI->startTest3) {
+    startTest("osha_fast_ffp");
   } else {
     qWarning() << "Bad sender for startExercisesPressed()";
   }

@@ -272,11 +272,11 @@
          </item>
          <item row="1" column="4" colspan="2">
           <widget class="QPushButton" name="startTest3">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="text">
-            <string>Start Custom</string>
+            <string>Start OSHA modified (fast) FFP</string>
+           </property>
+           <property name="default">
+            <bool>false</bool>
            </property>
           </widget>
          </item>

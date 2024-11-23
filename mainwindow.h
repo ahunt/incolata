@@ -11,9 +11,9 @@ class QThread;
 class QValueAxis;
 
 enum class SampleType;
-struct DeviceNotification;
 struct TestNotification;
 struct P8020Device;
+struct P8020DeviceNotification;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -45,7 +45,7 @@ private:
   // Owned by itself, self-destructs as and when needed.
   QThread *mWorkerThread;
 
-  static void device_callback(const DeviceNotification* notification,
+  static void device_callback(const P8020DeviceNotification* notification,
                               void* cb_data);
   static void test_callback(const TestNotification* notification,
                             void* cb_data);

@@ -16,12 +16,12 @@ static const qsizetype sAmbientSampleRange = 40;
 static const qsizetype sSpecimenSampleRange = 60;
 
 void
-MainWindow::device_callback(const DeviceNotification* notification,
+MainWindow::device_callback(const P8020DeviceNotification* notification,
                             void* cb_data)
 {
   MainWindow* mw = static_cast<MainWindow*>(cb_data);
   switch (notification->tag) {
-    case DeviceNotification::Tag::Sample: {
+    case P8020DeviceNotification::Tag::Sample: {
       const double sample = notification->sample.particles;
       emit mw->receivedRawSample(sample);
       if (sample < 100) {
@@ -31,8 +31,8 @@ MainWindow::device_callback(const DeviceNotification* notification,
       }
       break;
     }
-    default:
-      // TODO: handle remaining cases.
+    case P8020DeviceNotification::Tag::ConnectionClosed:
+      // TODO: handle loss of connection.
       break;
   }
 }

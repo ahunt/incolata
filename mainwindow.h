@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "incolata_common.h"
 
 class QChart;
 class QLineSeries;
@@ -11,7 +12,6 @@ class QValueAxis;
 
 enum class SampleType;
 struct DeviceNotification;
-struct TestConfig;
 struct TestNotification;
 struct P8020Device;
 

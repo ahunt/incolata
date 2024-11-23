@@ -2,9 +2,9 @@
 #define TESTWORKER_H
 
 #include <QObject>
+#include "incolata_common.h"
 
 struct P8020Device;
-struct TestConfig;
 
 class TestWorker : public QObject
 {

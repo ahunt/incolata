@@ -65,6 +65,7 @@ ExercisesModel::columnCount(const QModelIndex&) const
 QVariant
 ExercisesModel::data(const QModelIndex& index, int role) const
 {
+  const bool isCurrentExercise = (index.row() == currentExercise && ffs[currentExercise] < 0);
   switch (role) {
     case Qt::DisplayRole:
       if (index.column() == 1) {
@@ -105,11 +106,7 @@ ExercisesModel::data(const QModelIndex& index, int role) const
       if (index.column() == 0 && index.row() == currentExercise) {
         return QIcon::fromTheme("media-playback-start");
       } else if (index.column() == 2) {
-        // We could perform this check for all prior rows, but we only expect
-        // this condition to ever be true for the immediately preceeding row.
-        if ((index.row() == currentExercise ||
-             index.row() == currentExercise - 1) &&
-            ffs[index.row()] < 0) {
+        if (isCurrentExercise && interimFFs[index.row()] < 0) {
           return QIcon::fromTheme("system-search");
         }
       }

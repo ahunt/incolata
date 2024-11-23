@@ -8,6 +8,7 @@ on:
     branches: [main]
 
 jobs:
+
   build_release:
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +35,6 @@ jobs:
       - name: Build
         run: cd build && ninja
 
-jobs:
   build_debug:
     runs-on: ubuntu-latest
     steps:

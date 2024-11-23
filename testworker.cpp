@@ -48,7 +48,7 @@ TestWorker::runTest(TestConfig* const testConfig,
     return;
   }
 
-  auto date = QDate().toString("yyyy_MM_dd");
+  auto date = QDateTime::currentDateTime().toString("yyyy_MM_dd");
   for (size_t i = 0; i < result->fit_factors_length; i += 12) {
     // TODO: make this robust against non-ASCII specimen and subjects.
     stream << specimen << ",";

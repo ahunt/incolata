@@ -103,7 +103,7 @@ ExercisesModel::data(const QModelIndex& index, int role) const
     case Qt::DecorationRole:
       // Icon names from
       // https://specifications.freedesktop.org/icon-naming-spec/latest/
-      if (index.column() == 0 && index.row() == currentExercise) {
+      if (index.column() == 0 && isCurrentExercise) {
         return QIcon::fromTheme("media-playback-start");
       } else if (index.column() == 2) {
         if (isCurrentExercise && interimFFs[index.row()] < 0) {
@@ -112,7 +112,7 @@ ExercisesModel::data(const QModelIndex& index, int role) const
       }
       break;
     case Qt::FontRole:
-      if (index.column() == 1 && index.row() == currentExercise) {
+      if (index.column() == 1 && isCurrentExercise) {
         QFont font;
         font.setBold(true);
         font.setPointSize(font.pointSize() + 2);
@@ -120,7 +120,7 @@ ExercisesModel::data(const QModelIndex& index, int role) const
       }
       break;
     case Qt::BackgroundRole:
-      if (index.row() == currentExercise) {
+      if (isCurrentExercise) {
         return QBrush(QColorConstants::Yellow);
       }
       break;

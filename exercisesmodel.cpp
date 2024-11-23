@@ -9,6 +9,7 @@ ExercisesModel::ExercisesModel(QObject* parent)
   , exercises(QStringList() << "...")
   , currentExercise(0)
   , ffs(1, -1.0)
+  , errs(1, -1.0)
   , interimFFs(1, -1.0)
 {
 }
@@ -17,6 +18,7 @@ void ExercisesModel::setExercises(const QStringList& newExercises) {
   beginResetModel();
   this->exercises = newExercises;
   this->ffs = QList<double>(newExercises.length(), -1.0);
+  this->errs = QList<double>(newExercises.length(), -1.0);
   this->interimFFs = QList<double>(newExercises.length(), -1.0);
   endResetModel();
 }
@@ -32,9 +34,10 @@ ExercisesModel::updateCurrentExercise(uint ex)
 }
 
 void
-ExercisesModel::updateFF(uint ex, double ff)
+ExercisesModel::updateFF(uint ex, double ff, double err)
 {
   ffs[ex] = ff;
+  errs[ex] = err;
   // TODO: set correct role too.
   emit dataChanged(index(ex, 2), index(ex, 2));
 }
@@ -87,6 +90,9 @@ ExercisesModel::data(const QModelIndex& index, int role) const
           s << QString::number(ff, 'f', 0);
         } else {
           s << QString::number(ff, 'f', 1);
+        }
+	if (!isInterim) {
+	  s << "±" << QString::number(errs[index.row()], 'f', 1);
         }
         s << " / " << QString::number(log10(ff), 'f', 2)
           << QStringLiteral(" log₁₀");

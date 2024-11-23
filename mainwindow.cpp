@@ -57,7 +57,8 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
     case TestNotification::Tag::ExerciseResult: {
       const size_t ex = notification->exercise_result._0;
       const double ff = notification->exercise_result._1;
-      emit mw->ffUpdated(ex, ff);
+      const double err = notification->exercise_result._2;
+      emit mw->ffUpdated(ex, ff, err);
       break;
     };
     case TestNotification::Tag::Sample: {

@@ -19,9 +19,9 @@ private:
 public slots:
   // Runs test with testConfig. runTest assumes ownership of testConfig, and
   // will free it if/when needed.
-  void runTest(const TestConfig* config,
-               void* callback,
-               void* cb_data,
+  void runTest(TestConfig* const config,
+               void* const callback,
+               void* const cb_data,
                const QString& specimen,
                const QString& subject,
                const QString& protocol);

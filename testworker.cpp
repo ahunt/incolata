@@ -13,9 +13,9 @@ TestWorker::TestWorker(P8020Device* device, QObject* parent)
 }
 
 void
-TestWorker::runTest(const TestConfig* testConfig,
-                    void* callback_void,
-                    void* cb_data,
+TestWorker::runTest(TestConfig* const testConfig,
+                    void* const callback_void,
+                    void* const cb_data,
                     const QString& specimen,
                     const QString& subject,
                     const QString& protocol)
@@ -42,17 +42,20 @@ TestWorker::runTest(const TestConfig* testConfig,
   }
   QTextStream stream(&testLog);
 
-  TestResult* result =
+  P8020TestResult* result =
     p8020_device_run_test(mDevice, testConfig, callback, cb_data);
+  if (result == nullptr) {
+    return;
+  }
 
   auto date = QDate().toString("yyyy_MM_dd");
-  for (size_t i = 0; i < result->exercise_count; i += 12) {
+  for (size_t i = 0; i < result->fit_factors_length; i += 12) {
     // TODO: make this robust against non-ASCII specimen and subjects.
     stream << specimen << ",";
     // TODO: think of a less ugly way to structure this, once we've had some
     // more coffee.
     for (size_t j = i; j < i + 12; j++) {
-      if (j >= result->exercise_count) {
+      if (j >= result->fit_factors_length) {
         stream << ",";
         continue;
       }
@@ -71,6 +74,6 @@ TestWorker::runTest(const TestConfig* testConfig,
   // TODO: log raw data?
   // TODO: save to DB?
 
-  // TODO: p8020_test_result_free(result);
-  // TODO: p8020_test_config_free(testConfig);
+  p8020_test_result_free(result);
+  p8020_test_config_free(testConfig);
 }

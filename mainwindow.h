@@ -52,9 +52,9 @@ private:
   void startTest(const QString& protocolShortName);
 
 signals:
-  void triggerTest(const TestConfig* config,
-                   void* callback,
-                   void* cb_data,
+  void triggerTest(TestConfig* const config,
+                   void* const callback,
+                   void* const cb_data,
                    const QString& specimen,
                    const QString& subject,
                    const QString& protocol);

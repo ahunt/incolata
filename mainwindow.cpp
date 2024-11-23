@@ -213,7 +213,8 @@ MainWindow::startTest(const QString& protocolShortName)
 
   const std::string shortNameStdString = protocolShortName.toStdString();
   assert(shortNameStdString.find_first_of('\0') == std::string::npos && "short name must not contain nulls");
-  const TestConfig* config = p8020_test_config_builtin_load(shortNameStdString.c_str());
+  TestConfig* config =
+    p8020_test_config_builtin_load(shortNameStdString.c_str());
   const size_t exerciseCount = p8020_test_config_exercise_count(config);
   QStringList exercises;
   for (size_t i = 0; i < exerciseCount; i++) {

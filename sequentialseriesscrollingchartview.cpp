@@ -208,6 +208,6 @@ SequentialSeriesScrollingChartView::addDatapoint(const size_t& seriesIndex,
   } else {
     // Round up to the next whole log as that seems easiest to read.
     auto maxLog = std::log10(mMaxYSeen);
-    logYAxis->setMax(std::pow(10.0, std::floor(maxLog) + 1));
+    logYAxis->setMax(std::pow(10.0, std::max(std::floor(maxLog) + 1, 3.0)));
   }
 }

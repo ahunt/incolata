@@ -89,7 +89,7 @@ FitFactorChartView::addDatapoint(const size_t& exercise,
   // Round up to the next whole log as that seems easiest to read.
   mMaxFFSeen = std::max(mMaxFFSeen, fitFactor);
   auto maxLog = std::log10(mMaxFFSeen);
-  mYAxis->setMax(std::pow(10.0, std::floor(maxLog) + 1));
+  mYAxis->setMax(std::pow(10.0, std::max(std::floor(maxLog) + 1, 3.0)));
 
   refreshBackground();
 }

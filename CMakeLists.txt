@@ -54,6 +54,7 @@ ExternalProject_Add(
 	COMMAND_EXPAND_LISTS
 	SOURCE_DIR "${CMAKE_SOURCE_DIR}/libp8020"
 	BINARY_DIR "${CMAKE_SOURCE_DIR}/libp8020"
+	BUILD_ALWAYS true
 	BUILD_BYPRODUCTS ${CMAKE_SOURCE_DIR}/libp8020/target/debug/libp8020.a ${CMAKE_SOURCE_DIR}/libp8020/target/release/libp8020.a)
 add_library(libp8020 STATIC IMPORTED)
 add_dependencies(libp8020 libp8020build)

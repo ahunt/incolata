@@ -40,6 +40,13 @@ cd build/Debug && ninja
 > You can also open the project in QtCreator, which should take care of
 > configuring and building, modulo submodule init.
 
+#### Static Analysis
+
+```
+scan-build cmake . -B build/analysis
+cd build/analysis && scan-build make
+```
+
 ### Windows
 
 TODO

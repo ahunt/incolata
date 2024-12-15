@@ -22,7 +22,7 @@ MainWindow::device_callback(const P8020DeviceNotification* notification,
   MainWindow* mw = static_cast<MainWindow*>(cb_data);
   switch (notification->tag) {
     case P8020DeviceNotification::Tag::Sample: {
-      const double sample = notification->sample.particles;
+      const double sample = notification->sample.particle_conc;
       emit mw->receivedRawSample(sample);
       if (sample < 100) {
         emit mw->renderRawSample(QString::number(sample, 'f', 2));

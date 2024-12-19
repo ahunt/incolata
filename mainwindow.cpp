@@ -34,6 +34,9 @@ MainWindow::device_callback(const P8020DeviceNotification* notification,
     case P8020DeviceNotification::Tag::ConnectionClosed:
       // TODO: handle loss of connection.
       break;
+    case P8020DeviceNotification::Tag::DevicePropertiesAvailable:
+      // TODO: handle device props (render in status bar, once it's added).
+      break;
   }
 }
 

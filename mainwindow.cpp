@@ -133,22 +133,22 @@ MainWindow::MainWindow(QWidget* parent)
   mUI->testTable->setColumnWidth(1, 400);
   mUI->testTable->setColumnWidth(2, 240);
 
-  mUI->rawChartView->setTitle("Raw Particles");
+  mUI->rawChartView->setTitle("Raw Particle Conc. (#/cm³)");
   mUI->rawChartView->setXRange(sRawSampleRange);
   mUI->rawChartView->enableFixedXAxis();
   mUI->rawChartView->xAxis()->setTickInterval(30);
   mUI->rawChartView->yAxis()->setRange(0, 2000);
 
-  mUI->ambientSampleGraph->setTitle("Ambient Particles");
+  mUI->ambientSampleGraph->setTitle("Ambient Particle Conc. (#/cm³)");
   mUI->ambientSampleGraph->setXRange(sAmbientSampleRange);
   mUI->ambientSampleGraph->setYAxisScalingMode(YAxisScalingMode::Floating);
   mUI->ambientSampleGraph->yAxis()->setRange(1000, 10000);
 
-  mUI->specimenSampleGraph->setTitle("Specimen Particles");
+  mUI->specimenSampleGraph->setTitle("Specimen Particle Conc. (#/cm³)");
   mUI->specimenSampleGraph->setXRange(sSpecimenSampleRange);
   mUI->specimenSampleGraph->yAxis()->setRange(0, 20);
 
-  mUI->liveFFGraph->setTitle("Live(ish) Fit Factor");
+  mUI->liveFFGraph->setTitle("Live Fit Factor");
   mUI->liveFFGraph->enableLogYAxis();
   // Intentionally use the same range as for specimen samples - the two graphs
   // should mirror each other:

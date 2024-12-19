@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 include(ExternalProject)
 
-project(incolata VERSION 0.1 LANGUAGES CXX)
+project(incolata VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -16,6 +16,9 @@ find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools Charts)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Charts)
 
 set(TS_FILES incolata_en_GB.ts)
+
+configure_file(config.h.in include/config.h)
+include_directories(${PROJECT_BINARY_DIR}/include)
 
 set(PROJECT_SOURCES
         main.cpp

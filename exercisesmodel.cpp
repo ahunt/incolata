@@ -6,11 +6,11 @@
 
 ExercisesModel::ExercisesModel(QObject* parent)
   : QAbstractTableModel{ parent }
-  , exercises(QStringList() << "...")
-  , currentExercise(0)
-  , ffs(1, -1.0)
-  , errs(1, -1.0)
-  , interimFFs(1, -1.0)
+  , exercises()
+  , currentExercise(-1)
+  , ffs()
+  , errs()
+  , interimFFs()
 {
 }
 

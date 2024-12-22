@@ -44,6 +44,8 @@ PortListModel::rowCount(const QModelIndex&) const
 void
 PortListModel::refreshDevices()
 {
+  // Doing this on the UI thread is potentially risky - it's fast on my machine,
+  // is it fast on all machines and especially on all OSs?
   P8020PortList* newPorts = p8020_ports_list(true);
   beginResetModel();
   if (this->ports != NULL) {

@@ -127,10 +127,13 @@ MainWindow::MainWindow(QWidget* parent)
 {
   mUI->setupUi(this);
 
+  // There doesn't appear to be away to set this in xml layout.
+  mUI->mainAreaSplitter->setSizes({400, 1000});
+
   mUI->testTable->setModel(mModel.get());
   mUI->testTable->setHorizontalHeader(nullptr);
   mUI->testTable->setColumnWidth(0, 20);
-  mUI->testTable->setColumnWidth(1, 400);
+  mUI->testTable->setColumnWidth(1, 200);
   mUI->testTable->setColumnWidth(2, 240);
 
   mUI->rawChartView->setTitle("Raw Particle Conc. (#/cm³)");

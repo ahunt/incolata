@@ -129,10 +129,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox">
+      <widget class="QComboBox" name="deviceComboBox">
        <property name="minimumSize">
         <size>
-         <width>350</width>
+         <width>600</width>
          <height>0</height>
         </size>
        </property>

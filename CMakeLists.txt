@@ -25,6 +25,9 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        connectiondialog.h
+        connectiondialog.cpp
+        connectiondialog.ui
         exercisesmodel.h
         exercisesmodel.cpp
         fitfactorchartview.h

@@ -74,7 +74,7 @@ PortListModel::data(const QModelIndex& index, int role) const
                    "non-NULL result for P8020PortType::Usb");
 
     if (info->product) {
-      result = QString(info->product);
+      result = QString(info->product) + " <…" + QString(info->serial_number).right(6) + ">";
     } else {
       result = QString("USB Device #") + QString(info->serial_number);
     }

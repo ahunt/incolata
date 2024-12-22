@@ -223,7 +223,7 @@ MainWindow::startTest(const QString& protocolShortName)
   for (size_t i = 0; i < exerciseCount; i++) {
     auto name = p8020_test_config_exercise_name(config, i);
     exercises << name;
-    p8020_test_config_exercise_name_free(name);
+    p8020_string_free(name);
   }
 
   mUI->ffGraph->setExerciseCount(exerciseCount);

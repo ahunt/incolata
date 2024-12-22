@@ -16,7 +16,7 @@ public:
   ~ConnectionDialog();
 
 private:
-  Ui::ConnectionDialog *ui;
+  std::unique_ptr<Ui::ConnectionDialog> ui;
 };
 
 #endif // CONNECTIONDIALOG_H

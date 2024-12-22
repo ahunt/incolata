@@ -11,7 +11,9 @@ ConnectionDialog::ConnectionDialog(QWidget *parent) :
   ui.get()->setupUi(this);
 
   ui.get()->buttonBox->button(QDialogButtonBox::Ok)->setText("Connect");
-  ui.get()->warningIcon->setPixmap(
+  ui.get()->appWarningIcon->setPixmap(
+    QIcon::fromTheme("dialog-warning").pixmap(QSize(32, 32)));
+  ui.get()->testWarningIcon->setPixmap(
     QIcon::fromTheme("dialog-warning").pixmap(QSize(32, 32)));
 }
 

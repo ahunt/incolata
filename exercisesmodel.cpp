@@ -31,7 +31,8 @@ ExercisesModel::updateCurrentExercise(const uint aExercise)
   const uint previous = std::max(mCurrentExercise, 0);
   // TODO: make this robust against non-incremental changes.
   mCurrentExercise = aExercise;
-  // TODO: consider passing in list of roles too?
+  // Include all roles, because many styling-related properties change when
+  // switching exercises.
   emit dataChanged(index(previous, 0), index(aExercise, 2));
 }
 
@@ -42,16 +43,18 @@ ExercisesModel::updateFF(const uint aExercise,
 {
   mFitFactors[aExercise] = aFitFactor;
   mErrs[aExercise] = aErr;
-  // TODO: set correct role too.
-  emit dataChanged(index(aExercise, 2), index(aExercise, 2));
+  emit dataChanged(index(aExercise, 2),
+                   index(aExercise, 2),
+                   QList<int>(Qt::DisplayRole, Qt::DecorationRole));
 }
 
 void
 ExercisesModel::renderInterimFF(const uint aExercise, double aFitFactor)
 {
   mInterimFitFactors[aExercise] = aFitFactor;
-  // TODO: set correct role too.
-  emit dataChanged(index(aExercise, 2), index(aExercise, 2));
+  emit dataChanged(index(aExercise, 2),
+                   index(aExercise, 2),
+                   QList<int>(Qt::DisplayRole, Qt::DecorationRole));
 }
 
 int

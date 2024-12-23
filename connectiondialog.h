@@ -24,8 +24,6 @@ public:
   explicit ConnectionDialog(QWidget *parent = nullptr);
   ~ConnectionDialog();
 
-  void closeEvent(QCloseEvent* event) override;
-
 signals:
   void requestedConnectionToDevice(const QString& aDevice);
 

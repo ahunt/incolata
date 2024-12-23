@@ -36,15 +36,6 @@ ConnectionDialog::ConnectionDialog(QWidget* aParent)
 ConnectionDialog::~ConnectionDialog() {}
 
 void
-ConnectionDialog::closeEvent(QCloseEvent* aEvent)
-{
-  QDialog::closeEvent(aEvent);
-  if (aEvent->isAccepted()) {
-    mPortLoaderThread->mExit = true;
-  }
-}
-
-void
 ConnectionDialog::doEmitFinishedSignals(const int result)
 {
   // TODO: make this robust against race conditions when devices disappear or

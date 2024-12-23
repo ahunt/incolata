@@ -149,6 +149,6 @@ PortLoaderThread::run()
       break;
     }
     emit portsReceived(ports);
-    sleep(std::chrono::milliseconds{ 1000 });
+    msleep(1000);
   }
 }

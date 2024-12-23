@@ -6,24 +6,24 @@
 class ExercisesModel : public QAbstractTableModel
 {
 public:
-  explicit ExercisesModel(QObject* parent = nullptr);
-  int rowCount(const QModelIndex& parent) const;
-  int columnCount(const QModelIndex& parent) const;
-  QVariant data(const QModelIndex& index, int role) const;
+  explicit ExercisesModel(QObject* aParent = nullptr);
+  int rowCount(const QModelIndex& aParent) const;
+  int columnCount(const QModelIndex& aParent) const;
+  QVariant data(const QModelIndex& aIndex, const int aRole) const;
 
-  void setExercises(const QStringList& exercises);
+  void setExercises(const QStringList& aExercises);
 
 public slots:
-  void updateCurrentExercise(uint ex);
-  void updateFF(uint ex, double ff, double err);
-  void renderInterimFF(uint ex, double ff);
+  void updateCurrentExercise(const uint aExercise);
+  void updateFF(const uint aExercise, const double aFitFactor, double aErr);
+  void renderInterimFF(uint aExercise, double aFitFactor);
 
 private:
-  QStringList exercises;
-  int currentExercise;
-  QList<double> ffs;
-  QList<double> errs;
-  QList<double> interimFFs;
+  QStringList mExercises;
+  int mCurrentExercise;
+  QList<double> mFitFactors;
+  QList<double> mErrs;
+  QList<double> mInterimFitFactors;
 };
 
 #endif // EXERCISESMODEL_H

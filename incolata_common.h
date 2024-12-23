@@ -4,10 +4,18 @@
 #include <QObject>
 
 struct TestConfig;
+struct P8020PortList;
+
+// TODO: wrap TestConfig* and P8020PortList* in QObjects with RAII instead. This
+// is necessary to avoid the risk of leaks and crashes (the latter if a signal
+// is connected to multiple slots).
 
 // Needed for Qt 6.2, not needed for Qt 6.8 (it's unclear which intermediate
 // versions it's needed for)
 Q_DECLARE_OPAQUE_POINTER(TestConfig*);
 Q_DECLARE_METATYPE(TestConfig*);
+
+Q_DECLARE_OPAQUE_POINTER(P8020PortList*);
+Q_DECLARE_METATYPE(P8020PortList*);
 
 #endif // INCOLATA_COMMON_H

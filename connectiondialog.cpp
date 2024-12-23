@@ -1,57 +1,77 @@
 #include "connectiondialog.h"
 #include "ui_connectiondialog.h"
 
+#include <QCloseEvent>
 #include <QDialogButtonBox>
 #include <QPushButton>
 
 #include "libp8020/libp8020.h"
 
-ConnectionDialog::ConnectionDialog(QWidget *parent) :
-  QDialog(parent),
-  ui(new Ui::ConnectionDialog)
+ConnectionDialog::ConnectionDialog(QWidget* aParent)
+  : QDialog(aParent)
+  , mUI(new Ui::ConnectionDialog)
+  , mPortLoaderThread(new PortLoaderThread)
 {
-  ui.get()->setupUi(this);
+  mUI.get()->setupUi(this);
 
-  ui.get()->buttonBox->button(QDialogButtonBox::Ok)->setText("Connect");
-  ui.get()->appWarningIcon->setPixmap(
+  mUI.get()->buttonBox->button(QDialogButtonBox::Ok)->setText("Connect");
+  mUI.get()->appWarningIcon->setPixmap(
     QIcon::fromTheme("dialog-warning").pixmap(QSize(32, 32)));
-  ui.get()->testWarningIcon->setPixmap(
+  mUI.get()->testWarningIcon->setPixmap(
     QIcon::fromTheme("dialog-warning").pixmap(QSize(32, 32)));
 
   PortListModel* model = new PortListModel(this);
-  model->refreshDevices();
-  ui.get()->deviceComboBox->setModel(model);
+  mUI.get()->deviceComboBox->setModel(model);
+
+  connect(mPortLoaderThread,
+          &PortLoaderThread::portsReceived,
+          model,
+          &PortListModel::updatePorts);
+  mPortLoaderThread->start();
 }
 
 ConnectionDialog::~ConnectionDialog() {}
 
-PortListModel::PortListModel(QObject* parent)
-  : QAbstractListModel{ parent }
-  , ports(nullptr)
+void
+ConnectionDialog::closeEvent(QCloseEvent* aEvent)
+{
+  QDialog::closeEvent(aEvent);
+  if (aEvent->isAccepted()) {
+    mPortLoaderThread->mExit = true;
+  }
+}
+
+PortListModel::PortListModel(QObject* aParent)
+  : QAbstractListModel(aParent)
+  , mPorts(nullptr)
 {
 }
 
+PortListModel::~PortListModel()
+{
+  if (this->mPorts != nullptr) {
+    p8020_port_list_free(this->mPorts);
+    this->mPorts = nullptr;
+  }
+}
 int
 PortListModel::rowCount(const QModelIndex&) const
 {
-  if (this->ports == nullptr) {
+  if (this->mPorts == nullptr) {
     return 0;
   }
-  int i = p8020_port_list_count(this->ports);
+  int i = p8020_port_list_count(this->mPorts);
   return i;
 }
 
 void
-PortListModel::refreshDevices()
+PortListModel::updatePorts(P8020PortList* aPorts)
 {
-  // Doing this on the UI thread is potentially risky - it's fast on my machine,
-  // is it fast on all machines and especially on all OSs?
-  P8020PortList* newPorts = p8020_ports_list(true);
   beginResetModel();
-  if (this->ports != nullptr) {
-    p8020_port_list_free(this->ports);
+  if (this->mPorts != nullptr) {
+    p8020_port_list_free(this->mPorts);
   }
-  this->ports = newPorts;
+  this->mPorts = aPorts;
   endResetModel();
 }
 
@@ -65,13 +85,13 @@ PortListModel::data(const QModelIndex& index, int role) const
       return QVariant();
   }
 
-  char* const name = p8020_port_list_port_name(this->ports, index.row());
+  char* const name = p8020_port_list_port_name(this->mPorts, index.row());
 
   QString result;
-  if (p8020_port_list_port_type(this->ports, index.row()) ==
+  if (p8020_port_list_port_type(this->mPorts, index.row()) ==
       P8020PortType::Usb) {
     P8020UsbPortInfo* info =
-      p8020_port_list_usb_port_info(this->ports, index.row());
+      p8020_port_list_usb_port_info(this->mPorts, index.row());
     assert(info && "p8020_port_list_usb_port_info is expected to return "
                    "non-NULL result for P8020PortType::Usb");
 
@@ -91,4 +111,28 @@ PortListModel::data(const QModelIndex& index, int role) const
 
   p8020_string_free(name);
   return result;
+}
+
+PortLoaderThread::PortLoaderThread(QObject* aParent)
+  : QThread(aParent)
+  , mExit(false)
+{
+  connect(this, &QThread::finished, this, &QThread::deleteLater);
+}
+
+void
+PortLoaderThread::run()
+{
+  while (true) {
+    if (mExit) {
+      break;
+    }
+    P8020PortList* const ports = p8020_ports_list(true);
+    if (mExit) {
+      p8020_port_list_free(ports);
+      break;
+    }
+    emit portsReceived(ports);
+    sleep(std::chrono::milliseconds{ 1000 });
+  }
 }

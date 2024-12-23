@@ -1,14 +1,19 @@
 #ifndef CONNECTIONDIALOG_H
 #define CONNECTIONDIALOG_H
 
+#include "incolata_common.h"
+
 #include <QAbstractListModel>
 #include <QDialog>
+#include <QThread>
 
-struct P8020PortList;
+class QCloseEvent;
 
 namespace Ui {
   class ConnectionDialog;
 }
+
+class PortLoaderThread;
 
 class ConnectionDialog : public QDialog
 {
@@ -18,22 +23,47 @@ public:
   explicit ConnectionDialog(QWidget *parent = nullptr);
   ~ConnectionDialog();
 
+  void closeEvent(QCloseEvent* event) override;
+
 private:
-  std::unique_ptr<Ui::ConnectionDialog> ui;
+  std::unique_ptr<Ui::ConnectionDialog> mUI;
+  // Owned by itself, self-destructs as and when needed.
+  PortLoaderThread* mPortLoaderThread;
 };
 
 class PortListModel : public QAbstractListModel
 {
+  Q_OBJECT
+
 public:
   explicit PortListModel(QObject* parent = nullptr);
+  ~PortListModel();
 
   int rowCount(const QModelIndex& parent) const;
   QVariant data(const QModelIndex& index, int role) const;
 
-  void refreshDevices();
+public slots:
+  void updatePorts(P8020PortList* const);
 
 private:
-  P8020PortList* ports;
+  P8020PortList* mPorts;
+};
+
+// PortLoaderThread refreshes ports in the background.
+// Callers must ensure that signal receivedPorts is connected prior to starting
+// this thread.
+class PortLoaderThread : public QThread
+{
+  Q_OBJECT
+
+public:
+  PortLoaderThread(QObject* parent = nullptr);
+  void run() override;
+
+  volatile bool mExit;
+
+signals:
+  void portsReceived(P8020PortList* const);
 };
 
 #endif // CONNECTIONDIALOG_H

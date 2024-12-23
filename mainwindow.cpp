@@ -119,7 +119,7 @@ MainWindow::processLiveFF(size_t exercise, size_t index, double fit_factor)
   mUI->liveFFGraph->addDatapoint(exercise, fit_factor);
 }
 
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   : QMainWindow(parent)
   , mUI(new Ui::MainWindow)
   , mModel(new ExercisesModel)
@@ -196,8 +196,11 @@ MainWindow::MainWindow(QWidget* parent)
   QObject::connect(
     this, &MainWindow::receivedLiveFF, this, &MainWindow::processLiveFF);
 
-  // TODO: provide a proper connection UI.
-  mDevice = p8020_device_connect("/dev/ttyUSB0", &device_callback, this);
+  const std::string deviceStdString = aDevice.toStdString();
+  assert(deviceStdString.find_first_of('\0') == std::string::npos &&
+         "device name must not contain nulls");
+  mDevice =
+    p8020_device_connect(deviceStdString.c_str(), &device_callback, this);
 
   // TODO: connect remaining signals, e.g. worker (test) finish -> stuff in
   // the UI.

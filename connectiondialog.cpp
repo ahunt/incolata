@@ -11,6 +11,7 @@ ConnectionDialog::ConnectionDialog(QWidget* aParent)
   : QDialog(aParent)
   , mUI(new Ui::ConnectionDialog)
   , mPortLoaderThread(new PortLoaderThread)
+  , mModel(new PortListModel(this))
 {
   mUI.get()->setupUi(this);
 
@@ -20,12 +21,14 @@ ConnectionDialog::ConnectionDialog(QWidget* aParent)
   mUI.get()->testWarningIcon->setPixmap(
     QIcon::fromTheme("dialog-warning").pixmap(QSize(32, 32)));
 
-  PortListModel* model = new PortListModel(this);
-  mUI.get()->deviceComboBox->setModel(model);
+  mUI.get()->deviceComboBox->setModel(mModel);
+
+  connect(
+    this, &QDialog::finished, this, &ConnectionDialog::doEmitFinishedSignals);
 
   connect(mPortLoaderThread,
           &PortLoaderThread::portsReceived,
-          model,
+          mModel,
           &PortListModel::updatePorts);
   mPortLoaderThread->start();
 }
@@ -38,6 +41,19 @@ ConnectionDialog::closeEvent(QCloseEvent* aEvent)
   QDialog::closeEvent(aEvent);
   if (aEvent->isAccepted()) {
     mPortLoaderThread->mExit = true;
+  }
+}
+
+void
+ConnectionDialog::doEmitFinishedSignals(const int result)
+{
+  // TODO: make this robust against race conditions when devices disappear or
+  // appear.
+  mPortLoaderThread->mExit = true;
+  if (result == QDialog::Accepted) {
+    auto device =
+      mModel->deviceAtIndex(mUI.get()->deviceComboBox->currentIndex());
+    emit requestedConnectionToDevice(device);
   }
 }
 
@@ -109,6 +125,15 @@ PortListModel::data(const QModelIndex& index, int role) const
     result = QString(name);
   }
 
+  p8020_string_free(name);
+  return result;
+}
+
+QString
+PortListModel::deviceAtIndex(const size_t index)
+{
+  char* const name = p8020_port_list_port_name(this->mPorts, index);
+  QString result = QString(name);
   p8020_string_free(name);
   return result;
 }

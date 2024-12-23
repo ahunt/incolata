@@ -28,7 +28,7 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  MainWindow(QWidget* parent = nullptr);
+  MainWindow(const QString& aDevice, QWidget* const parent = nullptr);
   ~MainWindow();
 
 private slots:

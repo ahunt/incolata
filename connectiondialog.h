@@ -14,6 +14,7 @@ namespace Ui {
 }
 
 class PortLoaderThread;
+class PortListModel;
 
 class ConnectionDialog : public QDialog
 {
@@ -25,10 +26,17 @@ public:
 
   void closeEvent(QCloseEvent* event) override;
 
+signals:
+  void requestedConnectionToDevice(const QString& aDevice);
+
 private:
   std::unique_ptr<Ui::ConnectionDialog> mUI;
   // Owned by itself, self-destructs as and when needed.
   PortLoaderThread* mPortLoaderThread;
+  PortListModel* mModel;
+
+private slots:
+  void doEmitFinishedSignals(const int result);
 };
 
 class PortListModel : public QAbstractListModel
@@ -41,6 +49,8 @@ public:
 
   int rowCount(const QModelIndex& parent) const;
   QVariant data(const QModelIndex& index, int role) const;
+
+  QString deviceAtIndex(const size_t index);
 
 public slots:
   void updatePorts(P8020PortList* const);

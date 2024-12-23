@@ -27,14 +27,14 @@ ConnectionDialog::~ConnectionDialog() {}
 
 PortListModel::PortListModel(QObject* parent)
   : QAbstractListModel{ parent }
-  , ports(NULL)
+  , ports(nullptr)
 {
 }
 
 int
 PortListModel::rowCount(const QModelIndex&) const
 {
-  if (this->ports == NULL) {
+  if (this->ports == nullptr) {
     return 0;
   }
   int i = p8020_port_list_count(this->ports);
@@ -48,7 +48,7 @@ PortListModel::refreshDevices()
   // is it fast on all machines and especially on all OSs?
   P8020PortList* newPorts = p8020_ports_list(true);
   beginResetModel();
-  if (this->ports != NULL) {
+  if (this->ports != nullptr) {
     p8020_port_list_free(this->ports);
   }
   this->ports = newPorts;

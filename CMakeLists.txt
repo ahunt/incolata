@@ -22,8 +22,10 @@ include_directories(${PROJECT_BINARY_DIR}/include)
 
 set(PROJECT_SOURCES
         main.cpp
-        mainwindow.cpp
+        application.h
+        application.cpp
         mainwindow.h
+        mainwindow.cpp
         mainwindow.ui
         connectiondialog.h
         connectiondialog.cpp

@@ -1,12 +1,12 @@
+#include "application.h"
 #include "mainwindow.h"
 
-#include <QApplication>
 #include <QLocale>
 #include <QTranslator>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+  Application a(argc, argv);
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();

@@ -158,6 +158,11 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   // should mirror each other:
   mUI->liveFFGraph->setXRange(sSpecimenSampleRange);
 
+  mUI->specimenIconLabel->setPixmap(
+    QIcon(":/specimen.svg").pixmap(QSize(32, 32)));
+  mUI->subjectIconLabel->setPixmap(
+    QIcon(":/subject.svg").pixmap(QSize(32, 32)));
+
   // The QComboBox.placeHolder is ignored for editable QComboBoxes - the docs
   // explicitly state that you need to this instead...
   mUI->subjectSelector->lineEdit()->setPlaceholderText("Subject");

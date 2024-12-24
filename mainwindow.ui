@@ -140,62 +140,154 @@
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="groupBox">
+         <widget class="QGroupBox" name="testControlGroupBox">
           <property name="title">
            <string/>
           </property>
-          <layout class="QGridLayout" name="layout_controlbox">
-           <item row="1" column="2" colspan="2">
-            <widget class="QPushButton" name="startTest2">
-             <property name="text">
-              <string>Crash 2.5</string>
-             </property>
-             <property name="autoDefault">
+          <layout class="QVBoxLayout" name="layout_controlbox">
+           <item>
+            <layout class="QHBoxLayout" name="subjectLayout">
+             <item>
+              <widget class="QLabel" name="subjectIconLabel">
+               <property name="text">
+                <string>S</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="subjectSelector">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>The person who is testing.</string>
+               </property>
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="specimenLayout">
+             <item>
+              <widget class="QLabel" name="specimenIconLabel">
+               <property name="text">
+                <string>P</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="specimenSelector">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>The specimen being tested.</string>
+               </property>
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="startTestGroupBox">
+             <property name="flat">
               <bool>true</bool>
              </property>
-             <property name="default">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" colspan="2">
-            <widget class="QPushButton" name="startTest1">
-             <property name="text">
-              <string>OSHA</string>
-             </property>
-             <property name="default">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="4" colspan="2">
-            <widget class="QPushButton" name="startTest3">
-             <property name="text">
-              <string>OSHA mod (fast) FFP</string>
-             </property>
-             <property name="default">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0" colspan="3">
-            <widget class="QComboBox" name="specimenSelector">
-             <property name="editable">
-              <bool>true</bool>
-             </property>
-             <property name="currentText">
-              <string>Select Specimen</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3" colspan="3">
-            <widget class="QComboBox" name="subjectSelector">
-             <property name="editable">
-              <bool>true</bool>
-             </property>
-             <property name="currentText">
-              <string>Subject</string>
-             </property>
+             <layout class="QGridLayout" name="layout_startTestGroupBox">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item row="1" column="0">
+               <widget class="QLabel" name="startTestLabel">
+                <property name="text">
+                 <string>**Start Test:**</string>
+                </property>
+                <property name="textFormat">
+                 <enum>Qt::MarkdownText</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QPushButton" name="startTest1">
+                <property name="text">
+                 <string>OSHA</string>
+                </property>
+                <property name="default">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QPushButton" name="startTest2">
+                <property name="text">
+                 <string>Crash 2.5</string>
+                </property>
+                <property name="autoDefault">
+                 <bool>true</bool>
+                </property>
+                <property name="default">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="2">
+               <widget class="QPushButton" name="startTest3">
+                <property name="text">
+                 <string>OSHA mod (fast) FFP</string>
+                </property>
+                <property name="default">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0" colspan="3">
+               <layout class="QHBoxLayout" name="customTestLayout">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QComboBox" name="customTestComboBox">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="customTestStartButton">
+                  <property name="toolTip">
+                   <string>Start Custom Test</string>
+                  </property>
+                  <property name="icon">
+                   <iconset theme="QIcon::ThemeIcon::MediaPlaybackStart"/>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>

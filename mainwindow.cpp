@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #include <QChart>
+#include <QLineEdit>
 #include <QLineSeries>
 #include <QLogValueAxis>
 #include <QThread>
@@ -156,6 +157,11 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   // Intentionally use the same range as for specimen samples - the two graphs
   // should mirror each other:
   mUI->liveFFGraph->setXRange(sSpecimenSampleRange);
+
+  // The QComboBox.placeHolder is ignored for editable QComboBoxes - the docs
+  // explicitly state that you need to this instead...
+  mUI->subjectSelector->lineEdit()->setPlaceholderText("Subject");
+  mUI->specimenSelector->lineEdit()->setPlaceholderText("Specimen");
 
   QObject::connect(mUI->startTest1,
                    &QAbstractButton::pressed,

@@ -45,6 +45,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 qt_add_executable(incolata
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    resources/resources.qrc
 )
 
 qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})

@@ -157,8 +157,6 @@ SequentialSeriesScrollingChartView::addDatapoint(const size_t& seriesIndex,
     mChart->addSeries(series);
     series->attachAxis(mXAxis);
     series->attachAxis(mYAxis);
-
-    series->setPointsVisible(true);
   }
   series = mSeriesList.back();
 

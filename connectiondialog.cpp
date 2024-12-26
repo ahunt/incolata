@@ -13,15 +13,15 @@ ConnectionDialog::ConnectionDialog(QWidget* aParent)
   , mPortLoaderThread(new PortLoaderThread)
   , mModel(new PortListModel(this))
 {
-  mUI.get()->setupUi(this);
+  mUI->setupUi(this);
 
-  mUI.get()->buttonBox->button(QDialogButtonBox::Ok)->setText("Connect");
-  mUI.get()->appWarningIcon->setPixmap(
+  mUI->buttonBox->button(QDialogButtonBox::Ok)->setText("Connect");
+  mUI->appWarningIcon->setPixmap(
     QIcon::fromTheme("dialog-warning").pixmap(QSize(32, 32)));
-  mUI.get()->testWarningIcon->setPixmap(
+  mUI->testWarningIcon->setPixmap(
     QIcon::fromTheme("dialog-warning").pixmap(QSize(32, 32)));
 
-  mUI.get()->deviceComboBox->setModel(mModel);
+  mUI->deviceComboBox->setModel(mModel);
 
   connect(
     this, &QDialog::finished, this, &ConnectionDialog::doEmitFinishedSignals);
@@ -42,8 +42,7 @@ ConnectionDialog::doEmitFinishedSignals(const int result)
   // appear.
   mPortLoaderThread->mExit = true;
   if (result == QDialog::Accepted) {
-    auto device =
-      mModel->deviceAtIndex(mUI.get()->deviceComboBox->currentIndex());
+    auto device = mModel->deviceAtIndex(mUI->deviceComboBox->currentIndex());
     emit requestedConnectionToDevice(device);
   }
 }

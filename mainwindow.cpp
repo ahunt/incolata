@@ -120,6 +120,15 @@ MainWindow::processLiveFF(size_t exercise, size_t index, double fit_factor)
   mUI->liveFFGraph->addDatapoint(exercise, fit_factor);
 }
 
+void
+MainWindow::subjectOrSpecimenEntryChanged(const QString&)
+{
+  bool enableTestStartPanel =
+    mUI->subjectSelector->currentText().length() > 0 &&
+    mUI->specimenSelector->currentText().length() > 0;
+  mUI->startTestGroupBox->setEnabled(enableTestStartPanel);
+}
+
 MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   : QMainWindow(parent)
   , mUI(new Ui::MainWindow)
@@ -199,6 +208,14 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
                    &MainWindow::renderRawSample,
                    mUI->rawCountLCD,
                    QOverload<const QString&>::of(&QLCDNumber::display));
+  QObject::connect(mUI->specimenSelector,
+                   &QComboBox::currentTextChanged,
+                   this,
+                   &MainWindow::subjectOrSpecimenEntryChanged);
+  QObject::connect(mUI->subjectSelector,
+                   &QComboBox::currentTextChanged,
+                   this,
+                   &MainWindow::subjectOrSpecimenEntryChanged);
   // Use signals+slots here as it deals with cross-thread dispatch for us.
   QObject::connect(
     this, &MainWindow::receivedRawSample, this, &MainWindow::processRawSample);
@@ -224,12 +241,8 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
 void
 MainWindow::startTest(const QString& protocolShortName)
 {
-  // TODO: reenable these after the test.
-  mUI->startTest1->setEnabled(false);
-  mUI->startTest2->setEnabled(false);
-  mUI->startTest3->setEnabled(false);
-  mUI->specimenSelector->setEnabled(false);
-  mUI->subjectSelector->setEnabled(false);
+  // TODO: reenable after the test.
+  mUI->testControlGroupBox->setEnabled(false);
 
   const std::string shortNameStdString = protocolShortName.toStdString();
   assert(shortNameStdString.find_first_of('\0') == std::string::npos && "short name must not contain nulls");

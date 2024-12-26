@@ -201,6 +201,9 @@
            </item>
            <item>
             <widget class="QGroupBox" name="startTestGroupBox">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="flat">
               <bool>true</bool>
              </property>

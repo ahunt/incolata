@@ -36,6 +36,7 @@ private slots:
   void processRawSample(double sample);
   void processSample(SampleType sampleType, size_t exercise, double value);
   void processLiveFF(size_t exercise, size_t index, double fit_factor);
+  void subjectOrSpecimenEntryChanged(const QString& aContents);
 
 private:
   std::unique_ptr<Ui::MainWindow> mUI;

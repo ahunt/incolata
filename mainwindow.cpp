@@ -5,9 +5,11 @@
 #include <QLineEdit>
 #include <QLineSeries>
 #include <QLogValueAxis>
+#include <QStatusBar>
 #include <QThread>
 #include <QValueAxis>
 
+#include "config.h"
 #include "exercisesmodel.h"
 #include "libp8020/libp8020.h"
 #include "testworker.h"
@@ -36,7 +38,7 @@ MainWindow::device_callback(const P8020DeviceNotification* notification,
       // TODO: handle loss of connection.
       break;
     case P8020DeviceNotification::Tag::DevicePropertiesAvailable:
-      // TODO: handle device props (render in status bar, once it's added).
+      emit mw->refreshStatusBar();
       break;
   }
 }
@@ -129,10 +131,35 @@ MainWindow::subjectOrSpecimenEntryChanged(const QString&)
   mUI->startTestGroupBox->setEnabled(enableTestStartPanel);
 }
 
+void
+MainWindow::refreshStatusBar()
+{
+  QString message = QString("Incolata v") + INCOLATA_VERSION;
+
+  if (mDevice != nullptr) {
+    P8020DeviceProperties* deviceProperties =
+      p8020_device_get_properties(mDevice);
+    if (deviceProperties != nullptr) {
+      message = QString("%0    8020(A): #%2 (Last service: %3-%4, runtime "
+                        "since last service: %5 h.)")
+                  .arg(message,
+                       deviceProperties->serial_number,
+                       QString::number(deviceProperties->last_service_year),
+                       QString::number(deviceProperties->last_service_month),
+                       QString::number(size_t(
+                         deviceProperties->run_time_since_last_service_hours)));
+      p8020_device_properties_free(deviceProperties);
+    }
+  }
+
+  statusBar()->showMessage(message);
+}
+
 MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   : QMainWindow(parent)
   , mUI(new Ui::MainWindow)
   , mModel(new ExercisesModel)
+  , mDevice(nullptr)
   , mWorkerThread(new QThread)
 {
   mUI->setupUi(this);
@@ -176,6 +203,8 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   // explicitly state that you need to this instead...
   mUI->subjectSelector->lineEdit()->setPlaceholderText("Subject");
   mUI->specimenSelector->lineEdit()->setPlaceholderText("Specimen");
+
+  refreshStatusBar();
 
   QObject::connect(mUI->startTest1,
                    &QAbstractButton::pressed,

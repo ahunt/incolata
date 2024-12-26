@@ -149,6 +149,9 @@
             <height>250</height>
            </size>
           </property>
+          <property name="renderHints">
+           <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+          </property>
          </widget>
         </item>
         <item>
@@ -320,6 +323,9 @@
             <height>200</height>
            </size>
           </property>
+          <property name="renderHints">
+           <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+          </property>
          </widget>
         </item>
         <item row="0" column="1">
@@ -336,6 +342,9 @@
             <height>250</height>
            </size>
           </property>
+          <property name="renderHints">
+           <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+          </property>
          </widget>
         </item>
         <item row="1" column="0">
@@ -346,6 +355,9 @@
             <height>200</height>
            </size>
           </property>
+          <property name="renderHints">
+           <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+          </property>
          </widget>
         </item>
         <item row="0" column="0">
@@ -355,6 +367,9 @@
             <width>0</width>
             <height>250</height>
            </size>
+          </property>
+          <property name="renderHints">
+           <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
           </property>
          </widget>
         </item>

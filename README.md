@@ -7,7 +7,7 @@ it's only been tested with a single 8020A.
 > [!WARNING]
 > This codebase is extremely messy.
 
-![Main Window, showing a test in progress](/docs/img/screenshot_main_2024_11_02.png?raw=true "Screenshot of the test window")
+![Main Window, showing a test in progress](/docs/img/screenshot_main_2024_12_26.png?raw=true "Screenshot of the test window")
 
 ## Setup guide
 

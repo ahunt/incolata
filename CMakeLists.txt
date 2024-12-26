@@ -42,10 +42,22 @@ set(PROJECT_SOURCES
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+IF (APPLE)
+  add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/resources/incolata_icon.icns"
+    COMMAND iconutil --convert icns --output "${CMAKE_CURRENT_BINARY_DIR}/resources/incolata_icon.icns" "${CMAKE_SOURCE_DIR}/resources/incolata_icon.iconset"
+    DEPENDS "${CMAKE_SOURCE_DIR}/resources/incolata_icon.iconset/")
+
+  set(MACOSX_BUNDLE_ICON_FILE incolata_icon.icns)
+  set(app_icon_macos "${CMAKE_CURRENT_BINARY_DIR}/resources/incolata_icon.icns")
+  set_source_files_properties(${app_icon_macos} PROPERTIES
+    MACOSX_PACKAGE_LOCATION "Resources")
+ENDIF()
+
 qt_add_executable(incolata
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
     resources/resources.qrc
+    ${app_icon_macos}
 )
 
 qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
@@ -53,7 +65,6 @@ qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 target_compile_options(${PROJECT_NAME} PRIVATE
   -Wall -Wextra -Wpedantic -Werror
 )
-
 
 ExternalProject_Add(
 	libp8020build

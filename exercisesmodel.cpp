@@ -3,6 +3,7 @@
 #include <QBrush>
 #include <QFont>
 #include <QIcon>
+#include <QLabel>
 
 ExercisesModel::ExercisesModel(QObject* aParent)
   : QAbstractTableModel(aParent)
@@ -11,18 +12,47 @@ ExercisesModel::ExercisesModel(QObject* aParent)
   , mFitFactors()
   , mErrs()
   , mInterimFitFactors()
+  , mCurrentExerciseLabel(nullptr)
 {
+}
+
+void
+ExercisesModel::setCurrentExerciseLabel(QLabel* const aCurrentExerciseLabel)
+{
+  mCurrentExerciseLabel = aCurrentExerciseLabel;
+  refreshCurrentExerciseLabel();
+}
+
+void
+ExercisesModel::refreshCurrentExerciseLabel()
+{
+  if (mCurrentExerciseLabel == nullptr) {
+    return;
+  }
+
+  if (mCurrentExercise < 0 || mExercises.length() == 0) {
+    mCurrentExerciseLabel->setText("");
+    return;
+  }
+
+  QString message = QString("%1/%2: %3")
+                      .arg(QString::number(mCurrentExercise + 1),
+                           QString::number(mExercises.length()),
+                           mExercises[mCurrentExercise]);
+  mCurrentExerciseLabel->setText(message);
 }
 
 void
 ExercisesModel::setExercises(const QStringList& aExercises)
 {
   beginResetModel();
-  this->mExercises = aExercises;
-  this->mFitFactors = QList<double>(aExercises.length(), -1.0);
-  this->mErrs = QList<double>(aExercises.length(), -1.0);
-  this->mInterimFitFactors = QList<double>(aExercises.length(), -1.0);
+  mExercises = aExercises;
+  mFitFactors = QList<double>(aExercises.length(), -1.0);
+  mErrs = QList<double>(aExercises.length(), -1.0);
+  mInterimFitFactors = QList<double>(aExercises.length(), -1.0);
+  mCurrentExercise = 0;
   endResetModel();
+  refreshCurrentExerciseLabel();
 }
 
 void
@@ -34,6 +64,7 @@ ExercisesModel::updateCurrentExercise(const uint aExercise)
   // Include all roles, because many styling-related properties change when
   // switching exercises.
   emit dataChanged(index(previous, 0), index(aExercise, 2));
+  refreshCurrentExerciseLabel();
 }
 
 void

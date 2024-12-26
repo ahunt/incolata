@@ -172,6 +172,7 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   mUI->testTable->setColumnWidth(0, 20);
   mUI->testTable->setColumnWidth(1, 200);
   mUI->testTable->setColumnWidth(2, 240);
+  mModel->setCurrentExerciseLabel(mUI->currentExerciseLabel);
 
   mUI->rawChartView->setTitle("Raw Particle Conc. (#/cm³)");
   mUI->rawChartView->setXRange(sRawSampleRange);

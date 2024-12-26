@@ -3,14 +3,17 @@
 
 #include <QAbstractTableModel>
 
+class QLabel;
+
 class ExercisesModel : public QAbstractTableModel
 {
 public:
   explicit ExercisesModel(QObject* aParent = nullptr);
-  int rowCount(const QModelIndex& aParent) const;
-  int columnCount(const QModelIndex& aParent) const;
-  QVariant data(const QModelIndex& aIndex, const int aRole) const;
+  int rowCount(const QModelIndex& aParent) const override;
+  int columnCount(const QModelIndex& aParent) const override;
+  QVariant data(const QModelIndex& aIndex, const int aRole) const override;
 
+  void setCurrentExerciseLabel(QLabel* const aCurrentExerciseLabel);
   void setExercises(const QStringList& aExercises);
 
 public slots:
@@ -24,6 +27,9 @@ private:
   QList<double> mFitFactors;
   QList<double> mErrs;
   QList<double> mInterimFitFactors;
+  QLabel* mCurrentExerciseLabel;
+
+  void refreshCurrentExerciseLabel();
 };
 
 #endif // EXERCISESMODEL_H

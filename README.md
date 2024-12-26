@@ -62,6 +62,11 @@ TODO
    cd build/Debug && ninja && open incolata.app
    ```
 
+> [!NOTE]
+> Not all Serial->USB adapters appear to work on OSX. My FTDI FT232R-based
+> adapter does work, my Aten adapter does not work and the driver situation is
+> unclear.
+
 ## Architecture
 
 Actual test machinery will live in libp8020a. Incolata is just a (not so) nice

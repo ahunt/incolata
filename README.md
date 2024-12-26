@@ -53,7 +53,14 @@ TODO
 
 ### OSX
 
-TODO, if I ever get hold of a Mac.
+1. Install [Homebrew](https://brew.sh)
+
+2. ```
+   brew install git rust cmake qt ninja
+   git clone https://github.com/ahunt/incolata.git && cd incolata &&  && git submodule init & git submodule update
+   cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B build/Debug
+   cd build/Debug && ninja && open incolata.app
+   ```
 
 ## Architecture
 

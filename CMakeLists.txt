@@ -71,8 +71,12 @@ set_target_properties(libp8020 PROPERTIES
   IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/libp8020/target/release/libp8020.a"
   IMPORTED_LOCATION_DEBUG "${CMAKE_SOURCE_DIR}/libp8020/target/debug/libp8020.a")
 
+IF (UNIX AND NOT APPLE)
+  set(AdditionalLibs udev)
+ENDIF()
+
 target_link_libraries(incolata
-  PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Charts libp8020 udev)
+  PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Charts libp8020 ${AdditionalLibs})
 
 set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER org.ahunt.incolata)
 

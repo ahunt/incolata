@@ -67,10 +67,10 @@ FitFactorChartView::refreshBackground()
 
   auto maxLog = std::log(mYAxis->max());
   auto stopMargin = 30;
-  gradient.setColorAt(std::log(100 - stopMargin) / maxLog, QRgb(0xFF0000));
-  gradient.setColorAt(std::log(100 + stopMargin) / maxLog, QRgb(0xFFFF00));
-  gradient.setColorAt(std::log(200 - stopMargin) / maxLog, QRgb(0xFFFF00));
-  gradient.setColorAt(std::log(200 + stopMargin) / maxLog, QRgb(0xBBFFBB));
+  gradient.setColorAt(std::log(100 - stopMargin) / maxLog, QRgb(0xFFBBBB));
+  gradient.setColorAt(std::log(100 + stopMargin) / maxLog, QRgb(0xFFFFBB));
+  gradient.setColorAt(std::log(200 - stopMargin) / maxLog, QRgb(0xFFFFBB));
+  gradient.setColorAt(std::log(200 + stopMargin) / maxLog, QRgb(0xCCFFCC));
 
   chart()->setPlotAreaBackgroundBrush(gradient);
   chart()->setPlotAreaBackgroundVisible(true);

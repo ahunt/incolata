@@ -83,3 +83,21 @@ jobs:
         run: scan-build cmake . -B build/analysis
       - name: Build
         run: cd build/analysis && scan-build make
+
+  mac_build_debug:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+      - name: Install deps
+        run: brew install qt ninja
+      - name: Diagnostics
+        run: |
+          rustc --version
+          cargo --version
+          qtpaths --qt-version
+      - name: Configure
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B build
+      - name: Build
+        run: cd build && ninja

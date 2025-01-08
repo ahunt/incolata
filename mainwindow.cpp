@@ -302,7 +302,7 @@ MainWindow::startTest(const QString& protocolShortName)
           << exercises.length() << " exercises)";
 
   emit triggerTest(config,
-                   (void*)&test_callback,
+                   &test_callback,
                    this,
                    mUI->specimenSelector->currentText(),
                    mUI->subjectSelector->currentText(),

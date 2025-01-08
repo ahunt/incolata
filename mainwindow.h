@@ -56,7 +56,7 @@ private:
 
 signals:
   void triggerTest(TestConfig* const config,
-                   void* const callback,
+                   const TestCallback callback,
                    void* const cb_data,
                    const QString& specimen,
                    const QString& subject,

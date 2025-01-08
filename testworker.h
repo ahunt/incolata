@@ -20,7 +20,7 @@ public slots:
   // Runs test with testConfig. runTest assumes ownership of testConfig, and
   // will free it if/when needed.
   void runTest(TestConfig* const config,
-               void* const callback,
+               const TestCallback callback,
                void* const cb_data,
                const QString& specimen,
                const QString& subject,

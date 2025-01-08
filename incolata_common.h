@@ -4,6 +4,7 @@
 #include <QObject>
 
 struct TestConfig;
+struct TestNotification;
 struct P8020PortList;
 
 // TODO: wrap TestConfig* and P8020PortList* in QObjects with RAII instead. This
@@ -17,5 +18,10 @@ Q_DECLARE_METATYPE(TestConfig*);
 
 Q_DECLARE_OPAQUE_POINTER(P8020PortList*);
 Q_DECLARE_METATYPE(P8020PortList*);
+
+typedef void (*TestCallback)(const TestNotification*, void*);
+
+Q_DECLARE_OPAQUE_POINTER(TestCallback);
+Q_DECLARE_METATYPE(TestCallback);
 
 #endif // INCOLATA_COMMON_H

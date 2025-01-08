@@ -14,18 +14,12 @@ TestWorker::TestWorker(P8020Device* device, QObject* parent)
 
 void
 TestWorker::runTest(TestConfig* const testConfig,
-                    void* const callback_void,
+                    const TestCallback callback,
                     void* const cb_data,
                     const QString& specimen,
                     const QString& subject,
                     const QString& protocol)
 {
-  // TODO: figure out what the right way of sending function pointers via
-  // signals/slots is? (Alternatively, this might become obsolete once
-  // test control is made fully async.)
-  void (*callback)(const TestNotification*, void*) =
-    (void (*)(const TestNotification*, void*))callback_void;
-
   // Opening the file before running the test is probably unnecessary, but it
   // helps me spot mistakes with the file path or whatever before running a
   // test.

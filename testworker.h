@@ -25,6 +25,9 @@ public slots:
                const QString& specimen,
                const QString& subject,
                const QString& protocol);
+
+signals:
+  void testCompleted();
 };
 
 #endif // TESTWORKER_H

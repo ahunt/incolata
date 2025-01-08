@@ -155,6 +155,12 @@ MainWindow::refreshStatusBar()
   statusBar()->showMessage(message);
 }
 
+void
+MainWindow::testCompleted()
+{
+  mUI->testControlGroupBox->setEnabled(true);
+}
+
 MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   : QMainWindow(parent)
   , mUI(new Ui::MainWindow)
@@ -260,18 +266,17 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   mDevice =
     p8020_device_connect(deviceStdString.c_str(), &device_callback, this);
 
-  // TODO: connect remaining signals, e.g. worker (test) finish -> stuff in
-  // the UI.
   TestWorker* testWorker = new TestWorker(mDevice);
   testWorker->moveToThread(mWorkerThread);
   connect(this, &MainWindow::triggerTest, testWorker, &TestWorker::runTest);
+  connect(
+    testWorker, &TestWorker::testCompleted, this, &MainWindow::testCompleted);
   mWorkerThread->start();
 }
 
 void
 MainWindow::startTest(const QString& protocolShortName)
 {
-  // TODO: reenable after the test.
   mUI->testControlGroupBox->setEnabled(false);
 
   const std::string shortNameStdString = protocolShortName.toStdString();

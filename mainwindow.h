@@ -38,6 +38,7 @@ private slots:
   void processLiveFF(size_t exercise, size_t index, double fit_factor);
   void subjectOrSpecimenEntryChanged(const QString& aContents);
   void refreshStatusBar();
+  void testCompleted();
 
 private:
   std::unique_ptr<Ui::MainWindow> mUI;

@@ -116,9 +116,8 @@ MainWindow::processSample(SampleType sampleType, size_t exercise, double value)
 }
 
 void
-MainWindow::processLiveFF(size_t exercise, size_t index, double fit_factor)
+MainWindow::processLiveFF(size_t exercise, size_t, double fit_factor)
 {
-  (void)index;
   mUI->liveFFGraph->addDatapoint(exercise, fit_factor);
 }
 

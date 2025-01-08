@@ -132,6 +132,16 @@ SequentialSeriesScrollingChartView::refreshXRange()
 }
 
 void
+SequentialSeriesScrollingChartView::wipeData()
+{
+  for (QLineSeries* series : mSeriesList) {
+    mChart->removeSeries(series);
+    delete series;
+  }
+  mSeriesList.clear();
+}
+
+void
 SequentialSeriesScrollingChartView::addDatapoint(const size_t& seriesIndex,
                                                  const qreal& value)
 {

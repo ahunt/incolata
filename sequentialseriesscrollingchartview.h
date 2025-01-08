@@ -55,6 +55,10 @@ public:
   // It is not permitted to add a datapoint to a previous series.
   void addDatapoint(const size_t& seriesIndex, const qreal& value);
 
+  // Wipe all chart data. After this call, it is safe to start adding data from
+  // the series with index=0 again.
+  void wipeData();
+
 private:
   // Owned by QChartView (will be deleted by QChartView *unless* replaced via
   // QChartView::setChart()).

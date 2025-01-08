@@ -294,7 +294,12 @@ MainWindow::startTest(const QString& protocolShortName)
   mUI->ffGraph->setExerciseCount(exerciseCount);
   mModel->setExercises(exercises);
 
-  qInfo() << "Start test: " << protocolShortName << " (" << exercises.length() << " exercises)";
+  mUI->ambientSampleGraph->wipeData();
+  mUI->specimenSampleGraph->wipeData();
+  mUI->liveFFGraph->wipeData();
+
+  qInfo() << "Starting test: " << protocolShortName << " ("
+          << exercises.length() << " exercises)";
 
   emit triggerTest(config,
                    (void*)&test_callback,

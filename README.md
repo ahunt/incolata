@@ -55,7 +55,8 @@ TODO
 
 1. Install [Homebrew](https://brew.sh)
 
-2. ```
+2.
+   ```
    brew install git rust cmake qt ninja
    git clone https://github.com/ahunt/incolata.git && cd incolata &&  && git submodule init & git submodule update
    cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B build/Debug
@@ -63,9 +64,9 @@ TODO
    ```
 
 > [!NOTE]
-> Not all Serial->USB adapters appear to work on OSX. My FTDI FT232R-based
-> adapter does work, my Aten adapter does not work and the driver situation is
-> unclear.
+> Some but not all Serial->USB adapters work out of the OSX. My (possibly fake)
+> FTDI FT232R-based adapter does work, whereas Aten requires you to install a
+> driver (untested).
 
 ## Architecture
 

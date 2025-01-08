@@ -44,6 +44,8 @@ TestWorker::runTest(TestConfig* const testConfig,
 
   P8020TestResult* result =
     p8020_device_run_test(mDevice, testConfig, callback, cb_data);
+
+  emit testCompleted();
   if (result == nullptr) {
     return;
   }

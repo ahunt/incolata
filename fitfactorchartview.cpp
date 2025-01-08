@@ -50,6 +50,16 @@ FitFactorChartView::setExerciseCount(const qsizetype& count)
 }
 
 void
+FitFactorChartView::wipeData()
+{
+  mSeries->removePoints(0, mSeries->count());
+  mMaxFFSeen = 0;
+  // Do not reset y-axis max: there's no point, and there's a non-zero
+  // probability that this test will have the same max as the last test (e.g. if
+  // the subject is repeatedly testing the same specimen).
+}
+
+void
 FitFactorChartView::refreshExerciseRange()
 {
   // 0 is deliberately included to provide an empty margin. (I'm not entirely

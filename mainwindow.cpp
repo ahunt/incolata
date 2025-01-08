@@ -290,6 +290,7 @@ MainWindow::startTest(const QString& protocolShortName)
     p8020_string_free(name);
   }
 
+  mUI->ffGraph->wipeData();
   mUI->ffGraph->setExerciseCount(exerciseCount);
   mModel->setExercises(exercises);
 

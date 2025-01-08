@@ -16,6 +16,10 @@ public:
   Q_PROPERTY(size_t exerciseCount MEMBER mExerciseCount WRITE setExerciseCount)
   void setExerciseCount(const qsizetype& count);
 
+  // Wipes all data shown on the graph. This is totally independent of
+  // setExerciseCount(), although in general they are called as a pair.
+  void wipeData();
+
 public slots:
   void addDatapoint(const size_t& exercise, const double& ff);
 

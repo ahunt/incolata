@@ -12,6 +12,31 @@ TestWorker::TestWorker(P8020Device* const aDevice, QObject* const aParent)
 {
 }
 
+QString
+enquote(const QString& aIn)
+{
+  // Same as in libp8020: using an established CSV library would be the sensible
+  // thing to do, but being sensible has no place here.
+  bool hasQuotationMark = false;
+  bool hasComma = false;
+  for (auto it = aIn.cbegin(), end = aIn.cend(); it != end; it++) {
+    if (*it == '"') {
+      hasQuotationMark = true;
+    } else if (*it == ',') {
+      hasComma = true;
+    }
+  }
+
+  if (!hasQuotationMark && !hasComma) {
+    return QString(aIn);
+  };
+  QString out = aIn;
+  if (hasQuotationMark) {
+    out = out.replace('"', "\"\"");
+  }
+  return QString("\"%1\"").arg(out);
+}
+
 void
 TestWorker::runTest(TestConfig* const aTestConfig,
                     const TestCallback aCallback,
@@ -48,7 +73,7 @@ TestWorker::runTest(TestConfig* const aTestConfig,
   auto date = QDateTime::currentDateTime().toString("yyyy_MM_dd");
   for (size_t i = 0; i < result->fit_factors_length; i += 12) {
     // TODO: make this robust against non-ASCII specimen and subjects.
-    stream << aSpecimen << ",";
+    stream << enquote(aSpecimen) << ",";
     for (size_t j = i; j < i + 12; j++) {
       if (j >= result->fit_factors_length) {
         stream << ",";
@@ -62,8 +87,8 @@ TestWorker::runTest(TestConfig* const aTestConfig,
       }
       stream << ",";
     }
-    stream << aComment << "," << aSubject << "," << date << "," << aProtocol
-           << "\n";
+    stream << enquote(aComment) << "," << enquote(aSubject) << "," << date
+           << "," << aProtocol << "\n";
   }
   testLog.close();
 

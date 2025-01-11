@@ -12,6 +12,7 @@ class TestWorker : public QObject
 
 public:
   TestWorker(P8020Device* const aDevice, QObject* const aParent = 0);
+  virtual ~TestWorker();
 
 private:
   P8020Device* const mDevice;

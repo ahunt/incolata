@@ -73,3 +73,9 @@ TestWorker::runTest(TestConfig* const aTestConfig,
   p8020_test_result_free(result);
   p8020_test_config_free(aTestConfig);
 }
+
+TestWorker::~TestWorker()
+{
+  // Also ensures that we cleanly disconnect (exit external control mode).
+  p8020_device_free(mDevice);
+}

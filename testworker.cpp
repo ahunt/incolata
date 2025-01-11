@@ -6,20 +6,20 @@
 #include <QDir>
 #include <QFile>
 
-TestWorker::TestWorker(P8020Device* device, QObject* parent)
-  : QObject(parent)
-  , mDevice(device)
+TestWorker::TestWorker(P8020Device* const aDevice, QObject* const aParent)
+  : QObject(aParent)
+  , mDevice(aDevice)
 {
 }
 
 void
-TestWorker::runTest(TestConfig* const testConfig,
-                    const TestCallback callback,
-                    void* const cb_data,
-                    const QString& specimen,
-                    const QString& subject,
+TestWorker::runTest(TestConfig* const aTestConfig,
+                    const TestCallback aCallback,
+                    void* const aCallbackData,
+                    const QString& aSpecimen,
+                    const QString& aSubject,
                     const QString& aComment,
-                    const QString& protocol)
+                    const QString& aProtocol)
 {
   // Opening the file before running the test is probably unnecessary, but it
   // helps me spot mistakes with the file path or whatever before running a
@@ -38,7 +38,7 @@ TestWorker::runTest(TestConfig* const testConfig,
   QTextStream stream(&testLog);
 
   P8020TestResult* result =
-    p8020_device_run_test(mDevice, testConfig, callback, cb_data);
+    p8020_device_run_test(mDevice, aTestConfig, aCallback, aCallbackData);
 
   emit testCompleted();
   if (result == nullptr) {
@@ -48,7 +48,7 @@ TestWorker::runTest(TestConfig* const testConfig,
   auto date = QDateTime::currentDateTime().toString("yyyy_MM_dd");
   for (size_t i = 0; i < result->fit_factors_length; i += 12) {
     // TODO: make this robust against non-ASCII specimen and subjects.
-    stream << specimen << ",";
+    stream << aSpecimen << ",";
     for (size_t j = i; j < i + 12; j++) {
       if (j >= result->fit_factors_length) {
         stream << ",";
@@ -62,7 +62,7 @@ TestWorker::runTest(TestConfig* const testConfig,
       }
       stream << ",";
     }
-    stream << aComment << "," << subject << "," << date << "," << protocol
+    stream << aComment << "," << aSubject << "," << date << "," << aProtocol
            << "\n";
   }
   testLog.close();
@@ -71,5 +71,5 @@ TestWorker::runTest(TestConfig* const testConfig,
   // TODO: save to DB?
 
   p8020_test_result_free(result);
-  p8020_test_config_free(testConfig);
+  p8020_test_config_free(aTestConfig);
 }

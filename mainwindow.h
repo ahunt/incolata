@@ -55,13 +55,13 @@ private:
   void startTest(const QString& protocolShortName);
 
 signals:
-  void triggerTest(TestConfig* const config,
-                   const TestCallback callback,
-                   void* const cb_data,
-                   const QString& specimen,
-                   const QString& subject,
+  void triggerTest(TestConfig* const aConfig,
+                   const TestCallback aCallback,
+                   void* const aCallbackData,
+                   const QString& aSpecimen,
+                   const QString& aSubject,
                    const QString& aComment,
-                   const QString& protocol);
+                   const QString& aProtocol);
   void exerciseChanged(uint ex);
   void ffUpdated(const uint& exercise, const double& fitFactor, const double& err);
   void renderRawSample(QString sample);

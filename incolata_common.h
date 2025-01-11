@@ -24,4 +24,11 @@ typedef void (*TestCallback)(const TestNotification*, void*);
 Q_DECLARE_OPAQUE_POINTER(TestCallback);
 Q_DECLARE_METATYPE(TestCallback);
 
+// Must be called once during application startup.
+inline static void
+incolataRegisterMetaTypes()
+{
+  qRegisterMetaType<TestCallback>();
+}
+
 #endif // INCOLATA_COMMON_H

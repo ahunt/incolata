@@ -60,6 +60,7 @@ signals:
                    void* const cb_data,
                    const QString& specimen,
                    const QString& subject,
+                   const QString& aComment,
                    const QString& protocol);
   void exerciseChanged(uint ex);
   void ffUpdated(const uint& exercise, const double& fitFactor, const double& err);

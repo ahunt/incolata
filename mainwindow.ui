@@ -215,6 +215,16 @@
             </layout>
            </item>
            <item>
+            <widget class="QLineEdit" name="commentEntry">
+             <property name="statusTip">
+              <string>Enter comments, which will be saved along with the test results.</string>
+             </property>
+             <property name="placeholderText">
+              <string>Comments...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QGroupBox" name="startTestGroupBox">
              <property name="enabled">
               <bool>false</bool>

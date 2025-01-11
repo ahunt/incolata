@@ -18,6 +18,7 @@ TestWorker::runTest(TestConfig* const testConfig,
                     void* const cb_data,
                     const QString& specimen,
                     const QString& subject,
+                    const QString& aComment,
                     const QString& protocol)
 {
   // Opening the file before running the test is probably unnecessary, but it
@@ -48,8 +49,6 @@ TestWorker::runTest(TestConfig* const testConfig,
   for (size_t i = 0; i < result->fit_factors_length; i += 12) {
     // TODO: make this robust against non-ASCII specimen and subjects.
     stream << specimen << ",";
-    // TODO: think of a less ugly way to structure this, once we've had some
-    // more coffee.
     for (size_t j = i; j < i + 12; j++) {
       if (j >= result->fit_factors_length) {
         stream << ",";
@@ -63,7 +62,8 @@ TestWorker::runTest(TestConfig* const testConfig,
       }
       stream << ",";
     }
-    stream << "," << subject << "," << date << "," << protocol << "\n";
+    stream << aComment << "," << subject << "," << date << "," << protocol
+           << "\n";
   }
   testLog.close();
 

@@ -24,6 +24,7 @@ public slots:
                void* const cb_data,
                const QString& specimen,
                const QString& subject,
+               const QString& aComment,
                const QString& protocol);
 
 signals:

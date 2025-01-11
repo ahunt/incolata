@@ -306,9 +306,8 @@ MainWindow::startTest(const QString& protocolShortName)
                    this,
                    mUI->specimenSelector->currentText(),
                    mUI->subjectSelector->currentText(),
+                   mUI->commentEntry->text(),
                    protocolShortName);
-
-  // TODO: reset graphs if necessary.
 }
 
 void

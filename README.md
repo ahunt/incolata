@@ -51,6 +51,11 @@ cd build/analysis && scan-build make
 
 TODO
 
+> [!NOTE]
+> Some, but not all, Serial->USB adapters work out of the box. Here it's the
+> opposite of the OSX situation: my Aten (with Prolific chip) just works, and my
+> FTDI FT232R-based adapter required me to install [their driver](https://ftdichip.com/drivers/).
+
 ### OSX
 
 1. Install [Homebrew](https://brew.sh)
@@ -64,9 +69,13 @@ TODO
    ```
 
 > [!NOTE]
-> Some but not all Serial->USB adapters work out of the OSX. My (possibly fake)
-> FTDI FT232R-based adapter does work, whereas Aten requires you to install a
-> driver (untested).
+> Some, but not all, Serial->USB adapters work out of the OSX. My (possibly
+> fake) FTDI FT232R-based adapter does work, whereas my Aten (with Prolific
+> chip) requires [installing a Driver](https://www.aten.com/global/en/supportcenter/info/downloads/?action=display_product&pid=575).
+> (Don't forget to unblock the driver via System Settings->Privacy &
+> Security->Enable System Extensions after installation.) Prolific offer a
+> [PL2303 Serial Driver on the app store](https://apps.apple.com/us/app/pl2303-serial/id1624835354?mt=12),
+> which might also work for the same Aten adapter, but I have not tested it.
 
 ## Architecture
 

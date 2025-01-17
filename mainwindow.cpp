@@ -12,6 +12,7 @@
 #include "config.h"
 #include "exercisesmodel.h"
 #include "libp8020/libp8020.h"
+#include "protocolsmodel.h"
 #include "testworker.h"
 
 static const qsizetype sRawSampleRange = 180;
@@ -164,6 +165,7 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   : QMainWindow(parent)
   , mUI(new Ui::MainWindow)
   , mModel(new ExercisesModel)
+  , mProtocolsModel(new ProtocolsModel)
   , mDevice(nullptr)
   , mWorkerThread(new QThread)
 {
@@ -171,6 +173,8 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
 
   // There doesn't appear to be away to set this in xml layout.
   mUI->mainAreaSplitter->setSizes({400, 1000});
+
+  mUI->protocolSelector->setModel(mProtocolsModel.get());
 
   mUI->testTable->setModel(mModel.get());
   mUI->testTable->setHorizontalHeader(nullptr);

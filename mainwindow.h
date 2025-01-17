@@ -22,6 +22,7 @@ class MainWindow;
 QT_END_NAMESPACE
 
 class ExercisesModel;
+class ProtocolsModel;
 
 class MainWindow : public QMainWindow
 {
@@ -43,6 +44,7 @@ private slots:
 private:
   std::unique_ptr<Ui::MainWindow> mUI;
   std::unique_ptr<ExercisesModel> mModel;
+  std::unique_ptr<ProtocolsModel> mProtocolsModel;
   P8020Device* mDevice;
 
   // Owned by itself, self-destructs as and when needed.

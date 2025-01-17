@@ -34,6 +34,8 @@ set(PROJECT_SOURCES
         exercisesmodel.cpp
         fitfactorchartview.h
         fitfactorchartview.cpp
+        protocolsmodel.h
+        protocolsmodel.cpp
         sequentialseriesscrollingchartview.h
         sequentialseriesscrollingchartview.cpp
         testworker.h

@@ -1,8 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
 #include "incolata_common.h"
+#include "protocolsmodel.h"
+#include <QMainWindow>
 
 class QChart;
 class QLineSeries;
@@ -54,16 +55,15 @@ private:
                               void* cb_data);
   static void test_callback(const TestNotification* notification,
                             void* cb_data);
-  void startTest(const QString& protocolShortName);
+  void startTest(const QSharedPointer<Protocol> aProtocol);
 
 signals:
-  void triggerTest(TestConfig* const aConfig,
+  void triggerTest(const QSharedPointer<Protocol> aProtocol,
                    const TestCallback aCallback,
                    void* const aCallbackData,
                    const QString& aSpecimen,
                    const QString& aSubject,
-                   const QString& aComment,
-                   const QString& aProtocol);
+                   const QString& aComment);
   void exerciseChanged(uint ex);
   void ffUpdated(const uint& exercise, const double& fitFactor, const double& err);
   void renderRawSample(QString sample);

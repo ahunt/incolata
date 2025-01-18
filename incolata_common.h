@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include "protocol.h"
+
 struct TestConfig;
 struct TestNotification;
 struct P8020PortList;
@@ -23,6 +25,9 @@ typedef void (*TestCallback)(const TestNotification*, void*);
 
 Q_DECLARE_OPAQUE_POINTER(TestCallback);
 Q_DECLARE_METATYPE(TestCallback);
+
+Q_DECLARE_OPAQUE_POINTER(Protocol);
+Q_DECLARE_METATYPE(Protocol);
 
 // Must be called once during application startup.
 inline static void

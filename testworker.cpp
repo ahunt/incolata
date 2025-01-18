@@ -1,10 +1,12 @@
 #include "testworker.h"
-#include "libp8020/libp8020.h"
 
 #include <QDate>
 #include <QDebug>
 #include <QDir>
 #include <QFile>
+
+#include "libp8020/libp8020.h"
+#include "protocol.h"
 
 TestWorker::TestWorker(P8020Device* const aDevice, QObject* const aParent)
   : QObject(aParent)
@@ -38,13 +40,12 @@ enquote(const QString& aIn)
 }
 
 void
-TestWorker::runTest(TestConfig* const aTestConfig,
+TestWorker::runTest(const QSharedPointer<Protocol> aProtocol,
                     const TestCallback aCallback,
                     void* const aCallbackData,
                     const QString& aSpecimen,
                     const QString& aSubject,
-                    const QString& aComment,
-                    const QString& aProtocol)
+                    const QString& aComment)
 {
   // Opening the file before running the test is probably unnecessary, but it
   // helps me spot mistakes with the file path or whatever before running a
@@ -62,8 +63,17 @@ TestWorker::runTest(TestConfig* const aTestConfig,
   }
   QTextStream stream(&testLog);
 
+  const TestConfig* testConfig;
+  switch (aProtocol->tag) {
+    case Protocol::BUILTIN_CONFIG:
+      testConfig = aProtocol->builtinConfig;
+      break;
+    case Protocol::BUILTIN_CONFIG_ID:
+      assert(false && "not supported yet - needs to be moved into Protocol");
+      break;
+  }
   P8020TestResult* result =
-    p8020_device_run_test(mDevice, aTestConfig, aCallback, aCallbackData);
+    p8020_device_run_test(mDevice, testConfig, aCallback, aCallbackData);
 
   emit testCompleted();
   if (result == nullptr) {
@@ -88,7 +98,7 @@ TestWorker::runTest(TestConfig* const aTestConfig,
       stream << ",";
     }
     stream << enquote(aComment) << "," << enquote(aSubject) << "," << date
-           << "," << aProtocol << "\n";
+           << "," << aProtocol->id() << "\n";
   }
   testLog.close();
 
@@ -96,7 +106,6 @@ TestWorker::runTest(TestConfig* const aTestConfig,
   // TODO: save to DB?
 
   p8020_test_result_free(result);
-  p8020_test_config_free(aTestConfig);
 }
 
 TestWorker::~TestWorker()

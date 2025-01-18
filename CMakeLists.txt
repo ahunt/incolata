@@ -34,6 +34,8 @@ set(PROJECT_SOURCES
         exercisesmodel.cpp
         fitfactorchartview.h
         fitfactorchartview.cpp
+        protocol.h
+        protocol.cpp
         protocolsmodel.h
         protocolsmodel.cpp
         sequentialseriesscrollingchartview.h
@@ -65,7 +67,7 @@ qt_add_executable(incolata
 qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 
 target_compile_options(${PROJECT_NAME} PRIVATE
-  -Wall -Wextra -Wpedantic -Werror
+  -std=c++20 -Wall -Wextra -Wpedantic -Werror
 )
 
 ExternalProject_Add(

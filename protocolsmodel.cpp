@@ -1,6 +1,6 @@
 #include "protocolsmodel.h"
 
-#include "libp8020/libp8020.h"
+#include "protocol.h"
 
 ProtocolsModel::ProtocolsModel(QObject* aParent)
   : QAbstractListModel(aParent)
@@ -32,4 +32,15 @@ ProtocolsModel::data(const QModelIndex& aIndex, const int aRole) const
   p8020_string_free(name);
 
   return result;
+}
+
+QSharedPointer<Protocol>
+ProtocolsModel::protocol(const int& aIndex) const
+{
+  // This will (obviously) change significantly once custom protocols are
+  // supported.
+  return QSharedPointer<Protocol>(new Protocol{
+    .tag = Protocol::BUILTIN_CONFIG,
+    .builtinConfig = mBuiltinConfigs.configs[aIndex],
+  });
 }

@@ -12,6 +12,7 @@
 #include "config.h"
 #include "exercisesmodel.h"
 #include "libp8020/libp8020.h"
+#include "protocol.h"
 #include "protocolsmodel.h"
 #include "testworker.h"
 
@@ -228,6 +229,10 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
                    &QAbstractButton::pressed,
                    this,
                    &MainWindow::startTestPressed);
+  QObject::connect(mUI->startCustomProtocol,
+                   &QAbstractButton::pressed,
+                   this,
+                   &MainWindow::startTestPressed);
 
   QObject::connect(this,
                    &MainWindow::exerciseChanged,
@@ -278,14 +283,25 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
 }
 
 void
-MainWindow::startTest(const QString& protocolShortName)
+MainWindow::startTest(const QSharedPointer<Protocol> protocol)
 {
   mUI->testControlGroupBox->setEnabled(false);
 
-  const std::string shortNameStdString = protocolShortName.toStdString();
-  assert(shortNameStdString.find_first_of('\0') == std::string::npos && "short name must not contain nulls");
-  TestConfig* config =
-    p8020_test_config_builtin_load(shortNameStdString.c_str());
+  // TODO: move most of this into Protocol.
+  const TestConfig* config;
+  switch (protocol->tag) {
+    case Protocol::BUILTIN_CONFIG:
+      config = protocol->builtinConfig;
+      break;
+    case Protocol::BUILTIN_CONFIG_ID:
+      const std::string shortNameStdString =
+        protocol->builtinConfigID->toStdString();
+      assert(shortNameStdString.find_first_of('\0') == std::string::npos &&
+             "short name must not contain nulls");
+      config = p8020_test_config_builtin_load(shortNameStdString.c_str());
+      break;
+  }
+
   const size_t exerciseCount = p8020_test_config_exercise_count(config);
   QStringList exercises;
   for (size_t i = 0; i < exerciseCount; i++) {
@@ -302,16 +318,15 @@ MainWindow::startTest(const QString& protocolShortName)
   mUI->specimenSampleGraph->wipeData();
   mUI->liveFFGraph->wipeData();
 
-  qInfo() << "Starting test: " << protocolShortName << " ("
-          << exercises.length() << " exercises)";
+  qInfo() << "Starting test: " << protocol->id() << " (" << exercises.length()
+          << " exercises)";
 
-  emit triggerTest(config,
+  emit triggerTest(protocol,
                    &test_callback,
                    this,
                    mUI->specimenSelector->currentText(),
                    mUI->subjectSelector->currentText(),
-                   mUI->commentEntry->text(),
-                   protocolShortName);
+                   mUI->commentEntry->text());
 }
 
 void
@@ -319,11 +334,22 @@ MainWindow::startTestPressed()
 {
   auto sndr(sender());
   if (sndr == mUI->startTest1) {
-    startTest("osha_legacy");
+    startTest(QSharedPointer<Protocol>(new Protocol{
+      .tag = Protocol::BUILTIN_CONFIG_ID,
+      .builtinConfigID = new QString("osha_legacy"),
+    }));
   } else if (sndr == mUI->startTest2) {
-    startTest("crash2.5");
+    startTest(QSharedPointer<Protocol>(new Protocol{
+      .tag = Protocol::BUILTIN_CONFIG_ID,
+      .builtinConfigID = new QString("crash2.5"),
+    }));
   } else if (sndr == mUI->startTest3) {
-    startTest("osha_fast_ffp");
+    startTest(QSharedPointer<Protocol>(new Protocol{
+      .tag = Protocol::BUILTIN_CONFIG_ID,
+      .builtinConfigID = new QString("osha_fast_ffp"),
+    }));
+  } else if (sndr == mUI->startCustomProtocol) {
+    startTest(mProtocolsModel->protocol(mUI->protocolSelector->currentIndex()));
   } else {
     qWarning() << "Bad sender for startExercisesPressed()";
   }

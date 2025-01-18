@@ -1,8 +1,9 @@
 #ifndef TESTWORKER_H
 #define TESTWORKER_H
 
-#include <QObject>
 #include "incolata_common.h"
+#include "protocolsmodel.h"
+#include <QObject>
 
 struct P8020Device;
 
@@ -20,13 +21,12 @@ private:
 public slots:
   // Runs test with testConfig. runTest assumes ownership of testConfig, and
   // will free it if/when needed.
-  void runTest(TestConfig* const aConfig,
+  void runTest(const QSharedPointer<Protocol> aProtocol,
                const TestCallback aCallback,
                void* const aCallbackData,
                const QString& aSpecimen,
                const QString& aSubject,
-               const QString& aComment,
-               const QString& aProtocol);
+               const QString& aComment);
 
 signals:
   void testCompleted();

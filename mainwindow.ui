@@ -216,7 +216,7 @@
            </item>
            <item>
             <widget class="QLineEdit" name="commentEntry">
-             <property name="statusTip">
+             <property name="toolTip">
               <string>Enter comments, which will be saved along with the test results.</string>
              </property>
              <property name="placeholderText">

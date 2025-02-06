@@ -283,7 +283,7 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
 }
 
 void
-MainWindow::startTest(const QSharedPointer<Protocol> protocol)
+MainWindow::startTest(QSharedPointer<Protocol> protocol)
 {
   mUI->testControlGroupBox->setEnabled(false);
 
@@ -299,6 +299,10 @@ MainWindow::startTest(const QSharedPointer<Protocol> protocol)
       assert(shortNameStdString.find_first_of('\0') == std::string::npos &&
              "short name must not contain nulls");
       config = p8020_test_config_builtin_load(shortNameStdString.c_str());
+      protocol.reset(new Protocol{
+        .tag = Protocol::BUILTIN_CONFIG,
+        .builtinConfig = config,
+      });
       break;
   }
 

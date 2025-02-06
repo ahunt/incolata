@@ -55,7 +55,7 @@ private:
                               void* cb_data);
   static void test_callback(const TestNotification* notification,
                             void* cb_data);
-  void startTest(const QSharedPointer<Protocol> aProtocol);
+  void startTest(QSharedPointer<Protocol> aProtocol);
 
 signals:
   void triggerTest(const QSharedPointer<Protocol> aProtocol,

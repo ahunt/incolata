@@ -20,9 +20,9 @@ Protocol::id() const
 {
   switch (tag) {
     case Protocol::BUILTIN_CONFIG: {
-      char* const short_name = p8020_test_config_short_name(builtinConfig);
-      const QString result = short_name;
-      p8020_string_free(short_name);
+      char* const id = p8020_test_config_id(builtinConfig);
+      const QString result = id;
+      p8020_string_free(id);
       return result;
     }
     case Protocol::BUILTIN_CONFIG_ID:

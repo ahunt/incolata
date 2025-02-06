@@ -23,12 +23,12 @@ ProtocolsModel::data(const QModelIndex& aIndex, const int aRole) const
 
   const TestConfig* const config = mBuiltinConfigs.configs[aIndex.row()];
 
-  char* const short_name = p8020_test_config_short_name(config);
+  char* const id = p8020_test_config_id(config);
   char* const name = p8020_test_config_name(config);
 
-  QString result = QString("%2 [%1]").arg(short_name, name);
+  QString result = QString("%2 [%1]").arg(id, name);
 
-  p8020_string_free(short_name);
+  p8020_string_free(id);
   p8020_string_free(name);
 
   return result;

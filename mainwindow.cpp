@@ -177,6 +177,11 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
 
   mUI->protocolSelector->setModel(mProtocolsModel.get());
 
+  // https://github.com/ahunt/incolata/issues/14 - Qt makes the dropdown too
+  // narrow, the workaround is to set a min width. 800 was picked arbitrarily,
+  // a dynamic calculation might be better but this works well enough for me.
+  mUI->protocolSelector->view()->setMinimumWidth(800);
+
   mUI->testTable->setModel(mModel.get());
   mUI->testTable->setHorizontalHeader(nullptr);
   mUI->testTable->setColumnWidth(0, 20);

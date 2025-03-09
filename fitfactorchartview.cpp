@@ -17,11 +17,7 @@ FitFactorChartView::FitFactorChartView(QWidget* const parent)
 
   mXAxis->setLabelFormat("%d");
   mXAxis->setTickType(QValueAxis::TicksDynamic);
-  // Only label every second tick for space reasons.
-  // TODO: consider making this dynamic depending on available width?
-  mXAxis->setTickInterval(2);
-  mXAxis->setTickAnchor(1);
-  mXAxis->setMinorTickCount(1);
+  mXAxis->setTickInterval(1);
 
   mYAxis->setLabelFormat("%d");
   mYAxis->setMax(1000);

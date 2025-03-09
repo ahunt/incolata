@@ -139,6 +139,7 @@ SequentialSeriesScrollingChartView::wipeData()
     delete series;
   }
   mSeriesList.clear();
+  refreshXRange();
 }
 
 void

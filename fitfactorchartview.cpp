@@ -62,9 +62,7 @@ FitFactorChartView::wipeData()
 void
 FitFactorChartView::refreshExerciseRange()
 {
-  // 0 is deliberately included to provide an empty margin. (I'm not entirely
-  // convinced that this is the best UX yet.)
-  mXAxis->setRange(0, mExerciseCount);
+  mXAxis->setRange(0.5, mExerciseCount + 0.5);
 }
 
 void

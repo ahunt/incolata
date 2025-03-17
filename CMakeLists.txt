@@ -32,6 +32,9 @@ set(PROJECT_SOURCES
         connectiondialog.ui
         exercisesmodel.h
         exercisesmodel.cpp
+        exerciserowwidget.h
+        exerciserowwidget.cpp
+        exerciserowwidget.ui
         fitfactorchartview.h
         fitfactorchartview.cpp
         protocol.h

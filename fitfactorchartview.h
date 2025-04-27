@@ -21,14 +21,16 @@ public:
   void wipeData();
 
 public slots:
-  void addDatapoint(const size_t& exercise, const double& ff);
+  void addDatapoint(const size_t& deviceIndex,
+                    const size_t& exercise,
+                    const double& ff);
 
 private:
   qsizetype mExerciseCount;
   qreal mMaxFFSeen;
 
   // Owned by QChartView.chart().
-  QLineSeries* const mSeries;
+  std::vector<QLineSeries*> const mSeriess;
   // Owned by QChartView.chart().
   QValueAxis* const mXAxis;
   // Owned by QChartView.chart().

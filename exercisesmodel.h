@@ -18,7 +18,7 @@ public:
 
 public slots:
   void updateCurrentExercise(const uint aExercise);
-  void updateFF(const uint aExercise, const double aFitFactor, double aErr);
+  void updateFF(const size_t& aDeviceIndex, const size_t& aExercise, const double& aFitFactor, const double& aErr);
   void renderInterimFF(uint aExercise, double aFitFactor);
 
 private:

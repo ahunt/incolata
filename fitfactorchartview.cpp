@@ -8,7 +8,7 @@ FitFactorChartView::FitFactorChartView(QWidget* const parent)
   : QChartView(parent)
   , mExerciseCount(8)
   , mMaxFFSeen(0)
-  , mSeries(new QLineSeries())
+  , mSeriess(2)
   , mXAxis(new QValueAxis())
   , mYAxis(new QLogValueAxis())
 {
@@ -24,13 +24,16 @@ FitFactorChartView::FitFactorChartView(QWidget* const parent)
   mYAxis->setBase(10.0);
   mYAxis->setMinorTickCount(-1);
 
-  chart()->addSeries(mSeries);
+  chart()->addSeries(mSeriess[0]);
+  chart()->addSeries(mSeriess[1]);
   chart()->addAxis(mXAxis, Qt::AlignBottom);
   chart()->addAxis(mYAxis, Qt::AlignLeft);
 
-  mSeries->setPointsVisible(true);
-  mSeries->attachAxis(mXAxis);
-  mSeries->attachAxis(mYAxis);
+  for (size_t i = 0; i < 2; i++) {
+    mSeriess[i]->setPointsVisible(true);
+    mSeriess[i]->attachAxis(mXAxis);
+    mSeriess[i]->attachAxis(mYAxis);
+  }
 
   chart()->setMargins(QMargins(5,5,5,5));
 
@@ -48,7 +51,8 @@ FitFactorChartView::setExerciseCount(const qsizetype& count)
 void
 FitFactorChartView::wipeData()
 {
-  mSeries->removePoints(0, mSeries->count());
+  mSeriess[0]->removePoints(0, mSeriess[0]->count());
+  mSeriess[1]->removePoints(0, mSeriess[1]->count());
   mMaxFFSeen = 0;
   // Do not reset y-axis max: there's no point, and there's a non-zero
   // probability that this test will have the same max as the last test (e.g. if
@@ -81,14 +85,15 @@ FitFactorChartView::refreshBackground()
 }
 
 void
-FitFactorChartView::addDatapoint(const size_t& exercise,
+FitFactorChartView::addDatapoint(const size_t& deviceIndex,
+                                 const size_t& exercise,
                                  const double& fitFactor)
 {
   assert(exercise <
            static_cast<size_t>(std::numeric_limits<qsizetype>::max()) + 1 &&
          "sorry, FTL doesn't support that many exercises");
 
-  mSeries->append(QPoint(exercise + 1, fitFactor));
+  mSeriess[deviceIndex]->append(QPoint(exercise + 1, fitFactor));
 
   // Round up to the next whole log as that seems easiest to read.
   mMaxFFSeen = std::max(mMaxFFSeen, fitFactor);

@@ -65,7 +65,7 @@ signals:
                    const QString& aSubject,
                    const QString& aComment);
   void exerciseChanged(uint ex);
-  void ffUpdated(const uint& exercise, const double& fitFactor, const double& err);
+  void ffUpdated(const size_t& aDeviceIndex, const size_t& aExercise, const double& aFitFactor, const double& aErr);
   void renderRawSample(QString sample);
   void receivedRawSample(double sample);
   void receivedSample(SampleType sampleType, size_t exercise, double value);

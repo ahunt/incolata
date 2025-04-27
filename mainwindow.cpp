@@ -67,7 +67,8 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
       const size_t ex = notification->exercise_result._0;
       const double ff = notification->exercise_result._1;
       const double err = notification->exercise_result._2;
-      emit mw->ffUpdated(ex, ff, err);
+      // TODO: set correct device index
+      emit mw->ffUpdated(0, ex, ff, err);
       break;
     };
     case TestNotification::Tag::Sample: {

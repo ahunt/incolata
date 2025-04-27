@@ -70,10 +70,14 @@ ExercisesModel::updateCurrentExercise(const uint aExercise)
 }
 
 void
-ExercisesModel::updateFF(const uint aExercise,
-                         const double aFitFactor,
-                         const double aErr)
+ExercisesModel::updateFF(const size_t& deviceIndex,
+			 const size_t& aExercise,
+                         const double& aFitFactor,
+                         const double& aErr)
 {
+  // TODO: handle deviceIndex.
+  (void) deviceIndex;
+
   mFitFactors[aExercise] = aFitFactor;
   mErrs[aExercise] = aErr;
   emit dataChanged(index(aExercise, 0),

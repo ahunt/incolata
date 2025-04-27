@@ -94,7 +94,7 @@ struct PortInfo
   QString mID;
   QString mDisplayName;
 
-  auto operator<=>(const PortInfo&) const = default;
+  bool operator==(const PortInfo&) const = default;
 };
 
 Q_DECLARE_METATYPE(PortInfo);

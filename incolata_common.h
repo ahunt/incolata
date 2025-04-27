@@ -7,7 +7,6 @@
 
 struct TestConfig;
 struct TestNotification;
-struct P8020PortList;
 
 // TODO: wrap TestConfig* and P8020PortList* in QObjects with RAII instead. This
 // is necessary to avoid the risk of leaks and crashes (the latter if a signal
@@ -17,9 +16,6 @@ struct P8020PortList;
 // versions it's needed for)
 Q_DECLARE_OPAQUE_POINTER(TestConfig*);
 Q_DECLARE_METATYPE(TestConfig*);
-
-Q_DECLARE_OPAQUE_POINTER(P8020PortList*);
-Q_DECLARE_METATYPE(P8020PortList*);
 
 typedef void (*TestCallback)(const TestNotification*, void*);
 

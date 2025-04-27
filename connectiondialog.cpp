@@ -49,83 +49,49 @@ ConnectionDialog::doEmitFinishedSignals(const int result)
 
 PortListModel::PortListModel(QObject* aParent)
   : QAbstractListModel(aParent)
-  , mPorts(nullptr)
+  , mPorts()
 {
 }
 
-PortListModel::~PortListModel()
-{
-  if (this->mPorts != nullptr) {
-    p8020_port_list_free(this->mPorts);
-    this->mPorts = nullptr;
-  }
-}
+PortListModel::~PortListModel() {}
+
 int
 PortListModel::rowCount(const QModelIndex&) const
 {
-  if (this->mPorts == nullptr) {
-    return 0;
-  }
-  int i = p8020_port_list_count(this->mPorts);
-  return i;
+  return mPorts.count();
 }
 
 void
-PortListModel::updatePorts(P8020PortList* aPorts)
+PortListModel::updatePorts(const PortMap& aPorts)
 {
-  beginResetModel();
-  if (this->mPorts != nullptr) {
-    p8020_port_list_free(this->mPorts);
+  if (mPorts == aPorts) {
+    // Avoid resetting the model if at all possible, as this resets the user's
+    // selection.
+    return;
   }
+
+  beginResetModel();
   this->mPorts = aPorts;
   endResetModel();
 }
 
 QVariant
-PortListModel::data(const QModelIndex& index, int role) const
+PortListModel::data(const QModelIndex& aIndex, const int aRole) const
 {
-  switch (role) {
+  switch (aRole) {
     case Qt::DisplayRole:
       break;
     default:
       return QVariant();
   }
 
-  char* const name = p8020_port_list_port_name(this->mPorts, index.row());
-
-  QString result;
-  if (p8020_port_list_port_type(this->mPorts, index.row()) ==
-      P8020PortType::Usb) {
-    P8020UsbPortInfo* info =
-      p8020_port_list_usb_port_info(this->mPorts, index.row());
-    assert(info && "p8020_port_list_usb_port_info is expected to return "
-                   "non-NULL result for P8020PortType::Usb");
-
-    if (info->product) {
-      result = QString(info->product) + " <…" + QString(info->serial_number).right(6) + ">";
-    } else {
-      result = QString("USB Device #") + QString(info->serial_number);
-    }
-    if (info->manufacturer) {
-      result += " (" + QString(info->manufacturer) + ")";
-    }
-    result += " [" + QString(name) + "]";
-    p8020_usb_port_info_free(info);
-  } else {
-    result = QString(name);
-  }
-
-  p8020_string_free(name);
-  return result;
+  return mPorts.values()[aIndex.row()].mDisplayName;
 }
 
 QString
-PortListModel::deviceAtIndex(const size_t index)
+PortListModel::deviceAtIndex(const size_t& aIndex)
 {
-  char* const name = p8020_port_list_port_name(this->mPorts, index);
-  QString result = QString(name);
-  p8020_string_free(name);
-  return result;
+  return mPorts.values()[aIndex].mID;
 }
 
 PortLoaderThread::PortLoaderThread(QObject* aParent)
@@ -135,6 +101,18 @@ PortLoaderThread::PortLoaderThread(QObject* aParent)
   connect(this, &QThread::finished, this, &QThread::deleteLater);
 }
 
+PortMap
+transformPorts(const P8020PortList* const aPorts)
+{
+  PortMap out;
+  size_t portCount = p8020_port_list_count(aPorts);
+  for (size_t i = 0; i < portCount; i++) {
+    PortInfo info(aPorts, i);
+    out[info.mID] = info;
+  }
+  return out;
+}
+
 void
 PortLoaderThread::run()
 {
@@ -142,9 +120,11 @@ PortLoaderThread::run()
     if (mExit) {
       break;
     }
-    P8020PortList* const ports = p8020_ports_list(true);
+    P8020PortList* const rawPorts = p8020_ports_list(true);
+    PortMap ports = transformPorts(rawPorts);
+    p8020_port_list_free(rawPorts);
+
     if (mExit) {
-      p8020_port_list_free(ports);
       break;
     }
     emit portsReceived(ports);
@@ -152,7 +132,9 @@ PortLoaderThread::run()
   }
 }
 
-PortInfo::PortInfo(const P8020PortList* const aPorts, const int aIndex)
+PortInfo::PortInfo() {}
+
+PortInfo::PortInfo(const P8020PortList* const aPorts, const size_t& aIndex)
 {
   char* const name = p8020_port_list_port_name(aPorts, aIndex);
   this->mID = QString(name);

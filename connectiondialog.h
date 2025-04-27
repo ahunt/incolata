@@ -15,6 +15,12 @@ namespace Ui {
 
 class PortLoaderThread;
 class PortListModel;
+class PortInfo;
+struct P8020PortList;
+
+// PortMap is a map of port ID to PortInfo. QMap is used to ensure stable
+// ordering for display purposes.
+typedef QMap<QString, PortInfo> PortMap;
 
 class ConnectionDialog : public QDialog
 {
@@ -45,16 +51,16 @@ public:
   explicit PortListModel(QObject* parent = nullptr);
   ~PortListModel();
 
-  int rowCount(const QModelIndex& parent) const;
-  QVariant data(const QModelIndex& index, int role) const;
+  int rowCount(const QModelIndex&) const;
+  QVariant data(const QModelIndex&, int) const;
 
-  QString deviceAtIndex(const size_t index);
+  QString deviceAtIndex(const size_t&);
 
 public slots:
-  void updatePorts(P8020PortList* const);
+  void updatePorts(const PortMap&);
 
 private:
-  P8020PortList* mPorts;
+  PortMap mPorts;
 };
 
 // PortLoaderThread refreshes ports in the background.
@@ -71,12 +77,13 @@ public:
   volatile bool mExit;
 
 signals:
-  void portsReceived(P8020PortList* const);
+  void portsReceived(const PortMap&);
 };
 
 struct PortInfo
 {
-  PortInfo(const P8020PortList* const, const int);
+  PortInfo();
+  PortInfo(const P8020PortList* const, const size_t&);
 
   // Corresponds to path on *nix.
   QString mID;

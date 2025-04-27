@@ -16,12 +16,6 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="maximumSize">
-   <size>
-    <width>419</width>
-    <height>208</height>
-   </size>
-  </property>
   <property name="windowTitle">
    <string>Incolata: Connect Device</string>
   </property>
@@ -119,9 +113,9 @@
    <item>
     <layout class="QVBoxLayout" name="deviceLayout">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="device0Label">
        <property name="text">
-        <string>**Device:**</string>
+        <string>**Device 1:**</string>
        </property>
        <property name="textFormat">
         <enum>Qt::MarkdownText</enum>
@@ -129,7 +123,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="deviceComboBox">
+      <widget class="QComboBox" name="device0ComboBox">
        <property name="minimumSize">
         <size>
          <width>600</width>
@@ -137,6 +131,21 @@
         </size>
        </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="device1Label">
+       <property name="font">
+        <font>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Device 2 (optional): seal-integrity</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="device1ComboBox"/>
      </item>
     </layout>
    </item>

@@ -37,10 +37,12 @@ private:
   std::unique_ptr<Ui::ConnectionDialog> mUI;
   // Owned by itself, self-destructs as and when needed.
   PortLoaderThread* mPortLoaderThread;
-  PortListModel* mModel;
+  PortListModel* mModel0;
+  PortListModel* mModel1;
 
 private slots:
   void doEmitFinishedSignals(const int result);
+  void portsCountUpdated(const int aCount);
 };
 
 class PortListModel : public QAbstractListModel
@@ -48,18 +50,20 @@ class PortListModel : public QAbstractListModel
   Q_OBJECT
 
 public:
-  explicit PortListModel(QObject* parent = nullptr);
+  explicit PortListModel(QObject* parent = nullptr,
+                         bool aIsSecondDevice = false);
   ~PortListModel();
 
   int rowCount(const QModelIndex&) const;
   QVariant data(const QModelIndex&, int) const;
 
-  QString deviceAtIndex(const size_t&);
+  std::optional<QString> deviceAtIndex(const size_t&) const;
 
 public slots:
   void updatePorts(const PortMap&);
 
 private:
+  bool mIsSecondDevice;
   PortMap mPorts;
 };
 
@@ -78,6 +82,7 @@ public:
 
 signals:
   void portsReceived(const PortMap&);
+  void portsCountUpdated(const size_t);
 };
 
 struct PortInfo

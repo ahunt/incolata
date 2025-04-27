@@ -11,7 +11,8 @@ ConnectionDialog::ConnectionDialog(QWidget* aParent)
   : QDialog(aParent)
   , mUI(new Ui::ConnectionDialog)
   , mPortLoaderThread(new PortLoaderThread)
-  , mModel(new PortListModel(this))
+  , mModel0(new PortListModel(this, /* aIsSecondDevice = */ false))
+  , mModel1(new PortListModel(this, /* aIsSecondDevice = */ true))
 {
   mUI->setupUi(this);
 
@@ -21,16 +22,26 @@ ConnectionDialog::ConnectionDialog(QWidget* aParent)
   mUI->testWarningIcon->setPixmap(
     QIcon::fromTheme("dialog-warning").pixmap(QSize(32, 32)));
 
-  mUI->deviceComboBox->setModel(mModel);
+  mUI->device0ComboBox->setModel(mModel0);
+  mUI->device1ComboBox->setModel(mModel1);
 
   connect(
     this, &QDialog::finished, this, &ConnectionDialog::doEmitFinishedSignals);
 
   connect(mPortLoaderThread,
           &PortLoaderThread::portsReceived,
-          mModel,
+          mModel0,
+          &PortListModel::updatePorts);
+  connect(mPortLoaderThread,
+          &PortLoaderThread::portsReceived,
+          mModel1,
           &PortListModel::updatePorts);
   mPortLoaderThread->start();
+
+  connect(mPortLoaderThread,
+          &PortLoaderThread::portsCountUpdated,
+          this,
+          &ConnectionDialog::portsCountUpdated);
 }
 
 ConnectionDialog::~ConnectionDialog() {}
@@ -42,13 +53,23 @@ ConnectionDialog::doEmitFinishedSignals(const int result)
   // appear.
   mPortLoaderThread->mExit = true;
   if (result == QDialog::Accepted) {
-    auto device = mModel->deviceAtIndex(mUI->deviceComboBox->currentIndex());
-    emit requestedConnectionToDevice(device);
+    auto device0 = mModel0->deviceAtIndex(mUI->device0ComboBox->currentIndex());
+    assert(device0.has_value() && "Device 0 must always be valid");
+
+    // TODO: check for device 1 too.
+    emit requestedConnectionToDevice(device0.value());
   }
 }
 
-PortListModel::PortListModel(QObject* aParent)
+void
+ConnectionDialog::portsCountUpdated(const int aCount)
+{
+  mUI->device1ComboBox->setEnabled(aCount > 1);
+}
+
+PortListModel::PortListModel(QObject* aParent, bool aIsSecondDevice)
   : QAbstractListModel(aParent)
+  , mIsSecondDevice(aIsSecondDevice)
   , mPorts()
 {
 }
@@ -58,7 +79,11 @@ PortListModel::~PortListModel() {}
 int
 PortListModel::rowCount(const QModelIndex&) const
 {
-  return mPorts.count();
+  const size_t count = mPorts.count();
+  if (mIsSecondDevice) {
+    return count + 1;
+  }
+  return count;
 }
 
 void
@@ -85,12 +110,27 @@ PortListModel::data(const QModelIndex& aIndex, const int aRole) const
       return QVariant();
   }
 
-  return mPorts.values()[aIndex.row()].mDisplayName;
+  size_t row = aIndex.row();
+  if (mIsSecondDevice) {
+    if (row == 0) {
+      return "<Not Selected>";
+    }
+    row--;
+  }
+
+  return mPorts.values()[row].mDisplayName;
 }
 
-QString
-PortListModel::deviceAtIndex(const size_t& aIndex)
+std::optional<QString>
+PortListModel::deviceAtIndex(const size_t& aIndex) const
 {
+  size_t row = aIndex;
+  if (mIsSecondDevice) {
+    if (row == 0) {
+      return std::nullopt;
+    }
+    row--;
+  }
   return mPorts.values()[aIndex].mID;
 }
 
@@ -127,6 +167,7 @@ PortLoaderThread::run()
     if (mExit) {
       break;
     }
+    emit portsCountUpdated(ports.count());
     emit portsReceived(ports);
     msleep(1000);
   }

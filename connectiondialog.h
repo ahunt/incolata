@@ -74,4 +74,17 @@ signals:
   void portsReceived(P8020PortList* const);
 };
 
+struct PortInfo
+{
+  PortInfo(const P8020PortList* const, const int);
+
+  // Corresponds to path on *nix.
+  QString mID;
+  QString mDisplayName;
+
+  auto operator<=>(const PortInfo&) const = default;
+};
+
+Q_DECLARE_METATYPE(PortInfo);
+
 #endif // CONNECTIONDIALOG_H

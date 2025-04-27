@@ -151,3 +151,31 @@ PortLoaderThread::run()
     msleep(1000);
   }
 }
+
+PortInfo::PortInfo(const P8020PortList* const aPorts, const int aIndex)
+{
+  char* const name = p8020_port_list_port_name(aPorts, aIndex);
+  this->mID = QString(name);
+
+  if (p8020_port_list_port_type(aPorts, aIndex) == P8020PortType::Usb) {
+    P8020UsbPortInfo* info = p8020_port_list_usb_port_info(aPorts, aIndex);
+    assert(info && "p8020_port_list_usb_port_info is expected to return "
+                   "non-NULL result for P8020PortType::Usb");
+
+    if (info->product) {
+      this->mDisplayName = QString(info->product) + " <…" +
+                           QString(info->serial_number).right(6) + ">";
+    } else {
+      this->mDisplayName =
+        QString("USB Device #") + QString(info->serial_number);
+    }
+    if (info->manufacturer) {
+      this->mDisplayName += " (" + QString(info->manufacturer) + ")";
+    }
+    this->mDisplayName += " [" + QString(name) + "]";
+    p8020_usb_port_info_free(info);
+  } else {
+    this->mDisplayName = QString(name);
+  }
+  p8020_string_free(name);
+}

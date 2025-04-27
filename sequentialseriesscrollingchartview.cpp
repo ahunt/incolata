@@ -12,18 +12,20 @@ SequentialSeriesScrollingChartView::SequentialSeriesScrollingChartView(
   // we only grab its pointer for convenience.
   , mChart(this->chart())
   , mXAxis(new QValueAxis())
+  , mYAxisLeft(new QValueAxis())
+  , mYAxisRight(new QValueAxis())
   , mFixedXAxis(nullptr)
-  , mSeriesList()
+  , mSeriesLists(2)
   , mYAxisScalingMode(YAxisScalingMode::ZeroAnchored)
   , mSeriesSpacing(0)
-  , mMinYSeen(std::numeric_limits<double>::infinity())
-  , mMaxYSeen(0.0)
+  , mMinYSeenLeft(std::numeric_limits<double>::infinity())
+  , mMaxYSeenLeft(0.0)
+  , mMinYSeenRight(std::numeric_limits<double>::infinity())
+  , mMaxYSeenRight(0.0)
 {
-  QValueAxis* const yAxis = new QValueAxis();
-  mYAxis = yAxis;
-
   mXAxis->setLabelFormat("%d");
-  yAxis->setLabelFormat("%d");
+  static_cast<QValueAxis*>(mYAxisLeft)->setLabelFormat("%d");
+  static_cast<QValueAxis*>(mYAxisRight)->setLabelFormat("%d");
 
   mXAxis->setTickType(QValueAxis::TicksDynamic);
   mXAxis->setTickAnchor(0);
@@ -31,7 +33,8 @@ SequentialSeriesScrollingChartView::SequentialSeriesScrollingChartView(
 
   mChart->legend()->hide();
   mChart->addAxis(mXAxis, Qt::AlignBottom);
-  mChart->addAxis(mYAxis, Qt::AlignLeft);
+  mChart->addAxis(mYAxisLeft, Qt::AlignLeft);
+  mChart->addAxis(mYAxisRight, Qt::AlignRight);
 }
 
 QValueAxis*
@@ -41,28 +44,48 @@ SequentialSeriesScrollingChartView::xAxis() const
 }
 
 QAbstractAxis*
-SequentialSeriesScrollingChartView::yAxis() const
+SequentialSeriesScrollingChartView::yAxisLeft() const
 {
-  return mYAxis;
+  return mYAxisLeft;
+}
+
+QAbstractAxis*
+SequentialSeriesScrollingChartView::yAxisRight() const
+{
+  return mYAxisRight;
 }
 
 void
 SequentialSeriesScrollingChartView::enableLogYAxis()
 {
-  assert(mSeriesList.size() == 0 &&
+  assert(mSeriesLists[0].size() == 0 &&
+         "enableLogYAxis() must only be called prior to adding datapoints");
+  assert(mSeriesLists[1].size() == 0 &&
          "enableLogYAxis() must only be called prior to adding datapoints");
 
-  mChart->removeAxis(mYAxis);
-  delete mYAxis;
-  QLogValueAxis* const axis = new QLogValueAxis();
-  mYAxis = axis;
+  mChart->removeAxis(mYAxisLeft);
+  delete mYAxisLeft;
+  // Use a temporary value with type QLogValueAxis as we're calling
+  // QLogValueAxis-specific methods below.
+  QLogValueAxis* yAxisLeft = new QLogValueAxis();
+  mYAxisLeft = yAxisLeft;
+  mChart->removeAxis(mYAxisRight);
+  delete mYAxisRight;
+  // See comment on yAxisLeft;
+  QLogValueAxis* yAxisRight = new QLogValueAxis();
+  mYAxisRight = yAxisRight;
 
-  mChart->addAxis(mYAxis, Qt::AlignLeft);
+  mChart->addAxis(yAxisLeft, Qt::AlignLeft);
+  mChart->addAxis(yAxisRight, Qt::AlignRight);
 
-  axis->setLabelFormat("%d");
-  axis->setBase(10.0);
-  axis->setMinorTickCount(-1);
-  axis->setMax(1000);
+  yAxisLeft->setLabelFormat("%d");
+  yAxisLeft->setBase(10.0);
+  yAxisLeft->setMinorTickCount(-1);
+  yAxisLeft->setMax(1000);
+  yAxisRight->setLabelFormat("%d");
+  yAxisRight->setBase(10.0);
+  yAxisRight->setMinorTickCount(-1);
+  yAxisRight->setMax(1000);
 }
 
 void
@@ -83,7 +106,7 @@ SequentialSeriesScrollingChartView::enableFixedXAxis()
 void
 SequentialSeriesScrollingChartView::setSeriesSpacing(const size_t& spacing)
 {
-  assert(mSeriesList.size() == 0 &&
+  assert(mSeriesLists.size() == 0 &&
          "setSeriesSpacing() must only be called prior to adding datapoints");
   mSeriesSpacing = spacing;
 }
@@ -92,7 +115,9 @@ void
 SequentialSeriesScrollingChartView::setYAxisScalingMode(
   const YAxisScalingMode& mode)
 {
-  assert(dynamic_cast<QValueAxis*>(mYAxis) &&
+  assert(dynamic_cast<QValueAxis*>(mYAxisLeft) &&
+         "setYAxisScalingMode must not be called for log Y axes");
+  assert(dynamic_cast<QValueAxis*>(mYAxisRight) &&
          "setYAxisScalingMode must not be called for log Y axes");
   mYAxisScalingMode = mode;
 }
@@ -113,9 +138,9 @@ SequentialSeriesScrollingChartView::setXRange(const qsizetype& range)
 void
 SequentialSeriesScrollingChartView::refreshXRange()
 {
-  const auto maxX = mSeriesList.size() > 0
+  const auto maxX = mSeriesLists[0].size() > 0
                       ? std::optional<qsizetype>(static_cast<qsizetype>(
-                          mSeriesList.back()->points().back().rx()))
+                          mSeriesLists[0].back()->points().back().rx()))
                       : std::nullopt;
   if (!mFixedXAxis) {
     qsizetype ceil = mXRange;
@@ -134,31 +159,36 @@ SequentialSeriesScrollingChartView::refreshXRange()
 void
 SequentialSeriesScrollingChartView::wipeData()
 {
-  for (QLineSeries* series : mSeriesList) {
-    mChart->removeSeries(series);
-    delete series;
+  for (auto seriesList : mSeriesLists) {
+    for (QLineSeries* series : seriesList) {
+      mChart->removeSeries(series);
+      delete series;
+    }
+    seriesList.clear();
   }
-  mSeriesList.clear();
   refreshXRange();
 }
 
 void
-SequentialSeriesScrollingChartView::addDatapoint(const size_t& seriesIndex,
+SequentialSeriesScrollingChartView::addDatapoint(const size_t& deviceIndex,
+                                                 const size_t& seriesIndex,
                                                  const qreal& value)
 {
-  assert((seriesIndex + 1 >= mSeriesList.size()) &&
+  assert(deviceIndex < 2 && "only (up to) 2 devices are supported");
+  assert((seriesIndex + 1 >= mSeriesLists[deviceIndex].size()) &&
          "must not append to prior (already completed) series");
 
   const QLineSeries* const lastPopulatedSeries =
-    mSeriesList.size() > 0 ? mSeriesList.back() : nullptr;
+    mSeriesLists[deviceIndex].size() > 0 ? mSeriesLists[deviceIndex].back()
+                                         : nullptr;
 
   QLineSeries* series;
-  while (seriesIndex >= mSeriesList.size()) {
+  while (seriesIndex >= mSeriesLists[deviceIndex].size()) {
     // Add in a loop, because the caller could have skipped one or more
     // intermediate series. We could make the vector sparse... (which is likely
     // to be confusing to manage), or we can just add some empty series which
     // makes things easier to reason about.
-    series = mSeriesList.emplace_back(new QLineSeries());
+    series = mSeriesLists[deviceIndex].emplace_back(new QLineSeries());
 
     // Ordering is significant: Qt complains (and ignores the request) if
     // you try to attach an axis to a new series, if that axis is already
@@ -167,9 +197,9 @@ SequentialSeriesScrollingChartView::addDatapoint(const size_t& seriesIndex,
     // addSeries(foo), before you foo->attachAxis.)
     mChart->addSeries(series);
     series->attachAxis(mXAxis);
-    series->attachAxis(mYAxis);
+    series->attachAxis(deviceIndex == 0 ? mYAxisLeft : mYAxisRight);
   }
-  series = mSeriesList.back();
+  series = mSeriesLists[deviceIndex].back();
 
   qsizetype x;
 
@@ -189,32 +219,39 @@ SequentialSeriesScrollingChartView::addDatapoint(const size_t& seriesIndex,
 
   // Using something functional to find the min/max Y values would certainly be
   // more elegant, but this is faster (at the cost of 16 bytes).
-  mMinYSeen = std::min(mMinYSeen, value);
-  mMaxYSeen = std::max(mMaxYSeen, value);
+  qreal minYSeen, maxYSeen;
+  if (deviceIndex == 0) {
+    minYSeen = mMinYSeenLeft = std::min(mMinYSeenLeft, value);
+    maxYSeen = mMaxYSeenLeft = std::max(mMaxYSeenLeft, value);
+  } else {
+    minYSeen = mMinYSeenRight = std::min(mMinYSeenRight, value);
+    maxYSeen = mMaxYSeenRight = std::max(mMaxYSeenRight, value);
+  }
 
-  QLogValueAxis* const logYAxis = dynamic_cast<QLogValueAxis*>(mYAxis);
+  QAbstractAxis* const yAxis = deviceIndex == 0 ? mYAxisLeft : mYAxisRight;
+  QLogValueAxis* const logYAxis = dynamic_cast<QLogValueAxis*>(yAxis);
   if (logYAxis == nullptr) {
     switch (mYAxisScalingMode) {
       case ZeroAnchored: {
         // TODO: configure making this configurable
-        const qsizetype max = static_cast<qsizetype>(mMaxYSeen) / 20 * 20 + 20;
-        mYAxis->setRange(0.0, static_cast<qreal>(max));
+        const qsizetype max = static_cast<qsizetype>(maxYSeen) / 20 * 20 + 20;
+        yAxis->setRange(0.0, static_cast<qreal>(max));
         break;
       }
       case Floating: {
         // TODO: consider making margins configurable.
         const qsizetype min =
           std::max(static_cast<qsizetype>(0),
-                   static_cast<qsizetype>(mMinYSeen) / 100 * 100 - 100);
+                   static_cast<qsizetype>(minYSeen) / 100 * 100 - 100);
         const qsizetype max =
-          static_cast<qsizetype>(mMaxYSeen) / 100 * 100 + 200;
-        mYAxis->setRange(static_cast<qreal>(min), static_cast<qreal>(max));
+          static_cast<qsizetype>(maxYSeen) / 100 * 100 + 200;
+        yAxis->setRange(static_cast<qreal>(min), static_cast<qreal>(max));
         break;
       }
     }
   } else {
     // Round up to the next whole log as that seems easiest to read.
-    auto maxLog = std::log10(mMaxYSeen);
+    auto maxLog = std::log10(maxYSeen);
     logYAxis->setMax(std::pow(10.0, std::max(std::floor(maxLog) + 1, 3.0)));
   }
 }

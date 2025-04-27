@@ -31,8 +31,10 @@ public:
   Q_PROPERTY(QValueAxis* xAxis MEMBER mXAxis READ default)
   QValueAxis* xAxis() const;
 
-  Q_PROPERTY(QAbstractAxis* yAxis MEMBER mYAxis READ default)
-  QAbstractAxis* yAxis() const;
+  Q_PROPERTY(QAbstractAxis* yAxisLeft MEMBER mYAxisLeft READ default)
+  QAbstractAxis* yAxisLeft() const;
+  Q_PROPERTY(QAbstractAxis* yAxisRight MEMBER mYAxisRight READ default)
+  QAbstractAxis* yAxisRight() const;
 
   // Spacing between each sequential series. All changes must be made prior to
   // adding any datapoints. Defaults to 0, i.e. by default the first point of
@@ -53,7 +55,9 @@ public:
   void setYAxisScalingMode(const YAxisScalingMode& mode);
 
   // It is not permitted to add a datapoint to a previous series.
-  void addDatapoint(const size_t& seriesIndex, const qreal& value);
+  void addDatapoint(const size_t& deviceIndex,
+                    const size_t& seriesIndex,
+                    const qreal& value);
 
   // Wipe all chart data. After this call, it is safe to start adding data from
   // the series with index=0 again.
@@ -67,19 +71,22 @@ private:
   // Owned by mChart.
   QValueAxis* mXAxis;
   // Owned by mChart.
-  QAbstractAxis* mYAxis;
+  QAbstractAxis* mYAxisLeft;
+  // Owned by mChart.
+  QAbstractAxis* mYAxisRight;
   // May be nullptr. Owned by mChart if it exists.
   QValueAxis* mFixedXAxis;
 
   // Each series is owned by mChart.
-  std::vector<QLineSeries*> mSeriesList;
+  // mSeriesLists[0] is device 0, left axis.
+  // mSeriesLists[1] is device 1, right axis.
+  std::vector<std::vector<QLineSeries*>> mSeriesLists;
 
   YAxisScalingMode mYAxisScalingMode;
   size_t mSeriesSpacing;
   qsizetype mXRange;
 
-  qreal mMinYSeen;
-  qreal mMaxYSeen;
+  qreal mMinYSeenLeft, mMaxYSeenLeft, mMinYSeenRight, mMaxYSeenRight;
 
   void refreshXRange();
 };

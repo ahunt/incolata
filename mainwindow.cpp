@@ -99,7 +99,8 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
 void
 MainWindow::processRawSample(double sample)
 {
-  mUI->rawChartView->addDatapoint(0, sample);
+  // TODO: set correct device index.
+  mUI->rawChartView->addDatapoint(0, 0, sample);
 }
 
 void
@@ -107,10 +108,12 @@ MainWindow::processSample(SampleType sampleType, size_t exercise, double value)
 {
   switch (sampleType) {
     case SampleType::AmbientSample:
-      mUI->ambientSampleGraph->addDatapoint(exercise, value);
+      // TODO: set correct device index.
+      mUI->ambientSampleGraph->addDatapoint(0, exercise, value);
       break;
     case SampleType::SpecimenSample:
-      mUI->specimenSampleGraph->addDatapoint(exercise, value);
+      // TODO: set correct device index.
+      mUI->specimenSampleGraph->addDatapoint(0, exercise, value);
       break;
     default:
       // TODO: handle remaining cases.
@@ -121,7 +124,8 @@ MainWindow::processSample(SampleType sampleType, size_t exercise, double value)
 void
 MainWindow::processLiveFF(size_t exercise, size_t, double fit_factor)
 {
-  mUI->liveFFGraph->addDatapoint(exercise, fit_factor);
+  // TODO: set correct device index.
+  mUI->liveFFGraph->addDatapoint(0, exercise, fit_factor);
 }
 
 void
@@ -191,16 +195,19 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   mUI->rawChartView->setXRange(sRawSampleRange);
   mUI->rawChartView->enableFixedXAxis();
   mUI->rawChartView->xAxis()->setTickInterval(30);
-  mUI->rawChartView->yAxis()->setRange(0, 2000);
+  mUI->rawChartView->yAxisLeft()->setRange(0, 2000);
+  mUI->rawChartView->yAxisRight()->setRange(0, 20);
 
   mUI->ambientSampleGraph->setTitle("Ambient Particle Conc. (#/cm³)");
   mUI->ambientSampleGraph->setXRange(sAmbientSampleRange);
   mUI->ambientSampleGraph->setYAxisScalingMode(YAxisScalingMode::Floating);
-  mUI->ambientSampleGraph->yAxis()->setRange(1000, 10000);
+  mUI->ambientSampleGraph->yAxisLeft()->setRange(1000, 10000);
+  mUI->ambientSampleGraph->yAxisRight()->setRange(1000, 10000);
 
   mUI->specimenSampleGraph->setTitle("Specimen Particle Conc. (#/cm³)");
   mUI->specimenSampleGraph->setXRange(sSpecimenSampleRange);
-  mUI->specimenSampleGraph->yAxis()->setRange(0, 20);
+  mUI->specimenSampleGraph->yAxisLeft()->setRange(0, 20);
+  mUI->specimenSampleGraph->yAxisRight()->setRange(0, 2);
 
   mUI->liveFFGraph->setTitle("Live Fit Factor");
   mUI->liveFFGraph->enableLogYAxis();

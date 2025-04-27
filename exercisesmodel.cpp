@@ -5,6 +5,8 @@
 #include <QIcon>
 #include <QLabel>
 
+#include "exerciserowwidget.h"
+
 ExercisesModel::ExercisesModel(QObject* aParent)
   : QAbstractTableModel(aParent)
   , mExercises()
@@ -63,7 +65,7 @@ ExercisesModel::updateCurrentExercise(const uint aExercise)
   mCurrentExercise = aExercise;
   // Include all roles, because many styling-related properties change when
   // switching exercises.
-  emit dataChanged(index(previous, 0), index(aExercise, 2));
+  emit dataChanged(index(previous, 0), index(aExercise, 0));
   refreshCurrentExerciseLabel();
 }
 
@@ -74,8 +76,8 @@ ExercisesModel::updateFF(const uint aExercise,
 {
   mFitFactors[aExercise] = aFitFactor;
   mErrs[aExercise] = aErr;
-  emit dataChanged(index(aExercise, 2),
-                   index(aExercise, 2),
+  emit dataChanged(index(aExercise, 0),
+                   index(aExercise, 0),
                    QList<int>(Qt::DisplayRole, Qt::DecorationRole));
 }
 
@@ -83,8 +85,8 @@ void
 ExercisesModel::renderInterimFF(const uint aExercise, double aFitFactor)
 {
   mInterimFitFactors[aExercise] = aFitFactor;
-  emit dataChanged(index(aExercise, 2),
-                   index(aExercise, 2),
+  emit dataChanged(index(aExercise, 0),
+                   index(aExercise, 0),
                    QList<int>(Qt::DisplayRole, Qt::DecorationRole));
 }
 
@@ -97,71 +99,40 @@ ExercisesModel::rowCount(const QModelIndex&) const
 int
 ExercisesModel::columnCount(const QModelIndex&) const
 {
-  return 3;
+  return 1;
 }
 
 QVariant
 ExercisesModel::data(const QModelIndex& aIndex, const int aRole) const
 {
+  auto row = aIndex.row();
   const bool isCurrentExercise =
-    (aIndex.row() == mCurrentExercise && mFitFactors[mCurrentExercise] < 0);
+    (row == mCurrentExercise && mFitFactors[mCurrentExercise] < 0);
   switch (aRole) {
-    case Qt::DisplayRole:
-      if (aIndex.column() == 1) {
-        return mExercises[aIndex.row()];
-      } else if (aIndex.column() == 2) {
-        double finalFF = mFitFactors[aIndex.row()];
-        double interimFF = mInterimFitFactors[aIndex.row()];
-        // In a spherical world, a valid ff is always >= 1. But it's entirely
-        // possible to achieve < 1 if you try to fool the machine and/or you
-        // have a bad machine.
-        if (finalFF < 0 && interimFF < 0) {
-          return QVariant("");
-        }
-        bool isInterim = finalFF < 0;
-        double ff = isInterim ? interimFF : finalFF;
-
-        QString result;
-        QTextStream s(&result);
-        if (isInterim) {
-          s << "<Interim> ";
-        }
-        if (ff >= 10) {
-          s << QString::number(ff, 'f', 0);
-        } else {
-          s << QString::number(ff, 'f', 1);
-        }
-	if (!isInterim) {
-          s << "±" << QString::number(mErrs[aIndex.row()], 'f', 1);
-        }
-        s << " / " << QString::number(log10(ff), 'f', 2)
-          << QStringLiteral(" log₁₀");
-        return result;
+    case Qt::DisplayRole: {
+      // TODO: adapt this to handle multi-device results.
+      bool isInterim = false;
+      std::vector<std::optional<double>> ffs = {};
+      std::vector<std::optional<double>> ffErrors = {};
+      auto ff0 = mFitFactors[row];
+      auto interimFF0 = mInterimFitFactors[row];
+      if (ff0 >= 0) {
+        ffs.push_back(ff0);
+        ffErrors.push_back(mErrs[row]);
+      } else if (interimFF0 >= 0) {
+        ffs.push_back(interimFF0);
+        isInterim = true;
       }
-      break;
-    case Qt::DecorationRole:
-      // Icon names from
-      // https://specifications.freedesktop.org/icon-naming-spec/latest/
-      if (aIndex.column() == 0 && isCurrentExercise) {
-        return QIcon::fromTheme("media-playback-start");
-      } else if (aIndex.column() == 2) {
-        if (isCurrentExercise && mInterimFitFactors[aIndex.row()] < 0) {
-          return QIcon::fromTheme("system-search");
-        }
-      }
-      break;
-    case Qt::FontRole:
-      if (aIndex.column() == 1 && isCurrentExercise) {
-        QFont font;
-        font.setBold(true);
-        font.setPointSize(font.pointSize() + 2);
-        return font;
-      }
-      break;
-    case Qt::BackgroundRole:
-      if (isCurrentExercise) {
-        return QBrush(QColorConstants::Yellow);
-      }
+      return QVariant::fromValue(ExerciseData{
+        .mTitle =
+          QString("%1. %2").arg(QString::number(row + 1), mExercises[row]),
+        .mFitFactors = ffs,
+        .mFitFactorErrors = ffErrors,
+        .mIsInterim = isInterim,
+        .mIsRecording = isCurrentExercise,
+      });
+    }
+    default:
       break;
   }
   return QVariant();

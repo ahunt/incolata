@@ -10,6 +10,7 @@
 #include <QValueAxis>
 
 #include "config.h"
+#include "exerciserowwidget.h"
 #include "exercisesmodel.h"
 #include "libp8020/libp8020.h"
 #include "protocol.h"
@@ -182,11 +183,8 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   // a dynamic calculation might be better but this works well enough for me.
   mUI->protocolSelector->view()->setMinimumWidth(800);
 
-  mUI->testTable->setModel(mModel.get());
-  mUI->testTable->setHorizontalHeader(nullptr);
-  mUI->testTable->setColumnWidth(0, 20);
-  mUI->testTable->setColumnWidth(1, 200);
-  mUI->testTable->setColumnWidth(2, 240);
+  mUI->exercisesList->setItemDelegate(new ExerciseRowDelegate(this));
+  mUI->exercisesList->setModel(mModel.get());
   mModel->setCurrentExerciseLabel(mUI->currentExerciseLabel);
 
   mUI->rawChartView->setTitle("Raw Particle Conc. (#/cm³)");

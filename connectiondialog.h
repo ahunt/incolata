@@ -15,7 +15,7 @@ namespace Ui {
 
 class PortLoaderThread;
 class PortListModel;
-class PortInfo;
+struct PortInfo;
 struct P8020PortList;
 
 // PortMap is a map of port ID to PortInfo. QMap is used to ensure stable

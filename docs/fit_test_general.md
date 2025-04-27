@@ -128,3 +128,22 @@ https://tsi.com/industrial-manufacturing/learn/respirator-fit-test-protocol-comp
   Jan;7(1):46-53. doi: 10.1080/15459620903373537. PMID: 19904659.
    * "These results are also consistent with OSHA’s conclusion that there is no
      significant difference in EFR and FFR performance in workplace environment".
+* Rafiee, Ata, Laskar, Imranul and Quémerais, Bernadette. "Investigating the
+  field effectiveness of respirators against metal particle exposure in various
+  workplaces: a systematic review" Reviews on Environmental Health, vol. 37, no.
+  2, 2022, pp. 201-210. https://doi.org/10.1515/reveh-2020-0174
+   * Mixed fit-tested and non fit-tested data for FFP, and only uses fit-tested
+     data for EHMR - therefore the results aren't particularly meaningful.
+* Lawrence et al, 2006 (above) contains some data.
+* OSHA Assigned Protection Factors; Final Rule (2006)
+  https://www.osha.gov/laws-regs/federalregister/2006-08-24
+  Table III-4.--Fifth Percentiles of WPFs by Respirator Class.
+   * Underlying data in
+     https://www.regulations.gov/document/OSHA-H049C-2006-0899-0353
+   * More (including 95%ile) in
+     https://www.regulations.gov/document/OSHA-H049C-2006-0899-0584
+     this is just the data from...
+* Nelson, T. J. (1995). The Assigned Protection Factor of 10 for Half-mask
+  Respirators. American Industrial Hygiene Association Journal, 56(7), 717–724.
+  https://doi.org/10.1080/15428119591016755
+  3M copy at: https://multimedia.3m.com/mws/media/219152O/the-apf-of-10-for-half-mask-respirators.pdf

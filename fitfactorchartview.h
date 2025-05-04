@@ -29,7 +29,7 @@ private:
   qsizetype mExerciseCount;
   qreal mMaxFFSeen;
 
-  // Owned by QChartView.chart().
+  // Members are owned by QChartView.chart().
   std::vector<QLineSeries*> const mSeriess;
   // Owned by QChartView.chart().
   QValueAxis* const mXAxis;

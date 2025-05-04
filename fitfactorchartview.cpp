@@ -8,7 +8,7 @@ FitFactorChartView::FitFactorChartView(QWidget* const parent)
   : QChartView(parent)
   , mExerciseCount(8)
   , mMaxFFSeen(0)
-  , mSeriess(2)
+  , mSeriess({new QLineSeries(), new QLineSeries()})
   , mXAxis(new QValueAxis())
   , mYAxis(new QLogValueAxis())
 {

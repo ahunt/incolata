@@ -159,7 +159,7 @@ SequentialSeriesScrollingChartView::refreshXRange()
 void
 SequentialSeriesScrollingChartView::wipeData()
 {
-  for (auto seriesList : mSeriesLists) {
+  for (auto& seriesList : mSeriesLists) {
     for (QLineSeries* series : seriesList) {
       mChart->removeSeries(series);
       delete series;

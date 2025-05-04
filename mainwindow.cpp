@@ -361,7 +361,7 @@ MainWindow::startTestPressed()
   } else if (sndr == mUI->startTest3) {
     startTest(QSharedPointer<Protocol>(new Protocol{
       .tag = Protocol::BUILTIN_CONFIG_ID,
-      .builtinConfigID = new QString("osha_fast_ffp"),
+      .builtinConfigID = new QString("live_mode_1h"),
     }));
   } else if (sndr == mUI->startCustomProtocol) {
     startTest(mProtocolsModel->protocol(mUI->protocolSelector->currentIndex()));

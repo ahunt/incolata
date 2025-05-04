@@ -275,7 +275,7 @@
               <item row="2" column="2">
                <widget class="QPushButton" name="startTest3">
                 <property name="text">
-                 <string>OSHA mod (fast) FFP</string>
+                 <string>Live Mode (1h)</string>
                 </property>
                 <property name="default">
                  <bool>false</bool>

@@ -1,15 +1,43 @@
 # Incolata
 
 This is a very hacky proof of concept, and entirely unvalidated, fit-testing
-application. It's expected to work with any PortaCount 8020 and 8020A, however
-it's only been tested with a single 8020A.
+application.
 
-> [!WARNING]
-> This codebase is extremely messy.
+![Main Window, showing a test in progress](/docs/img/screenshot_main_2025_05_03.png?raw=true "Screenshot of the test window")
 
-![Main Window, showing a test in progress](/docs/img/screenshot_main_2024_12_26.png?raw=true "Screenshot of the test window")
+## Supported
 
-## Setup guide
+* Devices: 8020A, 8020Mgen1. (8020's should also work, but have not been tested.)
+* Protocols: OSHA classic and modified (fast), Crash2.5, ISO, and HSE.
+    * Other protocols can be easily added but (for the time being) require
+      recompilation.
+* Platforms: Linux, MacOS.
+* CSV logs containing per-exercise FFs.
+
+## Planned
+
+* Dual-device support (e.g. concurrent total particle count + leak integrity
+  measurement).
+* 8020Mgen2 support.
+* Raw data logging.
+* Windows support.
+* Custom protocol support (without having to edit sources, followed by
+  recompiling).
+* 8095 support. Its already possible to run tests with an 8095, but this isn't
+  recorded anywhere (ideally logs would be annotated somehow).
+
+### Not planned
+
+* Support for 803X and 804X. There are too few of these in the community to
+  justify the effort (at least for now).
+* Support for non-TSI CPCs, except for perhaps the OpenCPC/OpenAeros if/when it
+  becomees available.
+
+## Docs
+
+* [8020 resources, & hints & tips](docs/8020.md).
+
+## Development guide
 
 ### Linux
 
@@ -18,6 +46,7 @@ it's only been tested with a single 8020A.
 * Rust+Cargo
 * Qt6, Qt6-Charts ('qt6-charts-dev' or equivalent should pull in all the right Qt deps)
 * CMake
+* GCC or other C++ compiler
 
 **Nice-to-have:**
 
@@ -41,6 +70,8 @@ cd build/Debug && ninja
 > configuring and building, modulo submodule init.
 
 #### Static Analysis
+
+(Requires installing clang.)
 
 ```
 scan-build cmake . -B build/analysis

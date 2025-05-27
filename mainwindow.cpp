@@ -29,7 +29,7 @@ MainWindow::device_callback(const P8020DeviceNotification* notification,
   switch (notification->tag) {
     case P8020DeviceNotification::Tag::Sample: {
       const double sample = notification->sample.particle_conc;
-      emit mw->receivedRawSample(sample);
+      emit mw->receivedRawSample(notification->sample.device_id, sample);
       if (sample < 100) {
         emit mw->renderRawSample(QString::number(sample, 'f', 2));
       } else {
@@ -98,10 +98,9 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
 }
 
 void
-MainWindow::processRawSample(double sample)
+MainWindow::processRawSample(const size_t aDeviceIndex, const double aSample)
 {
-  // TODO: set correct device index.
-  mUI->rawChartView->addDatapoint(0, 0, sample);
+  mUI->rawChartView->addDatapoint(aDeviceIndex, /*seriesIndex*/ 0, aSample);
 }
 
 void

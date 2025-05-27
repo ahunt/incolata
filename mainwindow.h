@@ -35,7 +35,7 @@ public:
 
 private slots:
   void startTestPressed();
-  void processRawSample(double sample);
+  void processRawSample(const size_t aDeviceIndex, const double aSample);
   void processSample(SampleType sampleType, size_t exercise, double value);
   void processLiveFF(size_t exercise, size_t index, double fit_factor);
   void subjectOrSpecimenEntryChanged(const QString& aContents);
@@ -67,7 +67,7 @@ signals:
   void exerciseChanged(uint ex);
   void ffUpdated(const size_t& aDeviceIndex, const size_t& aExercise, const double& aFitFactor, const double& aErr);
   void renderRawSample(QString sample);
-  void receivedRawSample(double sample);
+  void receivedRawSample(const size_t aDeviceIndex, const double aSample);
   void receivedSample(SampleType sampleType, size_t exercise, double value);
   void receivedLiveFF(size_t exercise, size_t index, double fit_factor);
   void receivedInterimFF(size_t exercise, double fit_factor);

@@ -64,11 +64,11 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
       break;
     }
     case TestNotification::Tag::ExerciseResult: {
-      const size_t ex = notification->exercise_result._0;
-      const double ff = notification->exercise_result._1;
-      const double err = notification->exercise_result._2;
-      // TODO: set correct device index
-      emit mw->ffUpdated(0, ex, ff, err);
+      const size_t deviceIndex = notification->exercise_result._0;
+      const size_t ex = notification->exercise_result._1;
+      const double ff = notification->exercise_result._2;
+      const double err = notification->exercise_result._3;
+      emit mw->ffUpdated(deviceIndex, ex, ff, err);
       break;
     };
     case TestNotification::Tag::Sample: {
@@ -76,8 +76,10 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
       switch (sample.sample_type) {
         case SampleType::AmbientSample:
         case SampleType::SpecimenSample:
-          emit mw->receivedSample(
-            sample.sample_type, sample.exercise, sample.value);
+          emit mw->receivedSample(sample.device_id,
+                                  sample.sample_type,
+                                  sample.exercise,
+                                  sample.value);
           break;
         case SampleType::AmbientPurge:
         case SampleType::SpecimenPurge:
@@ -87,12 +89,13 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
     }
     case TestNotification::Tag::LiveFF: {
       auto& ff = notification->live_ff;
-      emit mw->receivedLiveFF(ff.exercise, ff.index, ff.fit_factor);
+      emit mw->receivedLiveFF(
+        ff.device_id, ff.exercise, ff.index, ff.fit_factor);
       break;
     }
     case TestNotification::Tag::InterimFF:
       auto& ff = notification->interim_ff;
-      emit mw->receivedInterimFF(ff.exercise, ff.fit_factor);
+      emit mw->receivedInterimFF(ff.device_id, ff.exercise, ff.fit_factor);
       break;
   }
 }
@@ -104,16 +107,17 @@ MainWindow::processRawSample(const size_t aDeviceIndex, const double aSample)
 }
 
 void
-MainWindow::processSample(SampleType sampleType, size_t exercise, double value)
+MainWindow::processSample(const size_t aDeviceIndex,
+                          const SampleType aSampleType,
+                          const size_t aExercise,
+                          const double aValue)
 {
-  switch (sampleType) {
+  switch (aSampleType) {
     case SampleType::AmbientSample:
-      // TODO: set correct device index.
-      mUI->ambientSampleGraph->addDatapoint(0, exercise, value);
+      mUI->ambientSampleGraph->addDatapoint(aDeviceIndex, aExercise, aValue);
       break;
     case SampleType::SpecimenSample:
-      // TODO: set correct device index.
-      mUI->specimenSampleGraph->addDatapoint(0, exercise, value);
+      mUI->specimenSampleGraph->addDatapoint(aDeviceIndex, aExercise, aValue);
       break;
     default:
       // TODO: handle remaining cases.
@@ -122,10 +126,12 @@ MainWindow::processSample(SampleType sampleType, size_t exercise, double value)
 }
 
 void
-MainWindow::processLiveFF(size_t exercise, size_t, double fit_factor)
+MainWindow::processLiveFF(const size_t aDeviceIndex,
+                          const size_t aExercise,
+                          const size_t /* aIndex */,
+                          const double aFitFactor)
 {
-  // TODO: set correct device index.
-  mUI->liveFFGraph->addDatapoint(0, exercise, fit_factor);
+  mUI->liveFFGraph->addDatapoint(aDeviceIndex, aExercise, aFitFactor);
 }
 
 void

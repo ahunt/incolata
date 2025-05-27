@@ -36,8 +36,14 @@ public:
 private slots:
   void startTestPressed();
   void processRawSample(const size_t aDeviceIndex, const double aSample);
-  void processSample(SampleType sampleType, size_t exercise, double value);
-  void processLiveFF(size_t exercise, size_t index, double fit_factor);
+  void processSample(const size_t aDeviceIndex,
+                     const SampleType sampleType,
+                     const size_t aExercise,
+                     const double aValue);
+  void processLiveFF(const size_t aDeviceIndex,
+                     const size_t aExercise,
+                     const size_t aIndex,
+                     const double aFitFactor);
   void subjectOrSpecimenEntryChanged(const QString& aContents);
   void refreshStatusBar();
   void testCompleted();
@@ -68,8 +74,16 @@ signals:
   void ffUpdated(const size_t& aDeviceIndex, const size_t& aExercise, const double& aFitFactor, const double& aErr);
   void renderRawSample(QString sample);
   void receivedRawSample(const size_t aDeviceIndex, const double aSample);
-  void receivedSample(SampleType sampleType, size_t exercise, double value);
-  void receivedLiveFF(size_t exercise, size_t index, double fit_factor);
-  void receivedInterimFF(size_t exercise, double fit_factor);
+  void receivedSample(const size_t aDeviceIndex,
+                      const SampleType aSampleType,
+                      const size_t aExercise,
+                      const double aValue);
+  void receivedLiveFF(const size_t aDeviceIndex,
+                      const size_t aExercise,
+                      const size_t aIndex,
+                      const double aFitFactor);
+  void receivedInterimFF(const size_t aDeviceIndex,
+                         const size_t aExercise,
+                         const double aFitFactor);
 };
 #endif // MAINWINDOW_H

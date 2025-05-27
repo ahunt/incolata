@@ -32,6 +32,12 @@
       from: Colton, C. E.: Filtering facepieces: Study supports need for
       fit-testing. 3M JobHealth Highlights 17(2):1-4 (1999) (unfortunately I was
       unable to figure out how to access this).
+* McKay RT, Davies E. Capability of respirator wearers to detect aerosolized
+  qualitative fit test agents (sweetener and Bitrex) with known fixed leaks.
+  Appl Occup Environ Hyg. 2000 Jun;15(6):479-84. doi: 10.1080/104732200301269.
+  PMID: 10853288.
+  (QLFT) Also supports approx 5-6x improvement in P95 protection, but is not a
+  (S)WPF study - in fact it's not even a full fit test.
 
 ## Correlation of fit factors and WPFs
 
@@ -147,3 +153,14 @@ https://tsi.com/industrial-manufacturing/learn/respirator-fit-test-protocol-comp
   Respirators. American Industrial Hygiene Association Journal, 56(7), 717–724.
   https://doi.org/10.1080/15428119591016755
   3M copy at: https://multimedia.3m.com/mws/media/219152O/the-apf-of-10-for-half-mask-respirators.pdf
+
+## Leakage (vs filter grade)
+
+* Chen CC, Willeke K. Characteristics of face seal leakage in filtering
+  facepieces. Am Ind Hyg Assoc J. 1992 Sep;53(9):533-9. doi:
+  10.1080/15298669291360120. PMID: 1524028.
+  "If there is substantial lack of face seal fit and the wearer performs a light
+   workload (low breathing rate), a HEPA respirator may provide less protecton
+   than a DM respirator. This may occur because the high pressure across the
+   HEPA filter pulls a greater amount of aerosols through a leak of given size
+   than the much lower pressure drop across the dust-mist respirator."

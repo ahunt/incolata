@@ -81,15 +81,17 @@ TestWorker::runTest(const QSharedPointer<Protocol> aProtocol,
   }
 
   auto date = QDateTime::currentDateTime().toString("yyyy_MM_dd");
-  for (size_t i = 0; i < result->fit_factors_length; i += 12) {
+  auto exerciseCount = p8020_test_result_get_exercise_count(result);
+  for (size_t i = 0; i < exerciseCount; i += 12) {
     // TODO: make this robust against non-ASCII specimen and subjects.
     stream << enquote(aSpecimen) << ",";
     for (size_t j = i; j < i + 12; j++) {
-      if (j >= result->fit_factors_length) {
+      if (j >= exerciseCount) {
         stream << ",";
         continue;
       }
-      double ff = result->fit_factors[j];
+      double ff =
+        p8020_test_result_get_fit_factor(result, /* device_id */ 0, j);
       if (ff >= 10) {
         stream << QString::number(ff, 'f', 0);
       } else {

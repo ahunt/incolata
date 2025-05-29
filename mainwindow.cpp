@@ -64,11 +64,8 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
       break;
     }
     case TestNotification::Tag::ExerciseResult: {
-      const size_t deviceIndex = notification->exercise_result._0;
-      const size_t ex = notification->exercise_result._1;
-      const double ff = notification->exercise_result._2;
-      const double err = notification->exercise_result._3;
-      emit mw->ffUpdated(deviceIndex, ex, ff, err);
+      auto& result = notification->exercise_result;
+      emit mw->ffUpdated(result.device_id, result.exercise, result.fit_factor, result.error);
       break;
     };
     case TestNotification::Tag::Sample: {

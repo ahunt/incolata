@@ -52,10 +52,10 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
   MainWindow* mw = static_cast<MainWindow*>(cb_data);
   switch (notification->tag) {
     case TestNotification::Tag::StateChange: {
-      const TestState ts = notification->state_change._0;
+      const TestState ts = notification->state_change.test_state;
       switch (ts.tag) {
         case TestState::Tag::StartedExercise:
-          emit mw->exerciseChanged(uint(ts.started_exercise._0));
+          emit mw->exerciseChanged(uint(ts.started_exercise.exercise));
           break;
         default:
           // TODO: handle these.
@@ -69,7 +69,7 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
       break;
     };
     case TestNotification::Tag::Sample: {
-      auto& sample = notification->sample._0;
+      auto& sample = notification->sample.data;
       switch (sample.sample_type) {
         case SampleType::AmbientSample:
         case SampleType::SpecimenSample:

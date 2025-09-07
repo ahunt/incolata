@@ -70,13 +70,13 @@ ExercisesModel::updateCurrentExercise(const size_t& aExercise)
 }
 
 void
-ExercisesModel::updateFF(const size_t& deviceIndex,
-			 const size_t& aExercise,
+ExercisesModel::updateFF(const size_t& aDeviceIndex,
+                         const size_t& aExercise,
                          const double& aFitFactor,
                          const double& aErr)
 {
-  // TODO: handle deviceIndex.
-  (void) deviceIndex;
+  // TODO: handle aDeviceIndex.
+  (void)aDeviceIndex;
 
   mFitFactors[aExercise] = aFitFactor;
   mErrs[aExercise] = aErr;
@@ -86,8 +86,13 @@ ExercisesModel::updateFF(const size_t& deviceIndex,
 }
 
 void
-ExercisesModel::renderInterimFF(const uint aExercise, double aFitFactor)
+ExercisesModel::renderInterimFF(const size_t& aDeviceIndex,
+                                const size_t& aExercise,
+                                const double& aFitFactor)
 {
+  // TODO: handle aDeviceIndex.
+  (void)aDeviceIndex;
+
   mInterimFitFactors[aExercise] = aFitFactor;
   emit dataChanged(index(aExercise, 0),
                    index(aExercise, 0),

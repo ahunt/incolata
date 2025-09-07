@@ -19,7 +19,9 @@ public:
 public slots:
   void updateCurrentExercise(const size_t& aExercise);
   void updateFF(const size_t& aDeviceIndex, const size_t& aExercise, const double& aFitFactor, const double& aErr);
-  void renderInterimFF(uint aExercise, double aFitFactor);
+  void renderInterimFF(const size_t& aDeviceIndex,
+                       const size_t& aExercise,
+                       const double& aFitFactor);
 
 private:
   QStringList mExercises;

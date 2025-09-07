@@ -70,7 +70,7 @@ signals:
                    const QString& aSpecimen,
                    const QString& aSubject,
                    const QString& aComment);
-  void exerciseChanged(uint ex);
+  void exerciseChanged(const size_t& aExercise);
   void ffUpdated(const size_t& aDeviceIndex, const size_t& aExercise, const double& aFitFactor, const double& aErr);
   void renderRawSample(QString sample);
   void receivedRawSample(const size_t aDeviceIndex, const double aSample);

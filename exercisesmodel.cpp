@@ -58,7 +58,7 @@ ExercisesModel::setExercises(const QStringList& aExercises)
 }
 
 void
-ExercisesModel::updateCurrentExercise(const uint aExercise)
+ExercisesModel::updateCurrentExercise(const size_t& aExercise)
 {
   const uint previous = std::max(mCurrentExercise, 0);
   // TODO: make this robust against non-incremental changes.

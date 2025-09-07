@@ -55,7 +55,7 @@ MainWindow::test_callback(const TestNotification* notification, void* cb_data)
       const TestState ts = notification->state_change.test_state;
       switch (ts.tag) {
         case TestState::Tag::StartedExercise:
-          emit mw->exerciseChanged(uint(ts.started_exercise.exercise));
+          emit mw->exerciseChanged(ts.started_exercise.exercise);
           break;
         default:
           // TODO: handle these.

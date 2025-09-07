@@ -30,8 +30,8 @@ application.
 
 * Support for 803X and 804X. There are too few of these in the community to
   justify the effort (at least for now).
-* Support for non-TSI CPCs, except for perhaps the OpenCPC/OpenAeros if/when it
-  becomees available.
+* Support for non-TSI CPCs, except for perhaps the OpenCPC/OpenAeros if/when I
+  get a hold of one, and figure out how to rig up a switching valve.
 
 ## Docs
 

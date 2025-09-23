@@ -7,7 +7,10 @@ application.
 
 ## Supported
 
-* Devices: 8020A, 8020Mgen1. (8020's should also work, but have not been tested.)
+* Devices:
+    * 8020A.
+    * 8020Mgen1 aka M41 PATS.
+    * (8020's should also work, but have not been tested.)
 * Protocols: OSHA classic and modified (fast), Crash2.5, ISO, and HSE.
     * Other protocols can be easily added but (for the time being) require
       recompilation.
@@ -18,7 +21,7 @@ application.
 
 * Dual-device support (e.g. concurrent total particle count + leak integrity
   measurement).
-* 8020Mgen2 support.
+* 8020Mgen2 (aka M41A1 PATS) support.
 * Raw data logging.
 * Windows support.
 * Custom protocol support (without having to edit sources, followed by

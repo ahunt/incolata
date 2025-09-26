@@ -43,6 +43,15 @@ MainWindow::device_callback(const P8020DeviceNotification* notification,
     case P8020DeviceNotification::Tag::DevicePropertiesAvailable:
       emit mw->refreshStatusBar();
       break;
+    case P8020DeviceNotification::Tag::TestStarted:
+      emit mw->testStarted();
+      break;
+    case P8020DeviceNotification::Tag::TestCompleted:
+      emit mw->testCompleted();
+      break;
+    case P8020DeviceNotification::Tag::TestCancelled:
+      emit mw->testCancelled();
+      break;
   }
 }
 
@@ -165,7 +174,7 @@ MainWindow::refreshStatusBar()
 }
 
 void
-MainWindow::testCompleted()
+MainWindow::doTestCompleted()
 {
   mUI->testControlGroupBox->setEnabled(true);
 }
@@ -291,7 +300,7 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   testWorker->moveToThread(mWorkerThread);
   connect(this, &MainWindow::triggerTest, testWorker, &TestWorker::runTest);
   connect(
-    testWorker, &TestWorker::testCompleted, this, &MainWindow::testCompleted);
+    this, &MainWindow::testCompleted, this, &MainWindow::doTestCompleted);
   mWorkerThread->start();
 }
 

@@ -46,7 +46,7 @@ private slots:
                      const double aFitFactor);
   void subjectOrSpecimenEntryChanged(const QString& aContents);
   void refreshStatusBar();
-  void testCompleted();
+  void doTestCompleted();
 
 private:
   std::unique_ptr<Ui::MainWindow> mUI;
@@ -70,6 +70,9 @@ signals:
                    const QString& aSpecimen,
                    const QString& aSubject,
                    const QString& aComment);
+  void testStarted();
+  void testCompleted();
+  void testCancelled();
   void exerciseChanged(const size_t& aExercise);
   void ffUpdated(const size_t& aDeviceIndex, const size_t& aExercise, const double& aFitFactor, const double& aErr);
   void renderRawSample(QString sample);

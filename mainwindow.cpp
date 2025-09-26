@@ -257,6 +257,19 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
                    &MainWindow::startTestPressed);
 
   QObject::connect(this,
+                   &MainWindow::testStarted,
+                   mModel.get(),
+                   &ExercisesModel::doTestStarted);
+  QObject::connect(this,
+                   &MainWindow::testCompleted,
+                   mModel.get(),
+                   &ExercisesModel::doTestCompleted);
+  QObject::connect(this,
+                   &MainWindow::testCancelled,
+                   mModel.get(),
+                   &ExercisesModel::doTestCancelled);
+
+  QObject::connect(this,
                    &MainWindow::exerciseChanged,
                    mModel.get(),
                    &ExercisesModel::updateCurrentExercise);

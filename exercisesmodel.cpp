@@ -9,6 +9,7 @@
 
 ExercisesModel::ExercisesModel(QObject* aParent)
   : QAbstractTableModel(aParent)
+  , mIsRunning(false)
   , mExercises()
   , mCurrentExercise(-1)
   , mFitFactors()
@@ -97,6 +98,24 @@ ExercisesModel::renderInterimFF(const size_t& aDeviceIndex,
   emit dataChanged(index(aExercise, 0),
                    index(aExercise, 0),
                    QList<int>(Qt::DisplayRole, Qt::DecorationRole));
+}
+
+void
+ExercisesModel::doTestStarted()
+{
+  mIsRunning = true;
+}
+
+void
+ExercisesModel::doTestCompleted()
+{
+  mIsRunning = false;
+}
+
+void
+ExercisesModel::doTestCancelled()
+{
+  mIsRunning = false;
 }
 
 int

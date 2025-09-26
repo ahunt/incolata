@@ -22,8 +22,13 @@ public slots:
   void renderInterimFF(const size_t& aDeviceIndex,
                        const size_t& aExercise,
                        const double& aFitFactor);
+  void doTestStarted();
+  void doTestCompleted();
+  void doTestCancelled();
 
 private:
+  bool mIsRunning;
+
   QStringList mExercises;
   int mCurrentExercise;
   QList<double> mFitFactors;

@@ -33,7 +33,7 @@ ExercisesModel::refreshCurrentExerciseLabel()
     return;
   }
 
-  if (mCurrentExercise < 0 || mExercises.length() == 0) {
+  if (!mIsRunning || mCurrentExercise < 0 || mExercises.length() == 0) {
     mCurrentExerciseLabel->setText("");
     return;
   }
@@ -104,18 +104,21 @@ void
 ExercisesModel::doTestStarted()
 {
   mIsRunning = true;
+  refreshCurrentExerciseLabel();
 }
 
 void
 ExercisesModel::doTestCompleted()
 {
   mIsRunning = false;
+  refreshCurrentExerciseLabel();
 }
 
 void
 ExercisesModel::doTestCancelled()
 {
   mIsRunning = false;
+  refreshCurrentExerciseLabel();
 }
 
 int

@@ -47,10 +47,19 @@ TestWorker::runTest(const QSharedPointer<Protocol> aProtocol,
                     const QString& aSubject,
                     const QString& aComment)
 {
-  // Opening the file before running the test is probably unnecessary, but it
-  // helps me spot mistakes with the file path or whatever before running a
-  // test.
-  QFile testLog(QDir::homePath() + "/fit_testing/ftl_log.csv");
+  QDir logDir(QDir::homePath() + "/fit_testing/");
+  if (!logDir.exists()) {
+    qInfo() << "log directory does not exist, attempting to create it";
+    // QDir does not offer an API to create the directory it points to, there's
+    // either mkdir(someSubdir), or this.
+    if (!logDir.mkpath(logDir.path())) {
+      // TODO: introduce some kind of user-friendly error handling.
+      qWarning() << "Unable to create log dir (" << logDir.path() << ")";
+      return;
+    }
+  }
+
+  QFile testLog(logDir.path() + "/ftl_log.csv");
   QIODeviceBase::OpenMode openOptions = QIODeviceBase::WriteOnly;
   if (testLog.exists()) {
     openOptions |= QIODeviceBase::Append;

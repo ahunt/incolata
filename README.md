@@ -8,9 +8,9 @@ application.
 ## Supported
 
 * Devices:
+    * 8020 (non-A).
     * 8020A.
-    * 8020Mgen1 aka M41 PATS.
-    * (8020's should also work, but have not been tested.)
+    * 8020Mgen1 (aka M41 PATS).
 * Protocols: OSHA classic and modified (fast), Crash2.5, ISO, and HSE.
     * Other protocols can be easily added but (for the time being) require
       recompilation.

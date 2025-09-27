@@ -158,10 +158,9 @@ MainWindow::refreshStatusBar()
     P8020DeviceProperties* deviceProperties =
       p8020_device_get_properties(mDevice);
     if (deviceProperties != nullptr) {
-      message = QString("%0    8020(A): #%2 (Last service: %3-%4, runtime "
-                        "since last service: %5 h.)")
+      message = QString("%1    8020(A): Last service: %2-%3, runtime since "
+                        "last service: %4h.")
                   .arg(message,
-                       deviceProperties->serial_number,
                        QString::number(deviceProperties->last_service_year),
                        QString::number(deviceProperties->last_service_month),
                        QString::number(size_t(

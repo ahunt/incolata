@@ -33,6 +33,22 @@
     <item>
      <layout class="QHBoxLayout" name="headerLayout">
       <item>
+       <widget class="QLabel" name="failLabel">
+        <property name="font">
+         <font>
+          <pointsize>32</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: red;</string>
+        </property>
+        <property name="text">
+         <string>☠ FAIL ☠</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="currentExerciseLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -389,7 +405,7 @@
      <x>0</x>
      <y>0</y>
      <width>1200</width>
-     <height>34</height>
+     <height>30</height>
     </rect>
    </property>
   </widget>

@@ -98,6 +98,24 @@
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="label_fail">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="font">
+        <font>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: red;</string>
+       </property>
+       <property name="text">
+        <string>☠ FAIL ☠</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="indicator">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">

@@ -201,6 +201,7 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   mUI->exercisesList->setItemDelegate(new ExerciseRowDelegate(this));
   mUI->exercisesList->setModel(mModel.get());
   mModel->setCurrentExerciseLabel(mUI->currentExerciseLabel);
+  mModel->setFailLabel(mUI->failLabel);
 
   mUI->rawChartView->setTitle("Raw Particle Conc. (#/cm³)");
   mUI->rawChartView->setXRange(sRawSampleRange);

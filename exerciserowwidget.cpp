@@ -66,6 +66,13 @@ ExerciseRowWidget::setData(const ExerciseData& aData)
   mUI->label_interim->setVisible(aData.mIsInterim && hasAtLeastOneFF);
   mUI->indicator->setVisible(aData.mIsRecording);
 
+  // TODO: make failure threshold configurable.
+  const bool hasAtLeastOneFailingFF =
+    std::ranges::any_of(aData.mFitFactors, [](std::optional<double> ff) {
+      return ff.value_or(101) < 100.0;
+    });
+  mUI->label_fail->setVisible(!aData.mIsInterim && hasAtLeastOneFailingFF);
+
   // Yes, this could be better written to handle an arbitrary number of devices,
   // but would it be worth it?
   setFFLabels(0, mUI->label_dev0_logff, mUI->label_dev0_linff, aData);

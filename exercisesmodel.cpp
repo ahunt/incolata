@@ -16,6 +16,7 @@ ExercisesModel::ExercisesModel(QObject* aParent)
   , mErrs()
   , mInterimFitFactors()
   , mCurrentExerciseLabel(nullptr)
+  , mFailLabel(nullptr)
 {
 }
 
@@ -43,6 +44,21 @@ ExercisesModel::refreshCurrentExerciseLabel()
                            QString::number(mExercises.length()),
                            mExercises[mCurrentExercise]);
   mCurrentExerciseLabel->setText(message);
+}
+
+void
+ExercisesModel::setFailLabel(QLabel* const aFailLabel)
+{
+  mFailLabel = aFailLabel;
+  refreshFailLabel();
+}
+
+void
+ExercisesModel::refreshFailLabel()
+{
+  const bool hasAtLeastOneFail = std::ranges::any_of(
+    mFitFactors, [](double ff) { return ff > 0 && ff < 100.0; });
+  mFailLabel->setVisible(hasAtLeastOneFail);
 }
 
 void
@@ -84,6 +100,8 @@ ExercisesModel::updateFF(const size_t& aDeviceIndex,
   emit dataChanged(index(aExercise, 0),
                    index(aExercise, 0),
                    QList<int>(Qt::DisplayRole, Qt::DecorationRole));
+
+  refreshFailLabel();
 }
 
 void

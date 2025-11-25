@@ -14,6 +14,7 @@ public:
   QVariant data(const QModelIndex& aIndex, const int aRole) const override;
 
   void setCurrentExerciseLabel(QLabel* const aCurrentExerciseLabel);
+  void setFailLabel(QLabel* const aFailLabel);
   void setExercises(const QStringList& aExercises);
 
 public slots:
@@ -35,8 +36,10 @@ private:
   QList<double> mErrs;
   QList<double> mInterimFitFactors;
   QLabel* mCurrentExerciseLabel;
+  QLabel* mFailLabel;
 
   void refreshCurrentExerciseLabel();
+  void refreshFailLabel();
 };
 
 #endif // EXERCISESMODEL_H

@@ -21,10 +21,10 @@ enquote(const QString& aIn) -> QString
   // thing to do, but being sensible has no place here.
   bool hasQuotationMark = false;
   bool hasComma = false;
-  for (auto it = aIn.cbegin(), end = aIn.cend(); it != end; it++) {
-    if (*it == '"') {
+  for (auto it : aIn) {
+    if (it == '"') {
       hasQuotationMark = true;
-    } else if (*it == ',') {
+    } else if (it == ',') {
       hasComma = true;
     }
   }

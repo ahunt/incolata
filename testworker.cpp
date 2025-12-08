@@ -14,8 +14,8 @@ TestWorker::TestWorker(P8020Device* const aDevice, QObject* const aParent)
 {
 }
 
-QString
-enquote(const QString& aIn)
+auto
+enquote(const QString& aIn) -> QString
 {
   // Same as in libp8020: using an established CSV library would be the sensible
   // thing to do, but being sensible has no place here.
@@ -30,7 +30,7 @@ enquote(const QString& aIn)
   }
 
   if (!hasQuotationMark && !hasComma) {
-    return QString(aIn);
+    return { aIn };
   };
   QString out = aIn;
   if (hasQuotationMark) {

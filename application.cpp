@@ -12,6 +12,6 @@ Application::Application(int& aArgc, char** aArgv)
 void
 Application::connectToDevice(const QString& aPath)
 {
-  MainWindow* w = new MainWindow(aPath);
+  auto w = new MainWindow(aPath);
   w->show();
 }

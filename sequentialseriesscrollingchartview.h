@@ -29,12 +29,12 @@ public:
   void setXRange(const qsizetype& range);
 
   Q_PROPERTY(QValueAxis* xAxis MEMBER mXAxis READ default)
-  QValueAxis* xAxis() const;
+  auto xAxis() const -> QValueAxis*;
 
   Q_PROPERTY(QAbstractAxis* yAxisLeft MEMBER mYAxisLeft READ default)
-  QAbstractAxis* yAxisLeft() const;
+  auto  yAxisLeft() const -> QAbstractAxis*;
   Q_PROPERTY(QAbstractAxis* yAxisRight MEMBER mYAxisRight READ default)
-  QAbstractAxis* yAxisRight() const;
+  auto yAxisRight() const -> QAbstractAxis*;
 
   // Spacing between each sequential series. All changes must be made prior to
   // adding any datapoints. Defaults to 0, i.e. by default the first point of

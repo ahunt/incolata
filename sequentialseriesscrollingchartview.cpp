@@ -37,20 +37,20 @@ SequentialSeriesScrollingChartView::SequentialSeriesScrollingChartView(
   mChart->addAxis(mYAxisRight, Qt::AlignRight);
 }
 
-QValueAxis*
-SequentialSeriesScrollingChartView::xAxis() const
+auto
+SequentialSeriesScrollingChartView::xAxis() const -> QValueAxis*
 {
   return mXAxis;
 }
 
-QAbstractAxis*
-SequentialSeriesScrollingChartView::yAxisLeft() const
+auto
+SequentialSeriesScrollingChartView::yAxisLeft() const -> QAbstractAxis*
 {
   return mYAxisLeft;
 }
 
-QAbstractAxis*
-SequentialSeriesScrollingChartView::yAxisRight() const
+auto
+SequentialSeriesScrollingChartView::yAxisRight() const -> QAbstractAxis*
 {
   return mYAxisRight;
 }

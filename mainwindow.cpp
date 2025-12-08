@@ -25,7 +25,7 @@ void
 MainWindow::device_callback(const P8020DeviceNotification* notification,
                             void* cb_data)
 {
-  MainWindow* mw = static_cast<MainWindow*>(cb_data);
+  auto mw = static_cast<MainWindow*>(cb_data);
   switch (notification->tag) {
     case P8020DeviceNotification::Tag::Sample: {
       const double sample = notification->sample.particle_conc;
@@ -58,7 +58,7 @@ MainWindow::device_callback(const P8020DeviceNotification* notification,
 void
 MainWindow::test_callback(const TestNotification* notification, void* cb_data)
 {
-  MainWindow* mw = static_cast<MainWindow*>(cb_data);
+  auto mw = static_cast<MainWindow*>(cb_data);
   switch (notification->tag) {
     case TestNotification::Tag::StateChange: {
       const TestState ts = notification->state_change.test_state;
@@ -309,7 +309,7 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   mDevice =
     p8020_device_connect(deviceStdString.c_str(), &device_callback, this);
 
-  TestWorker* testWorker = new TestWorker(mDevice);
+  auto testWorker = new TestWorker(mDevice);
   testWorker->moveToThread(mWorkerThread);
   connect(this, &MainWindow::triggerTest, testWorker, &TestWorker::runTest);
   connect(

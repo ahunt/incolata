@@ -15,8 +15,8 @@ Protocol::~Protocol()
   }
 }
 
-QString
-Protocol::id() const
+auto
+Protocol::id() -> QString const
 {
   switch (tag) {
     case Protocol::BUILTIN_CONFIG: {

@@ -21,7 +21,7 @@ struct Protocol
     const QString* builtinConfigID;
   };
 
-  QString id() const;
+  auto id() -> QString const;
 
   ~Protocol();
 };

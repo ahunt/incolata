@@ -67,12 +67,12 @@ SequentialSeriesScrollingChartView::enableLogYAxis()
   delete mYAxisLeft;
   // Use a temporary value with type QLogValueAxis as we're calling
   // QLogValueAxis-specific methods below.
-  QLogValueAxis* yAxisLeft = new QLogValueAxis();
+  auto yAxisLeft = new QLogValueAxis();
   mYAxisLeft = yAxisLeft;
   mChart->removeAxis(mYAxisRight);
   delete mYAxisRight;
   // See comment on yAxisLeft;
-  QLogValueAxis* yAxisRight = new QLogValueAxis();
+  auto yAxisRight = new QLogValueAxis();
   mYAxisRight = yAxisRight;
 
   mChart->addAxis(yAxisLeft, Qt::AlignLeft);
@@ -229,7 +229,7 @@ SequentialSeriesScrollingChartView::addDatapoint(const size_t& deviceIndex,
   }
 
   QAbstractAxis* const yAxis = deviceIndex == 0 ? mYAxisLeft : mYAxisRight;
-  QLogValueAxis* const logYAxis = dynamic_cast<QLogValueAxis*>(yAxis);
+  auto const logYAxis = dynamic_cast<QLogValueAxis*>(yAxis);
   if (logYAxis == nullptr) {
     switch (mYAxisScalingMode) {
       case ZeroAnchored: {

@@ -4,7 +4,8 @@
 #include <QLocale>
 #include <QTranslator>
 
-int main(int argc, char *argv[])
+auto
+main(int argc, char *argv[]) -> int
 {
   Application a(argc, argv);
 

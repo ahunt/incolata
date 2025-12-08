@@ -8,17 +8,18 @@ ProtocolsModel::ProtocolsModel(QObject* aParent)
 {
 }
 
-int
-ProtocolsModel::rowCount(const QModelIndex&) const
+auto
+ProtocolsModel::rowCount(const QModelIndex&) const -> int
 {
   return mBuiltinConfigs.count;
 }
 
-QVariant
+auto
 ProtocolsModel::data(const QModelIndex& aIndex, const int aRole) const
+  -> QVariant
 {
   if (aRole != Qt::DisplayRole) {
-    return QVariant();
+    return {};
   }
 
   const TestConfig* const config = mBuiltinConfigs.configs[aIndex.row()];
@@ -34,8 +35,8 @@ ProtocolsModel::data(const QModelIndex& aIndex, const int aRole) const
   return result;
 }
 
-QSharedPointer<Protocol>
-ProtocolsModel::protocol(const int& aIndex) const
+auto
+ProtocolsModel::protocol(const int& aIndex) -> QSharedPointer<Protocol> const
 {
   // This will (obviously) change significantly once custom protocols are
   // supported.

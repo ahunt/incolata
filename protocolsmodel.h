@@ -13,11 +13,11 @@ class ProtocolsModel : public QAbstractListModel
 public:
   explicit ProtocolsModel(QObject* aParent = nullptr);
 
-  int rowCount(const QModelIndex& aParent) const override;
-  QVariant data(const QModelIndex& aIndex, const int aRole) const override;
+  auto rowCount(const QModelIndex& aParent) const -> int override;
+  auto data(const QModelIndex& aIndex, const int aRole) const -> QVariant override;
 
   // Return the protocol for aIndex.
-  QSharedPointer<Protocol> protocol(const int& aIndex) const;
+  auto  protocol(const int& aIndex) -> QSharedPointer<Protocol> const;
 
 private:
   const P8020TestConfigList mBuiltinConfigs;

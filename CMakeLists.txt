@@ -7,7 +7,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(QT_MINIMUM_VERSION 6.0.0)
@@ -70,7 +70,7 @@ qt_add_executable(incolata
 qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 
 target_compile_options(${PROJECT_NAME} PRIVATE
-  -std=c++20 -Wall -Wextra -Wpedantic -Werror
+    -Wall -Wextra -Wpedantic -Werror
 )
 
 ExternalProject_Add(

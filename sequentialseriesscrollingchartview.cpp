@@ -178,6 +178,11 @@ SequentialSeriesScrollingChartView::addDatapoint(const size_t& deviceIndex,
   assert((seriesIndex + 1 >= mSeriesLists[deviceIndex].size()) &&
          "must not append to prior (already completed) series");
 
+  // Checking the axis type is a very ugly way of detecting whether we're using
+  // log axes. TODO: figure out a more elegant solution.
+  QAbstractAxis* const yAxis = deviceIndex == 0 ? mYAxisLeft : mYAxisRight;
+  auto const logYAxis = dynamic_cast<QLogValueAxis*>(yAxis);
+
   const QLineSeries* const lastPopulatedSeries =
     mSeriesLists[deviceIndex].size() > 0 ? mSeriesLists[deviceIndex].back()
                                          : nullptr;
@@ -214,7 +219,17 @@ SequentialSeriesScrollingChartView::addDatapoint(const size_t& deviceIndex,
     }
   }
 
-  series->append(QPointF(x, value));
+  if (logYAxis != nullptr) {
+    // Calculated fit-factors can sometimes be < 1.0 (e.g. when measuring a
+    // null-specimen, in combination with fluctuations in ambient particle
+    // count: particle counts during the exercise might be higher than during
+    // the ambient sampling period, resulting a ratio of < 1.0).
+    // However we can't represent that on a log-scale, so we round up to 1.0
+    // (QChartView won't even show the points if they are < 1.0.)
+    series->append(QPointF(x, std::max(value, 1.0)));
+  } else {
+    series->append(QPointF(x, value));
+  }
   refreshXRange();
 
   // Using something functional to find the min/max Y values would certainly be
@@ -228,8 +243,6 @@ SequentialSeriesScrollingChartView::addDatapoint(const size_t& deviceIndex,
     maxYSeen = mMaxYSeenRight = std::max(mMaxYSeenRight, value);
   }
 
-  QAbstractAxis* const yAxis = deviceIndex == 0 ? mYAxisLeft : mYAxisRight;
-  auto const logYAxis = dynamic_cast<QLogValueAxis*>(yAxis);
   if (logYAxis == nullptr) {
     switch (mYAxisScalingMode) {
       case ZeroAnchored: {

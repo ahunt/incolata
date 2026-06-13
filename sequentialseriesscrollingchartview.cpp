@@ -214,7 +214,7 @@ SequentialSeriesScrollingChartView::addDatapoint(const size_t& deviceIndex,
     }
   }
 
-  series->append(QPoint(x, value));
+  series->append(QPointF(x, value));
   refreshXRange();
 
   // Using something functional to find the min/max Y values would certainly be

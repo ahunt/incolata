@@ -86,8 +86,6 @@ private:
   size_t mSeriesSpacing;
   qsizetype mXRange;
 
-  qreal mMinYSeenLeft, mMaxYSeenLeft, mMinYSeenRight, mMaxYSeenRight;
-
   void refreshXRange();
 };
 

@@ -18,10 +18,6 @@ SequentialSeriesScrollingChartView::SequentialSeriesScrollingChartView(
   , mSeriesLists(2)
   , mYAxisScalingMode(YAxisScalingMode::ZeroAnchored)
   , mSeriesSpacing(0)
-  , mMinYSeenLeft(std::numeric_limits<double>::infinity())
-  , mMaxYSeenLeft(0.0)
-  , mMinYSeenRight(std::numeric_limits<double>::infinity())
-  , mMaxYSeenRight(0.0)
 {
   mXAxis->setLabelFormat("%d");
   static_cast<QValueAxis*>(mYAxisLeft)->setLabelFormat("%d");
@@ -232,15 +228,20 @@ SequentialSeriesScrollingChartView::addDatapoint(const size_t& deviceIndex,
   }
   refreshXRange();
 
-  // Using something functional to find the min/max Y values would certainly be
-  // more elegant, but this is faster (at the cost of 16 bytes).
-  qreal minYSeen, maxYSeen;
-  if (deviceIndex == 0) {
-    minYSeen = mMinYSeenLeft = std::min(mMinYSeenLeft, value);
-    maxYSeen = mMaxYSeenLeft = std::max(mMaxYSeenLeft, value);
-  } else {
-    minYSeen = mMinYSeenRight = std::min(mMinYSeenRight, value);
-    maxYSeen = mMaxYSeenRight = std::max(mMaxYSeenRight, value);
+  // Perform vertical scaling based on the _current_ series, e.g. current
+  // exercise, because that's an approximation of what will be interesting for
+  // the subject.
+  // TODO: consider scaling based only on the currently visible range: this is
+  // particularly useful for "live-mode" tests where the current series may
+  // contain a few hundred points. Re-scaling for every new point is likely
+  // to be annoying, but maybe we can move the start of the range in chunks?
+  // (However, given that we're already doing some quantisation below, that's
+  // maybe NBD?)
+  qreal minYSeen = std::numeric_limits<qreal>::infinity();
+  qreal maxYSeen = 0.0;
+  for (const auto& point : series->points()) {
+    minYSeen = std::min(minYSeen, point.y());
+    maxYSeen = std::max(maxYSeen, point.y());
   }
 
   if (logYAxis == nullptr) {

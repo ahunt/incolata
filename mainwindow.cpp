@@ -187,6 +187,7 @@ MainWindow::MainWindow(const QString& aDevice, QWidget* const parent)
   , mWorkerThread(new QThread)
 {
   mUI->setupUi(this);
+  setWindowState(Qt::WindowMaximized);
 
   // There doesn't appear to be away to set this in xml layout.
   mUI->mainAreaSplitter->setSizes({400, 1000});

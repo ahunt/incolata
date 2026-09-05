@@ -63,14 +63,14 @@ https://github.com/ahunt/incolata/blob/main/.github/workflows/checks.yml
 
 I typically run something like:
 ```
-git submodule init
+git submodule update --init
 cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B build/Debug
 cd build/Debug && ninja
 ```
 
 > [!TIP]  
 > You can also open the project in QtCreator, which should take care of
-> configuring and building, modulo submodule init.
+> configuring and building, modulo submodule update/init.
 
 #### Static Analysis
 

@@ -79,7 +79,7 @@ TestWorker::runTest(const QSharedPointer<Protocol> aProtocol,
       break;
     case Protocol::BUILTIN_CONFIG_ID:
       assert(false && "not supported yet - needs to be moved into Protocol");
-      break;
+      return;
   }
   P8020TestResult* result =
     p8020_device_run_test(mDevice, testConfig, aCallback, aCallbackData);

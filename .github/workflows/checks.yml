@@ -12,7 +12,7 @@ jobs:
   build_release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: 'true'
       - name: Install deps
@@ -38,7 +38,7 @@ jobs:
   build_debug:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: 'true'
       - name: Install deps
@@ -64,7 +64,7 @@ jobs:
   clang_analyser:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: 'true'
       - name: Install deps
@@ -87,7 +87,7 @@ jobs:
   mac_build_release:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: 'true'
       - name: Install deps
@@ -105,7 +105,7 @@ jobs:
   mac_build_debug:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: 'true'
       - name: Install deps
